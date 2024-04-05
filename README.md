@@ -1,4 +1,4 @@
-# proj-template
+# Analysis scripts for *seismic*
 simple template for ylab projects
 
 This repo includes a basic `.gitignore` with common files to exclude, but this should obviously be pared down / additional files should be added as necessary.
