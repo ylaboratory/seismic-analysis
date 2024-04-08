@@ -40,7 +40,7 @@ if (!require("anndata")){
 
 
 #load the object that's filtered already in the Tabula_muris_analysis scripts
-load(here("data","expr","TM_processed.rda"))
+load(here("data","expr","Saunders","Saunders_processed.rda"))
 
 ###### magma data preparation #####
 #cpm
@@ -54,8 +54,8 @@ facs_obj_sce= trans_mmu_to_hsa_stat(facs_obj_sce, gene_mapping_table = mmu_hsa_m
 droplet_obj_sce= trans_mmu_to_hsa_stat(droplet_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print magma files
-print_exp_tbl(facs_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.top10_magma.txt"),aux_table_path = here("tm_facs.magma.aux.txt"))
-print_exp_tbl(droplet_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.top10_magma.txt"),aux_table_path = here("tm_droplet.magma.aux.txt"))
+print_exp_tbl(facs_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"))
+print_exp_tbl(droplet_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_droplet.magma.aux.txt"))
 
 ###### fuma data preparation ##### 
 #logcpm
@@ -69,8 +69,8 @@ facs_obj_sce= trans_mmu_to_hsa_stat(facs_obj_sce, gene_mapping_table = mmu_hsa_m
 droplet_obj_sce= trans_mmu_to_hsa_stat(droplet_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print magma files
-print_exp_tbl(facs_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),aux_table_path = here("tm_facs.fuma.aux.txt"))
-print_exp_tbl(droplet_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),aux_table_path = here("tm_fuma.magma.aux.txt"))
+print_exp_tbl(facs_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"))
+print_exp_tbl(droplet_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_fuma.magma.aux.txt"))
 
 ##scdrs 
 #cells to keep (only cell types in the same analysis)
@@ -86,5 +86,3 @@ droplet_ad = AnnData(X = assay(droplet_obj_sce_clean,"counts")%>% set_rownames(r
 
 facs_ad %>%  write_h5ad(here("data","expr","Tabula_muris","facs.clean.h5ad"))
 droplet_ad %>%  write_h5ad(here("data","expr","Tabula_muris","droplet.clean.h5ad"))
-
-

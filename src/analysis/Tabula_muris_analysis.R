@@ -111,4 +111,4 @@ write.table(facs_res, here("results","Tabula_muris","facs_res.txt"),quote=F, sep
 write.table(droplet_res, here("results","Tabula_muris","droplet_res.txt"),quote=F, sep="\t", row.names = F)
 
 ##save objects for later 
-save(facs_obj_sce, droplet_obj_sce, file=here("data","expr","TM_processed.rda"))
+save(facs_obj_sce, droplet_obj_sce, file=here("data","expr","Tabula_muris","TM_processed.rda"))
