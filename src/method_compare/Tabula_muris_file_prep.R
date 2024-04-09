@@ -68,7 +68,7 @@ droplet_obj_sce = cal_stat(droplet_obj_sce, meta_data = as.data.frame(colData(dr
 facs_obj_sce= trans_mmu_to_hsa_stat(facs_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 droplet_obj_sce= trans_mmu_to_hsa_stat(droplet_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
-#print magma files
+#print fuma files
 print_exp_tbl(facs_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"))
 print_exp_tbl(droplet_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_fuma.magma.aux.txt"))
 

@@ -36,7 +36,7 @@ load(here("data","expr","Saunders","Saunders_clean.rda"))
 
 ##### 2. quality control, normalization and label cleaning#######
 colData(brain_sce)$tot_counts = colSums(assay(brain_sce,"counts")) #total counts
-colData(brain_sce)$mito_ratio = colSums(assay(brain_sce,"counts")[which(grepl(x=rowData(brain_sce)$symbol,pattern = "^mt-")), ])/brain_sce$tot_counts #mitochondria RNA ratio
+colData(brain_sce)$mito_ratio = colSums(assay(brain_sce,"counts")[which(grepl(x=rownames(brain_sce),pattern = "^mt-")), ])/brain_sce$tot_counts #mitochondria RNA ratio
 
 #filter #genes have been filtered
 brain_sce = brain_sce[,brain_sce$tot_counts>=1000 & brain_sce$mito_ratio<=0.1]
@@ -56,9 +56,9 @@ brain_sce_region_class = brain_sce
 brain_sce_region_cluster = brain_sce
 
 #add analysis granularity column
-brain_sce_region_subclass$region_subclass = paste0(brain_sce_region_subclass$tissue,".",brain_sce_region_subclass$subclass)
-brain_sce_region_class$region_class = paste0(brain_sce_region_class$tissue,".",brain_sce_region_class$class)
-brain_sce_region_cluster$region_cluster = paste0(brain_sce_region_cluster$tissue,".",brain_sce_region_cluster$cluster_anno)
+brain_sce_region_subclass$region_subclass = paste0(brain_sce_region_subclass$region,".",brain_sce_region_subclass$subclass)
+brain_sce_region_class$region_class = paste0(brain_sce_region_class$region,".",brain_sce_region_class$class)
+brain_sce_region_cluster$region_cluster = paste0(brain_sce_region_cluster$region,".",brain_sce_region_cluster$cluster_anno)
 
 ##### 3. Calculate specificity score and perform cell type association#######
 ###specificity score for all granularities
@@ -86,10 +86,10 @@ brain_sce_region_cluster = trans_mmu_to_hsa_stat(brain_sce_region_cluster , gene
 
 #add global statistics
 brain_sce = add_glob_stats(brain_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-brain_sce_subclass = add_glob_stats(brain_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-brain_sce_region_subclass = add_glob_stats(brain_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-brain_sce_region_class = add_glob_stats(brain_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-brain_sce_region_cluster = add_glob_stats(brain_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
+brain_sce_subclass = add_glob_stats(brain_sce_subclass, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
+brain_sce_region_subclass = add_glob_stats(brain_sce_region_subclass, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
+brain_sce_region_class = add_glob_stats(brain_sce_region_class, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
+brain_sce_region_cluster = add_glob_stats(brain_sce_region_cluster, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
 
 
 ##enrichment

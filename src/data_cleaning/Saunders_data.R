@@ -31,8 +31,8 @@ cell_type_voc = readRDS(here("raw","expr","Saunders","annotation.BrainCellAtlas_
 non_neuron_ct = map(cell_type, ~readRDS(here("raw","expr","Saunders",all_files[grepl(all_files, pattern=.x)]))) %>% 
   set_names(cell_type) %>%
   map(~as_tibble(.x, rownames = "cellname")) %>% 
-  map(~dplyr::rename(.x,cell_cluster=subcluster)) 
-non_neuron_ct = map2(non_neuron_ct, names(non_neuron_ct), ~mutate(.x, cell_cluster = paste0(.y,"_",cell_cluster))) %>%
+  map(~dplyr::rename(.x,non_neuron_cluster=subcluster)) 
+non_neuron_ct = map2(non_neuron_ct, names(non_neuron_ct), ~mutate(.x, non_neuron_cluster = paste0(.y,"_",non_neuron_cluster))) %>%
   purrr::reduce(~rbind(.x,.y))
 
 ### 3 merge data
@@ -97,8 +97,8 @@ cell_type_voc = cell_type_voc %>%
   mutate(cluster_anno = ifelse(is.na(cluster_anno) | class!="NEURON","",cluster_anno))
 
 cell_type_voc = cell_type_voc %>%
-  mutate(new_cluster = ifelse(!tissue %in% c("CB","FC") , common_name, first_sub_marker))  %>% #interneurons are labelled by marker or 
-  mutate(new_cluster = recode(new_cluster,
+  mutate(fine_cluster = ifelse(!tissue %in% c("CB","FC") , common_name, first_sub_marker))  %>% #interneurons are labelled by marker or 
+  mutate(fine_cluster = recode(fine_cluster,
                               "Neurofilament, Layer4?" ="Neurofilament (possible Layer4)" ,
                               "Layer 2/3, IEG+" = "Layer 2/3",
                               "Layer 2/3, Cadm2+" = "Layer 2/3",
@@ -141,14 +141,14 @@ cell_type_voc = cell_type_voc %>%
                               "Fast-spiking interneuron, Pvalb+/Pnoc+"="Fast-spiking interneuron, Pvalb+", "Fast-spiking interneuron, Pvalb+/Rgs12+"="Fast-spiking interneuron, Pvalb+",
                               "Medial habenular, lateral portion"="Medial habenula",
                               " Supramammillary Nucleus (SuM) Dopaminergic?, Th+/Ddc+"="Supramammillary Nucleus (SuM)")) %>%#recode annotation and its typo
-  mutate(new_cluster = ifelse(grepl(pattern='CGE-derived ',x=new_cluster), "Interneuron, candidate CGE-derived", new_cluster)) %>% 
-  mutate(new_cluster = ifelse(tissue %in% c("CB","FC","PC") & grepl(pattern="[Ee]ntorhinal",x=common_name), paste0(new_cluster," EC included"), new_cluster)) %>%
-  mutate(new_cluster = ifelse(cluster_anno == "Granular neurons_Gabra6", "Granule cells",new_cluster)) %>% 
-  mutate(new_cluster = ifelse(cluster_anno == "Purkinje Neurons", "Purkinje Neurons",new_cluster)) %>% 
-  mutate(new_cluster = ifelse(tissue=="FC"&class=="NEURON",ifelse(grepl(pattern = "interneuron",x=cluster_anno),paste0(cluster_anno,".",new_cluster), cluster_anno), new_cluster)) %>%
-  group_by(new_cluster, class, tissue) %>% #if automatic cluster assignment failed 
+  mutate(fine_cluster = ifelse(grepl(pattern='CGE-derived ',x=fine_cluster), "Interneuron, candidate CGE-derived", fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(tissue %in% c("CB","FC","PC") & grepl(pattern="[Ee]ntorhinal",x=common_name), paste0(fine_cluster," EC included"), fine_cluster)) %>%
+  mutate(fine_cluster = ifelse(cluster_anno == "Granular neurons_Gabra6", "Granule cells",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(cluster_anno == "Purkinje Neurons", "Purkinje Neurons",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(tissue=="FC"&class=="NEURON",ifelse(grepl(pattern = "interneuron",x=cluster_anno),paste0(cluster_anno,".",fine_cluster), cluster_anno), fine_cluster)) %>%
+  group_by(fine_cluster, class, tissue) %>% #if automatic cluster assignment failed 
   mutate(n=length(unique(cluster))) %>%
-  mutate(new_cluster=ifelse((class=="NEURON" & n>1), paste0(new_cluster, ".cluster.",cluster),new_cluster)) %>% #split neuron types (with same name but from differnt clusters)
+  mutate(fine_cluster=ifelse((class=="NEURON" & n>1), paste0(fine_cluster, ".cluster.",cluster),fine_cluster)) %>% #split neuron types (with same name but from differnt clusters)
   select_at(vars(-"n")) %>%
   ungroup %>%
   mutate(neuron_marker = strsplit(class_marker, split="-") %>% map(~.x[[1]]) %>% unlist) %>% mutate(subclass = ifelse(class!="NEURON",class, "")) %>%
@@ -156,9 +156,9 @@ cell_type_voc = cell_type_voc %>%
   mutate(subclass = ifelse(subclass=="" & grepl("Slc17",x=neuron_marker), "Glutamatergic", subclass)) %>% 
   mutate(subclass = ifelse(subclass=="" & grepl("Chat",x=neuron_marker), "Cholinergic", subclass)) %>% 
   mutate(subclass = ifelse(subclass=="" & grepl("Th",x=neuron_marker), "Dopaminergic",subclass)) %>%
-  group_by(new_cluster,class,tissue) %>%
+  group_by(fine_cluster,class,tissue) %>%
   mutate(n = length(unique(subclass))) %>% 
-  mutate(new_cluster = ifelse(class=="NEURON" & n>1, paste0(new_cluster, ".", subclass), new_cluster)) %>%
+  mutate(fine_cluster = ifelse(class=="NEURON" & n>1, paste0(fine_cluster, ".", subclass), fine_cluster)) %>%
   select_at(vars(-"n")) %>%
   ungroup
 
@@ -166,20 +166,20 @@ cell_type_voc = cell_type_voc %>%
 #combine with non-neuron annotation
 ##rule:neurons are marked by "new cluster", all non neurons are marked by "cell cluster", but neurogenesis/mitotic + choroid plexus + ependyma cells are not markerd. We use original labels to markerd it
 cell_info = cell_info %>%
-  left_join( cell_type_voc %>% dplyr::select(class, tissue, tissue_subcluster, class_marker, type_marker, cluster_anno,common_name,full_name,subclass,new_cluster), by=c("tissue_type"="tissue","subcluster"="tissue_subcluster")) %>% #add neuron annotation
-  dplyr::select(cellname, tissue_type, class, cluster,subcluster,class_marker,type_marker, cluster_anno, full_name, common_name, subclass, new_cluster ) %>%
-  left_join(non_neuron_ct %>% distinct(cellname, cell_cluster) %>% mutate(cell_cluster = gsub(pattern="_1-[0-9]*",replacement = "", x=cell_cluster)), by="cellname") %>%
-  mutate(new_cluster = ifelse(class=="NEURON", paste0("Neurons_",new_cluster), cell_cluster)) %>%
-  mutate(new_cluster=ifelse(class=="CHOROID_PLEXUS", "Choroid_plexus", new_cluster)) %>%
-  mutate(new_cluster=ifelse(class=="NEUROGENESIS" | class=="MITOTIC", "Neurogenesis_mitosis", new_cluster)) %>%
-  mutate(new_cluster=ifelse(class=="EPENDYMAL", "Ependymal", new_cluster)) %>%
-  drop_na(new_cluster) %>% #drop these non-neuronal cells without annotated class
-  mutate(class = ifelse(class=="NEURON","Neurons",new_cluster)) %>% #modify class
-  mutate(new_cluster = paste0(tissue_type, ".",new_cluster)) %>%
-  mutate(cluster_anno = ifelse(cluster_anno=="", class, cluster_anno)) %>% 
-  dplyr::rename(cluster_name = new_cluster ) %>%
-  dplyr::select(-cell_cluster) %>%
-  dplyr::rename(tissue = tissue_type, fine_cluster = cluster_name)
+  left_join( cell_type_voc %>% dplyr::select(class, tissue, tissue_subcluster, class_marker, type_marker, cluster_anno,common_name,full_name,subclass,fine_cluster), by=c("tissue_type"="tissue","subcluster"="tissue_subcluster")) %>% #add neuron annotation
+  dplyr::select(cellname, tissue_type, class, cluster,subcluster,class_marker,type_marker, cluster_anno, full_name, common_name, subclass, fine_cluster ) %>%
+  left_join(non_neuron_ct %>% distinct(cellname, non_neuron_cluster) %>% mutate(non_neuron_cluster = gsub(pattern="_1-[0-9]*",replacement = "", x=non_neuron_cluster)), by="cellname") %>% #merge non-neuron cell annotation
+  mutate(fine_cluster = ifelse(class=="NEURON", paste0("Neurons_",fine_cluster), non_neuron_cluster)) %>% 
+  mutate(fine_cluster=ifelse(class=="CHOROID_PLEXUS", "Choroid_plexus", fine_cluster)) %>% #annotate the cell type without non_neuron annotation
+  mutate(fine_cluster=ifelse(class=="NEUROGENESIS" | class=="MITOTIC", "Neurogenesis_mitosis", fine_cluster)) %>%
+  mutate(fine_cluster=ifelse(class=="EPENDYMAL", "Ependymal", fine_cluster)) %>%
+  drop_na(fine_cluster) %>% #drop these non-neuronal cells without annotated class 
+  mutate(class = ifelse(class=="NEURON","Neurons",fine_cluster)) %>% #modify class/subclass to make it the same as non_neuron annotation and fine clusters
+  mutate(subclass = ifelse(class=="Neurons", subclass, class)) %>%
+  mutate(cluster_anno = ifelse(cluster_anno=="", class, cluster_anno)) %>%  
+  mutate(fine_cluster = paste0(tissue_type, ".",fine_cluster)) %>%
+  dplyr::select(-non_neuron_cluster) %>%
+  dplyr::rename(region = tissue_type)
 
 #### 4 merge to sce
 if (!require("SingleCellExperiment")){
