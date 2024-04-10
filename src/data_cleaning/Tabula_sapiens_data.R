@@ -61,7 +61,7 @@ ts_obj = ts_obj[,which(ts_obj$cell_ontology_class %in% cell_ontology_anno$cell_o
 #add column annotation
 colData(ts_obj)$cell_ontology_id = cell_ontology_anno$cl_term[match(ts_obj$cell_ontology_class, cell_ontology_anno$cell_ontology_class)]
 colData(ts_obj)$official_name = cell_ontology_anno$official_name[match(ts_obj$cell_ontology_class, cell_ontology_anno$cell_ontology_class)]
-colData(ts_obj)$cluster_name = paste0(ts_obj$organ_tissue, ".", ts_obj$official_name)
+colData(ts_obj)$cluster_name = paste0(ts_obj$organ_tissue, ".", ts_obj$official_name) ###
 
 #filter out cells of strange annotation
 ts_obj = ts_obj[,which(ts_obj$cell_ontology_class!="hepatocyte" | ts_obj$organ_tissue!="Heart" )]

@@ -54,24 +54,23 @@ ts_obj = logNormCounts(ts_obj, size.factors = size.factor,assay.type = "counts")
 
 ##### 3. Calculate specificity score and perform cell type association#######
 ###specificity score and enrichment without out groups
-ts_obj = cal_stat(data_obj = ts_obj , meta_data = as.data.frame(colData(ts_obj)), group = "cluster_name")
+ts_obj = cal_stat(data_obj = ts_obj , meta_data = as.data.frame(colData(ts_obj)), group = "cluster_name") #cluster_name = organ/tissue + cell ontology
+
+#calculate specificity score
+ts_obj  = cal_sscore(data_obj = ts_obj) 
 
 #map to human genes
 data("mmu_hsa_mapping")  
 ts_obj = trans_mmu_to_hsa_stat(ts_obj , gene_mapping_table=mmu_hsa_mapping, from="hsa_ensembl", to="hsa_entrez")
 
-#calculagte specificity score
-ts_obj  = cal_sscore(data_obj = ts_obj) 
-
 #add global statistics
 ts_obj = add_glob_stats(ts_obj, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
 
 ##enrichment
-gwas_zscore = load_zscore(here("data","gwas","new_tm_gs","zscore_sample"))
-ts_obj = ct_asso(ts_obj, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.01& max_exp_ct>0.1")
+gwas_zscore = load_zscore(here("data","gwas","zscore_tm"))
+ts_obj = cal_ct_asso(ts_obj, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.01& max_exp_ct>0.1")
 
-#save
-res_new_gs = ct_asso_value(ts_obj,trait_name="all",merge_output = T) %>% 
-  mutate(cell_type = factor(cell_type, levels =  names(metadata(ts_obj)[["group_info"]][["cell_num"]]) ))
+#save results
+ts_res = get_ct_asso(ts_obj, trait_name = "all", asso_model = "linear", merge_output = T)
 
-save(res_new_gs,file=here("results","Tabula_sapiens","ours","res_new_gs.rda"))
+write.table(ts_res, here("results","Tabula_sapiens","ts_res.txt"),quote=F, sep="\t", row.names = F)
