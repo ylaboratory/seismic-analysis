@@ -41,7 +41,7 @@ for (gs_file in gs_file_all){
   gs_file_path = paste0(gs_dir,"/",gs_file)
   zscore = load_zscore(gs_file_path)
   t0 = Sys.time()
-  ts.sce = ct_asso(ts.sce, zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1")
+  ts.sce = get_ct_asso(ts.sce, zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1")
   t1 = Sys.time()
   
   #final time
