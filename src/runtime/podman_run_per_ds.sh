@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check for the right number of arguments
 if [ "$#" -ne 4 ]; then
@@ -12,7 +12,7 @@ BASE_PATH=$(dirname $(dirname $(realpath $0)))
 CONTAINER_NAME="$1"
 DATA_PATH_RDA="$2" #data path of the rdata
 DATA_PATH_H5AD="$3" #data path of the h5ad
-OUTPUT_PATH="$4"
+OUTPUT_PATH="$4" #output path
 IMAGE_NAME="seismic_rt"
 
 # Check if the data path exists
