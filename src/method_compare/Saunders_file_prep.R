@@ -38,6 +38,8 @@ if (!require("anndata")){
   library("anndata")
 }
 
+#load function
+source(here("src","tools","magma_fuma_file_prep.R"))
 
 #load the object that's filtered already in the Tabula_muris_analysis scripts
 load(here("data","expr","Saunders","Saunders_processed_multi.rda"))
@@ -64,11 +66,11 @@ brain_sce_region_subclass = trans_mmu_to_hsa_stat(brain_sce_region_subclass, gen
 brain_sce_region_cluster = trans_mmu_to_hsa_stat(brain_sce_region_cluster, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print magma files
-print_exp_tbl(brain_sce, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.fine_cluster.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.fine_cluster.magma.aux.txt"))
-print_exp_tbl(brain_sce_subclass, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.subclass.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.subclass.magma.aux.txt"))
-print_exp_tbl(brain_sce_region_class, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_class.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_class.magma.aux.txt"))
-print_exp_tbl(brain_sce_region_subclass, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_subclass.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_subclass.magma.aux.txt"))
-print_exp_tbl(brain_sce_region_cluster, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_cluster.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_cluster.magma.aux.txt"))
+print_magma_fuma_tbl(brain_sce, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.fine_cluster.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.fine_cluster.magma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_subclass, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.subclass.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.subclass.magma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_class, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_class.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_class.magma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_subclass, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_subclass.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_subclass.magma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_cluster, "MAGMA", main_table_path = here("data","expr","Saunders","Saunders.region_cluster.top10_magma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_cluster.magma.aux.txt"))
 
 ###### fuma data preparation ##### 
 #logcpm
@@ -92,11 +94,11 @@ brain_sce_region_subclass = trans_mmu_to_hsa_stat(brain_sce_region_subclass, gen
 brain_sce_region_cluster = trans_mmu_to_hsa_stat(brain_sce_region_cluster, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print fuma files
-print_exp_tbl(brain_sce, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.fine_cluster.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.fine_cluster.fuma.aux.txt"))
-print_exp_tbl(brain_sce_subclass, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.subclass.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.subclass.fuma.aux.txt"))
-print_exp_tbl(brain_sce_region_class, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_class.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_class.fuma.aux.txt"))
-print_exp_tbl(brain_sce_region_subclass, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_subclass.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_subclass.fuma.aux.txt"))
-print_exp_tbl(brain_sce_region_cluster, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_cluster.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_cluster.fuma.aux.txt"))
+print_magma_fuma_tbl(brain_sce, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.fine_cluster.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.fine_cluster.fuma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_subclass, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.subclass.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.subclass.fuma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_class, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_class.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_class.fuma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_subclass, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_subclass.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_subclass.fuma.aux.txt"))
+print_magma_fuma_tbl(brain_sce_region_cluster, "FUMA", main_table_path = here("data","expr","Saunders","Saunders.region_cluster.fuma.txt"),aux_table_path = here("data","expr","Saunders","Saunders.region_cluster.fuma.aux.txt"))
 
 ##scdrs 
 #cells to keep (only cell types in the same analysis)

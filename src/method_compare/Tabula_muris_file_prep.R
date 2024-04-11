@@ -38,6 +38,8 @@ if (!require("anndata")){
   library("anndata")
 }
 
+#load function
+source(here("src","tools","magma_fuma_file_prep.R"))
 
 #load the object that's filtered already in the Tabula_muris_analysis scripts
 load(here("data","expr","Tabula_muris","TM_processed.rda"))
@@ -54,8 +56,8 @@ facs_obj_sce= trans_mmu_to_hsa_stat(facs_obj_sce, gene_mapping_table = mmu_hsa_m
 droplet_obj_sce= trans_mmu_to_hsa_stat(droplet_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print magma files
-print_exp_tbl(facs_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"))
-print_exp_tbl(droplet_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_droplet.magma.aux.txt"))
+print_magma_fuma_tbl(facs_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"))
+print_magma_fuma_tbl(droplet_obj_sce, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.top10_magma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_droplet.magma.aux.txt"))
 
 ###### fuma data preparation ##### 
 #logcpm
@@ -69,8 +71,8 @@ facs_obj_sce= trans_mmu_to_hsa_stat(facs_obj_sce, gene_mapping_table = mmu_hsa_m
 droplet_obj_sce= trans_mmu_to_hsa_stat(droplet_obj_sce, gene_mapping_table = mmu_hsa_mapping, from = "mmu_symbol", to = "hsa_entrez")
 
 #print fuma files
-print_exp_tbl(facs_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"))
-print_exp_tbl(droplet_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_fuma.magma.aux.txt"))
+print_magma_fuma_tbl(facs_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"))
+print_magma_fuma_tbl(droplet_obj_sce, "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),aux_table_path = here("data","expr","Tabula_muris","tm_fuma.magma.aux.txt"))
 
 ##scdrs 
 #cells to keep (only cell types in the same analysis)
