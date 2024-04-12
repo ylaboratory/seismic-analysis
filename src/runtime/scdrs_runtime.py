@@ -13,7 +13,7 @@ from joblib import dump, load
 
 
 if __name__ == "__main__":
-    os.chdir("/grain/ql29/seismic-analysis") #change it as your own directory
+    #os.chdir("/grain/ql29/seismic-analysis") #change it as your own directory
 
     #parse the argument
     #input parameters: 

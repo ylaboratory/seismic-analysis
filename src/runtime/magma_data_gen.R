@@ -24,6 +24,7 @@ suppressMessages(library("seismicGWAS"))
 
 #load source
 source("scripts/magma_fuma_file_prep.R")
+source("scripts/sparse_mat_util.R")
 
 #load data set
 load(data_path)
@@ -35,7 +36,7 @@ suppressMessages(library("seismicGWAS"))
 
 #### data set processing for magma
 start = Sys.time()
-ts.sce = cal_stat(ts.sce, meta_data = as.data.frame(colData(ts.sce)), group = "cell_ontology_class",assay_name ="cpm" )
+ts.sce = cal_stat(ts.sce, meta_data = as.data.frame(colData(ts.sce)), group = "cell_ontology_class",assay_name ="cpm",mean_only = T )
 ts.sce = trans_mmu_to_hsa_stat(ts.sce, gene_mapping_table = mmu_hsa_mapping, from = "hsa_ensembl", to = "hsa_entrez")
 #s_mat = metadata(ts.sce)[["group_info"]][["mean_mat"]]
 #s_mat = sweep_sparse(s_mat, margin=2, stats = colSums(s_mat),fun="/")

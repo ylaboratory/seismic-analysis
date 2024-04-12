@@ -19,6 +19,10 @@ suppressMessages(library("here"))
 suppressMessages(library("seismicGWAS"))
 suppressMessages(library("SingleCellExperiment"))
 
+#load source code
+source(here("src","tools","magma_fuma_file_prep.R"))
+source(here("src","tools","sparse_mat_util.R"))
+
 #load data
 load(args[1])
 cell_seed = read.table(args[2], header=T,sep="\t")
@@ -39,15 +43,15 @@ seismic_gwas_p_value = function(data_sce, gwas_zscore, gene_mapping_table, group
   data_sce = cal_sscore(data_obj = data_sce) 
   data_sce = trans_mmu_to_hsa_stat(data_sce, gene_mapping_table=gene_mapping_table, from="mmu_symbol", to="hsa_entrez")
   data_sce = add_glob_stats(data_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-  data_sce = ct_asso(data_sce, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1")
-  p_value = metadata(data_sce)[["association"]][["z_score"]]  %>% filter(cell_type == "fake_cell_type") %>% pull(Pvalue)
+  data_sce = cal_ct_asso(data_sce, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1")
+  p_value = get_ct_asso(data_sce, trait_name = "all",asso_model = "linear")[[1]]  %>% filter(cell_type == "fake_cell_type") %>% pull(Pvalue)
   return(p_value)
 }
 
 magma_p_value = function(data_sce, gene_mapping_table, temp_file_header, magma_raw_path,group ){ #print 
   data_sce = cal_stat(data_obj = data_sce, meta_data = as.data.frame(colData(data_sce)), group = group, assay_name="cpm")
   data_sce = trans_mmu_to_hsa_stat(data_sce, gene_mapping_table=gene_mapping_table, from="mmu_symbol", to="hsa_entrez")
-  magma_mean_tbl = t(metadata(data_sce)[["group_info"]][["mean_mat"]]) %>% 
+  magma_mean_tbl = t(metadata(data_sce)[["seismicGWAS.data"]][["group_info"]][["mean_mat"]]) %>% 
     as.matrix() %>%
     as_tibble(rownames = "hsa_entrez") %>%
     pivot_longer(!hsa_entrez, names_to = "cluster_name", values_to = "specificity") %>%
@@ -64,7 +68,7 @@ magma_p_value = function(data_sce, gene_mapping_table, temp_file_header, magma_r
 fuma_p_value = function(data_sce, gene_mapping_table, temp_file_header, magma_raw_path,group ){ #handle NA values 
   data_sce = cal_stat(data_obj = data_sce, meta_data = as.data.frame(colData(data_sce)), group = group, assay_name="logcpm")
   data_sce = trans_mmu_to_hsa_stat(data_sce, gene_mapping_table=gene_mapping_table, from="mmu_symbol", to="hsa_entrez")
-  fuma_mean_tbl = t(metadata(data_sce)[["group_info"]][["mean_mat"]]) %>% 
+  fuma_mean_tbl = t(metadata(data_sce)[["seismicGWAS.data"]][["group_info"]][["mean_mat"]]) %>% 
     as.matrix() %>%
     cbind(rowMeans(.)) %>%
     set_colnames(c(colnames(.)[-ncol(.)],"Average")) %>% 

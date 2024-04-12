@@ -1,0 +1,40 @@
+#!/bin/bash
+
+#set number of cores
+NUM_CORE=10
+
+#run for scrambled expression data
+#run cross every sample and every seed: fuma magma and seismic
+for i in {1..10}
+do
+    Rscript src/null_sim/seismic_fuma_magma_null_sim.R data/expr/null_sim/expr_rda_rs/expr_ds_"$i".RData \
+        data/null_sim/seed_table/sample_cell_idx."$i".txt data/null_sim/null_sim/zscore/gs_"$i".genes.out \
+        data/null_sim/null_sim/magma_raw/gs_"$i".genes.raw data/log/null_sim/ds_"$i".all.process.log  "$NUM_CORE"\
+        results/null_sim/expr_rs/ds_"$i".null_res.txt data/null_sim/test_new 
+done
+
+#run cross every sample and every seed: scdrs
+for i in {1..10}
+do
+    nohup python -u src/null_sim/scdrs_null_sim.py data/expr/null_sim/expr_h5ad_rs/expr_ds_"$i".h5ad \
+        data/null_sim/seed_table/sample_cell_idx."$i".txt data/gwas/null_sim/scdrs_gs/gs_"$i".gs "$NUM_CORE" \
+        results/null_sim/expr_rs/ds_"$i"_scdrs_null_res.txt > data/log/null_sim/ds_"$i".scdrs.process.log
+done
+
+
+#run for scrambled gene set
+for i in {1..10}
+do
+   nohup Rscript src/simulation/seismic_null_sim.R data/expr/null_sim/expr_rda/expr_ds_"$i".RData \
+        data/null_sim/seed_table/sample_cell_idx."$i".txt  data/null_sim/null_sim/zscore_rs/gs_"$i".genes.out \
+        data/log/null_sim/gsrs_ds_"$i".all.process.log   "$NUM_CORE" \
+        results/null_sim/gs_rs/ds_"$i".null_res.txt
+done
+
+#run cross every sample and every seed: scdrs
+for i in {1..10}
+do
+    nohup python -u src/null_sim/scdrs_null_sim.py data/expr/null_sim/expr_h5ad/expr_ds_"$i".h5ad \
+        data/null_sim/seed_table/sample_cell_idx."$i".txt data/gwas/null_sim/scdrs_gs_rs/gs_"$i".gs "$NUM_CORE" \
+        results/null_sim/gs_rs/ds_"$i"_scdrs_null_res.txt > data/log/null_sim/gsrs_ds_"$i".scdrs.process.log
+done
