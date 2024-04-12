@@ -1,26 +1,20 @@
 # Analysis scripts for *seismic*
-simple template for ylab projects
 
-This repo includes a basic `.gitignore` with common files to exclude, but this should obviously be pared down / additional files should be added as necessary.
+This repository contains all code and scripts required for the analysis for the seismic paper. Here is the organization of the repository:
 
-There is also support for [super-linter](https://github.com/github/super-linter) as a [GitHub action](https://docs.github.com/en/free-pro-team@latest/actions), which essentially just means that all code will be automatically linted on push / when PRs are opened. Make sure all checks pass!
+- bin: This directory stores applications, such as MAGMA and scDRS.
 
-The directory structure is inspired by [this article](https://medium.com/outlier-bio-blog/a-quick-guide-to-organizing-data-science-projects-updated-for-2016-4cbb1e6dac71), which is based off of this [classic article](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) on organizing projects, and makes a good starting point for projects.
+- data: All processed expression and GWAS data will be put here, as well as the intermediate files.
 
-## conda environment
-The `env.yml` file should be updated accordingly for projects that use python, so that a new conda environment can be easily installed using the following command:
-```sh
-conda env create -f env.yml
-```
+- results: The results of all the analyses, including all real dataset analyses, simulation, runtime analysis, and benchmarking.
 
-Per usual, to activate the environment:
-```sh
-conda activate new_env_name
-```
+- raw: This directory contains the raw and unprocessed data.
 
-If the environment is already set up, to update it for new dependencies / resources:
-```sh
-conda env update -n new_env_name -f env.yml --prune
-```
+- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory. Such as MAGMA auxillary files. 
 
-Note that the `--prune` flag will tell conda to remove any dependencies that may no longer be required in the environment.
+- src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
+
+## Environment set up
+For the basic *seismic* analysis, only the package should be download and installed. Please refer to the package link and vignette to know more about the usage
+and the download of the package.
+
