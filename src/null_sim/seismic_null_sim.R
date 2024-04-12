@@ -34,15 +34,18 @@ trait_zscore = load_zscore(z_score_file)
 data("mmu_hsa_mapping")  
 
 #return a data_sce
-seismic_gwas_p_value = function(data_sce, gwas_zscore, gene_mapping_table, group){ #retreive association of #fake_type
-  data_sce = cal_stat(data_obj = data_sce, meta_data = as.data.frame(colData(data_sce)), group = group, assay_name="logcounts") #this is log normalized counts 
+seismic_p_value = function(data_sce, gwas_zscore, gene_mapping_table, group) {
+  data_sce = cal_stat(data_obj = data_sce, meta_data = as.data.frame(colData(data_sce)), group = group, assay_name = "logcounts") #this is log normalized counts 
   data_sce = cal_sscore(data_obj = data_sce) 
-  data_sce = trans_mmu_to_hsa_stat(data_sce, gene_mapping_table=gene_mapping_table, from="mmu_symbol", to="hsa_entrez")
-  data_sce = add_glob_stats(data_sce, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
-  data_sce = cal_ct_asso(data_sce, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1")
-  p_value = get_ct_asso(data_sce, trait_name = "all",asso_model = "linear")[[1]]  %>% filter(cell_type == "fake_cell_type") %>% pull(Pvalue)
+  data_sce = trans_mmu_to_hsa_stat(data_sce, gene_mapping_table = gene_mapping_table, from = "mmu_symbol", to = "hsa_entrez")
+  
+  data_sce = add_glob_stats(data_sce, stats = c("det_cell_num", "ave_exp_ct", "max_exp_ct")) 
+  data_sce = cal_ct_asso(data_sce, gwas_zscore, gene_filter_setting = "det_cell_num>=10 & ave_exp_ct > 0.1 & max_exp_ct > 0.1")
+  p_value = get_ct_asso(data_sce, trait_name = "all", asso_model = "linear")[[1]] %>% filter(cell_type == "fake_cell_type") %>% pull(Pvalue)
+  
   return(p_value)
 }
+
 
 
 get_p_value = function(data_sce, gwas_zscore, gene_mapping_table, group, cell_seed_vec){
