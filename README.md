@@ -16,5 +16,8 @@ This repository contains all code and scripts required for the analysis for the 
 
 ## Environment set up
 For the basic *seismic* analysis, only the package should be download and installed. Please refer to the package link and vignette to know more about the usage
-and the download of the package.
+and the download of the package. To download and install the *seismic* package:
 
+```{r}
+devtools::install_github("ylaboratory/seismicGWAS")
+```
