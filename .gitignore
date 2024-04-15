@@ -51,7 +51,6 @@ data/expr/*
 data/gwas/*
 data/ref/*
 
-
 #raw files
 raw/expr/*
 raw/gwas/*
@@ -71,9 +70,16 @@ raw/gwas/*
 *_res.txt
 *_go.txt
 *_dfbetas.txt
+*.gsa.out
+*.score.gz
+*.score
+*.full_score.gz
+*.full_score
+*scdrs_group*
 
 #other files
 *.tsv 
 sample_seed*
 expr_ds*
 *.log
+nohup.out
