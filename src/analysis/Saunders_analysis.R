@@ -115,11 +115,11 @@ region_subclass_res = get_ct_asso(brain_sce_region_subclass, trait_name = "all",
 region_classs_res = get_ct_asso(brain_sce_region_class , trait_name = "all", asso_model = "linear",merge_output = T)
 region_cluster_res = get_ct_asso(brain_sce_region_cluster , trait_name = "all", asso_model = "linear",merge_output = T)
 
-write.table(fine_cluster_res , here("results","Saunders","fine_cluster_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(subclass_res, here("results","Saunders","subclass_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(region_subclass_res , here("results","Saunders","region_subclass_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(region_classs_res , here("results","Saunders","region_classs_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(region_cluster_res, here("results","Saunders","region_cluster_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(fine_cluster_res , here("results","Saunders","fine_cluster","seismic","fine_cluster_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(subclass_res, here("results","Saunders","subclass","seismic","subclass_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(region_subclass_res , here("results","Saunders","region_subclass","seismic","region_subclass_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(region_classs_res , here("results","Saunders","region_class","seismic","region_classs_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(region_cluster_res, here("results","Saunders","region_cluster","seismic","region_cluster_res.txt"),quote=F, sep="\t", row.names = F)
 
 #save data for later file preparation
 save(brain_sce, brain_sce_subclass, brain_sce_region_subclass, brain_sce_region_class, brain_sce_region_cluster, file = here("data","expr","Saunders","Saunders_processed_multi.rda") )

@@ -14,8 +14,7 @@ echo  "
     -n | header name
     "
 }
-src_dir=$(dirname "$0")
-base_dir=$(cd "$src_dir"/../ || exit; pwd)
+base_dir=$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")
 magma_path=${base_dir}/bin/magma/magma
 
 while getopts "m:e:g:p:o:n:h" opt; 
@@ -44,7 +43,7 @@ done
 
 measure_time() {
   local cmd="$1"
-  local start=$(date +%s%3N) # start time in milliseconds
+  local start="$(date +%s%3N)" # start time in milliseconds
   eval "${cmd}"
   local end=$(date +%s%3N)   # end time in milliseconds
   local duration_ms=$((end-start))
@@ -72,7 +71,8 @@ time_string=()
 #magma or fuma
 if [ "$mode" = "MAGMA" ] || [ "$mode" = "Magma" ] || [ "$mode" = "magma" ]; then
   for gwas_file in "$gwas_dir"/*.genes.raw; do
-    base_name=$(basename "$gwas_file".genes.raw)
+    base_name=$(basename "$gwas_file")
+    base_name=${base_name%.genes.raw}
     start=$(date +%s%3N)
     nohup $magma_path --gene-results "$gwas_file" --set-annot "$exp_file" --out "$output_dir"/"$base_name" &
     end=$(date +%s%3N)
@@ -81,7 +81,8 @@ if [ "$mode" = "MAGMA" ] || [ "$mode" = "Magma" ] || [ "$mode" = "magma" ]; then
   done
 elif [ "$mode" = "FUMA" ] || [ "$mode" = "Fuma" ] || [ "$mode" = "fuma" ]; then
   for gwas_file in "$gwas_dir"/*.genes.raw; do
-    base_name=$(basename "$gwas_file".genes.raw)
+    base_name=$(basename "$gwas_file")
+    base_name=${base_name%.genes.raw}
     start=$(date +%s%3N)
     nohup $magma_path --gene-results "$gwas_file" --gene-covar "$exp_file" --model condition-hide=Average direction=greater --out "$output_dir"/"$base_name" &
     end=$(date +%s%3N)

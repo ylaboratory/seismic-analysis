@@ -38,7 +38,7 @@ Thumbs.db:encryptable
 
 ###### seismic project specific files
 #magma files
-bin/magma 
+bin/*
 
 #any RData or rda
 *.RData
@@ -76,3 +76,4 @@ raw/gwas/*
 *.tsv 
 sample_seed*
 expr_ds*
+*.log

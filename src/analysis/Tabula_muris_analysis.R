@@ -107,8 +107,8 @@ droplet_obj_sce = cal_ct_asso(droplet_obj_sce, gwas_zscore, gene_filter_setting 
 facs_res = get_ct_asso(facs_obj_sce, trait_name = "all", asso_model = "linear", merge_output = T)
 droplet_res = get_ct_asso(facs_obj_sce, trait_name = "all", asso_model = "linear", merge_output = T)
 
-write.table(facs_res, here("results","Tabula_muris","facs_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(droplet_res, here("results","Tabula_muris","droplet_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(facs_res, here("results","Tabula_muris","FACS","facs_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(droplet_res, here("results","Tabula_muris","droplet","droplet_res.txt"),quote=F, sep="\t", row.names = F)
 
 ##save objects for later 
 save(facs_obj_sce, droplet_obj_sce, file=here("data","expr","Tabula_muris","TM_processed.rda"))

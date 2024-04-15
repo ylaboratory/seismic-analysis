@@ -52,7 +52,7 @@ assay(brain_sce_region_class, "cpm") = scuttle::calculateCPM(brain_sce_region_cl
 assay(brain_sce_region_subclass, "cpm") = scuttle::calculateCPM(brain_sce_region_subclass, assay.type = "counts")
 assay(brain_sce_region_cluster, "cpm") = scuttle::calculateCPM(brain_sce_region_cluster, assay.type = "counts")
 
-`#calculate mean expression and map to human gene id
+#calculate mean expression and map to human gene id
 brain_sce = cal_stat(brain_sce, meta_data = as.data.frame(colData(brain_sce)), group = "fine_cluster",assay_name ="cpm" ,mean_only=T)
 brain_sce_subclass = cal_stat(brain_sce_subclass, meta_data = as.data.frame(colData(brain_sce_subclass)), group = "subclass",assay_name ="cpm" ,mean_only=T)
 brain_sce_region_class = cal_stat(brain_sce_region_class, meta_data = as.data.frame(colData(brain_sce_region_class)), group = "region_class",assay_name ="cpm" ,mean_only=T)
