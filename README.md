@@ -1,6 +1,6 @@
 # Analysis scripts for *seismic*
 
-This repository contains all code and scripts required for the analysis for the seismic paper. Here is the organization of the repository:
+This repository contains all code and scripts required for the analysis for the *seismic* paper. Here is the organization of the repository:
 
 - bin: This directory stores applications, such as MAGMA and scDRS.
 

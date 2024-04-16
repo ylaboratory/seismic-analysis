@@ -83,3 +83,4 @@ sample_seed*
 expr_ds*
 *.log
 nohup.out
+*.pdf
