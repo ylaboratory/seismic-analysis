@@ -97,7 +97,7 @@ droplet_obj_sce = add_glob_stats(droplet_obj_sce, stats = c("det_cell_num","ave_
 
 ##enrichment
 #load gwas zscore
-gwas_zscore = load_zscore(here("data","gwas","zscore_tm"))
+gwas_zscore = load_zscore(here("data","gwas","tm_gwas","zscore"))
 
 #enrichment
 facs_obj_sce = cal_ct_asso(facs_obj_sce, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.1& max_exp_ct>0.1", asso_model = "linear")
@@ -105,7 +105,7 @@ droplet_obj_sce = cal_ct_asso(droplet_obj_sce, gwas_zscore, gene_filter_setting 
 
 ##save results
 facs_res = get_ct_asso(facs_obj_sce, trait_name = "all", asso_model = "linear", merge_output = T)
-droplet_res = get_ct_asso(facs_obj_sce, trait_name = "all", asso_model = "linear", merge_output = T)
+droplet_res = get_ct_asso(droplet_obj_sce, trait_name = "all", asso_model = "linear", merge_output = T)
 
 write.table(facs_res, here("results","Tabula_muris","FACS","seismic","facs_res.txt"),quote=F, sep="\t", row.names = F)
 write.table(droplet_res, here("results","Tabula_muris","droplet","seismic","droplet_res.txt"),quote=F, sep="\t", row.names = F)

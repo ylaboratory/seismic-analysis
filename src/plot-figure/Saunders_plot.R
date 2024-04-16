@@ -218,7 +218,8 @@ plot_grid(title_tau, tau_ct, ncol=1, rel_heights = c(0.1,1))
 
 ##import the influential gene analysis data and plot
 library(org.Hs.eg.db)
-Kunkle_hc_micro_dfbetas = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_micro_dfbetas.txt"), header = T, sep = "\t") 
+Kunkle_hc_micro_dfbetas = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_micro_dfbetas.txt"), header = T, sep = "\t") %>%
+  mutate(gene_symbol = mapIds(org.Hs.eg.db, keys = as.character(hsa_entrez), column = "SYMBOL",keytype = "ENTREZID"))
 Kunkle_hc.mg_go = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_micro_go.txt"), header=T, sep="\t")
 
 tau_hc.ec_dfbetas = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_ec_dfbetas.txt"), header = T, sep="\t") %>%
@@ -229,6 +230,7 @@ tau_hc.ec_go = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_ec
 tau_hc.ec2_go = read.table(here("results","Saunders","inf_analysis","Kunkle_hc_ec2_go.txt"), header = T, sep="\t")
 
 #plot gene distribution
+seismicGWAS::plot_gene_inf(Kunkle_hc_micro_dfbetas, gene_label_column = "gene_symbol", num_top_gene_label = 20)
 seismicGWAS::plot_gene_inf(tau_hc.ec_dfbetas, gene_label_column = "gene_symbol", 
                            extra_labels = c("COX11","DCUN1D4","MRPL13","BECN1","MAP1LC3B","VPS26A","NDUFS2","NDUFA4","TBR1","ARPC1A","SYT10","DIXDC1","FEZF2","NPPC","NXPH3"))
 seismicGWAS::plot_gene_inf(tau_hc.ec2_dfbetas,gene_label_column = "gene_symbol", 
