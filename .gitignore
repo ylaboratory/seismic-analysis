@@ -85,3 +85,4 @@ expr_ds*
 nohup.out
 *.pdf
 *.csv
+*.txt
