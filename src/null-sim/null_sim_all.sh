@@ -18,7 +18,7 @@ for i in {1..10}
 do
     nohup python -u src/null_sim/scdrs_null_sim.py data/expr/null_sim/expr_h5ad_rs/expr_ds_"$i".h5ad \
         data/null_sim/seed_table/sample_cell_idx."$i".txt data/gwas/null_sim/scdrs_gs/gs_"$i".gs "$NUM_CORE" \
-        results/null_sim/expr_rs/ds_"$i"_scdrs_null_res.txt > data/log/null_sim/ds_"$i".scdrs.process.log
+        results/null_sim/expr_rs/ds_"$i".scdrs_null_res.txt > data/log/null_sim/ds_"$i".scdrs.process.log
 done
 
 
@@ -36,5 +36,5 @@ for i in {1..10}
 do
     nohup python -u src/null_sim/scdrs_null_sim.py data/expr/null_sim/expr_h5ad/expr_ds_"$i".h5ad \
         data/null_sim/seed_table/sample_cell_idx."$i".txt data/gwas/null_sim/scdrs_gs_rs/gs_"$i".gs "$NUM_CORE" \
-        results/null_sim/gs_rs/ds_"$i"_scdrs_null_res.txt > data/log/null_sim/gsrs_ds_"$i".scdrs.process.log
+        results/null_sim/gs_rs/ds_"$i".scdrs_null_res.txt > data/log/null_sim/gsrs_ds_"$i".scdrs.process.log
 done
