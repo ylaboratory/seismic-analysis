@@ -97,23 +97,6 @@ facs_magma_res = facs_magma_ct_mapping %>%
   mutate(cell_type = factor(cell_type, levels = levels(facs_res$cell_type))) %>%
   arrange(cell_type)
 
-#load results - droplet
-droplet_res = read.table( here("results","Tabula_muris","droplet","seismic","droplet_res.txt"), header = T, sep = "\t") %>% as_tibble()
-
-droplet_ct_meta = tibble(cell_type = as.character(droplet_res$cell_type)) %>%
-  mutate(tissue = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[1]) %>% unlist) %>%
-  mutate(cell_ontology = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[2]) %>% unlist) %>%
-  mutate(tissue = gsub(pattern = "Heart_and_|Limb_|_Gland",replacement = "", x = tissue) ) %>%
-  mutate(cell_ontology = gsub(pattern = "alveolar epithelial type 1 cells, alveolar epithelial type 2 cells, club cells, and basal cells", "alveolar epithelial cells",x=cell_ontology)) %>%
-  mutate(cell_ontology = gsub(pattern = "dendritic cells, alveolar macrophages, and interstital macrophages","dendritic cells and alveolar macrophages",x=cell_ontology)) %>%
-  mutate(cell_ontology = gsub(pattern=" positive","+",x=cell_ontology)) %>%
-  mutate(cell_ontology = gsub(pattern = " negative", "-", x=cell_ontology)) %>%
-  mutate(cell_ontology = gsub(pattern = "Thymocytes", "T cells", x=cell_ontology,ignore.case=T)) %>%
-  mutate(tissue_new = tissue) %>%
-  mutate(tissue_new = ifelse(tissue_new == "Marrow","Blood/Immune",tissue_new)) %>%
-  mutate(tissue_new = ifelse(grepl(pattern = "B cell|T cell|immune cells|erythrocyte|macrophage|microglia|myeloid|leukocyte|natural killer|antigen|NK|monocyte|lymphocyte|blood|Macrophage|thymocyte", x=cell_ontology), "Blood/Immune",tissue_new)) %>%
-  mutate(ontology_new = ifelse(tissue_new == "Blood/Immune", paste0(tissue,".",cell_ontology),cell_ontology)) 
-
 
 ##### plot venn diagram ######
 #figure 3 B
@@ -383,63 +366,9 @@ diff_heatmap(facs_fdr_mat, facs_magma_mat , color_vec =c( "#EEEEEE","#009E73","#
              column_labels =facs_ct_meta$ontology_new[match(colnames(facs_fdr_mat),facs_ct_meta$cell_type)],
              row_split = trait_meta$trait_type[match(rownames(facs_fdr_mat), trait_meta$official_names )] %>% factor(levels = c("neuropsy","immune","others")) )
 
-##### plot trait-wise correlation ####
-data_all = list(seismic = facs_res, scDRS = facs_scdrs_res, FUMA = facs_fuma_res, `S-MAGMA` = facs_magma_res) %>%
-  map(~pivot_longer(.x, !cell_type, values_to = "Pvalue", names_to = "trait")) %>%
-  map2(names(.), ~mutate(.x, method = .y)) %>%
-  purrr::reduce(~rbind(.x, .y)) %>%
-  left_join(trait_meta, by=c("trait"="trait_names"))
-
-seismic_fuma_cmp = data_all %>% 
-  select(cell_type, official_names, Pvalue, method) %>% 
-  filter(method == "seismic" | method == "FUMA") %>%
+##### print out tables ####
+all_results_facs %>% 
+  select(cell_type, trait_name, method, Pvalue, fdr) %>%
   split(.$method) %>%
-  .[c("FUMA","seismic")] %>%
-  purrr::reduce(~left_join(.x, .y, by=c("cell_type"="cell_type", "official_names" = "official_names"))) 
-ggplot(seismic_fuma_cmp, aes(x = -log10(Pvalue.x), y = -log10(Pvalue.y))) + 
-  geom_point(alpha = 0.6, size=1) + 
-  facet_wrap(~official_names ) +
-  theme_classic() +
-  xlim(0,41) + ylim(0,41) + 
-  geom_abline(slope=1,linetype="dashed") +
-  xlab("-log10(Pvalue) - FUMA") +
-  ylab("-log10(Pvalue) - seismic")
-
-seismic_scdrs_cmp = data_all %>% 
-  select(cell_type, official_names, Pvalue, method) %>% 
-  filter(method == "seismic" | method == "scDRS") %>%
-  split(.$method) %>%
-  .[c("scDRS","seismic")] %>%
-  purrr::reduce(~left_join(.x, .y, by=c("cell_type"="cell_type", "official_names" = "official_names"))) 
-ggplot(seismic_scdrs_cmp, aes(x = -log10(Pvalue.x), y = -log10(Pvalue.y))) + 
-  geom_point(alpha = 0.6, size=1) + 
-  facet_wrap(~official_names ) +
-  theme_classic() +
-  xlim(0,45) + ylim(0,45) + 
-  geom_abline(slope=1,linetype="dashed") +
-  xlab("-log10(Pvalue) - scDRS") +
-  ylab("-log10(Pvalue) - seismic")
-
-seismic_magma_cmp = data_all %>% 
-  select(cell_type, official_names, Pvalue, method) %>% 
-  filter(method == "seismic" | method == "S-MAGMA") %>%
-  split(.$method) %>%
-  .[c("S-MAGMA","seismic")] %>%
-  purrr::reduce(~left_join(.x, .y, by=c("cell_type"="cell_type", "official_names" = "official_names"))) 
-ggplot(seismic_fuma_cmp, aes(x = -log10(Pvalue.x), y = -log10(Pvalue.y))) + 
-  geom_point(alpha = 0.6, size=1) + 
-  facet_wrap(~official_names ) +
-  theme_classic() +
-  xlim(0,41) + ylim(0,41) + 
-  geom_abline(slope=1,linetype="dashed") +
-  xlab("-log10(Pvalue) - S-MAGMA") +
-  ylab("-log10(Pvalue) - seismic")
-
-
-all_comp = data_all %>% 
-  group_by(trait, method) %>%
-  mutate(FDR = p.adjust(Pvalue, method = "fdr")) %>% 
-  ungroup() %>%
-  filter(FDR<=0.05) %>%
-  group_by(trait, cell_type) %>% 
-  filter(n()==4) 
+  map(~select(.x, -method)) %>%
+  map2(names(.), ~write.csv(.x,here("results","Tabula_muris","FACS",.y,paste0("FACS_",.y,"_association.csv")),row.names = F))

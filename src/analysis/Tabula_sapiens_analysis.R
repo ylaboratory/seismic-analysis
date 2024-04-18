@@ -77,3 +77,11 @@ write.table(ts_res, here("results","Tabula_sapiens","seismic","ts_res.txt"),quot
 
 ##save objects for later 
 save(ts_obj, file=here("data","expr","Tabula_sapiens","TS_processed.rda"))
+
+##save cell ontology mapping
+colData(ts_obj) %>% 
+  as_tibble() %>%
+  distinct(cell_ontology_id, organ_tissue, cluster_name) %>%
+  set_colnames(c("cell_ontology_id","tissue","cluster_name")) %>%
+  write.table(here("results","Tabula_sapiens","ts_ontology.txt"), sep="\t",col.names = T, quote = F)
+

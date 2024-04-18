@@ -164,4 +164,3 @@ ggplot( cor_droplet_metric, aes(x=between, y=correlation)) +
   ggtitle("TM droplet data set, Spearman correlation across all cell types") +
   ylab("Spearman's correlation") + 
   theme(plot.title = element_text(hjust = 0.5))
-

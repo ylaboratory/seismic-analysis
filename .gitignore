@@ -86,3 +86,6 @@ nohup.out
 *.pdf
 *.csv
 *.txt
+
+#test files
+test.R 

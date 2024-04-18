@@ -112,3 +112,14 @@ write.table(droplet_res, here("results","Tabula_muris","droplet","seismic","drop
 
 ##save objects for later 
 save(facs_obj_sce, droplet_obj_sce, file=here("data","expr","Tabula_muris","TM_processed.rda"))
+
+##save cell ontology mapping
+colData(facs_obj_sce) %>% 
+  as_tibble() %>%
+  distinct(cell_ontology_id, tissue, cluster_name) %>%
+  write.table(here("results","Tabula_muris","FACS","facs_ontology.txt"), sep="\t",col.names = T, quote = F)
+
+colData(droplet_obj_sce) %>% 
+  as_tibble() %>%
+  distinct(cell_ontology_id, tissue, cluster_name) %>%
+  write.table(here("results","Tabula_muris","droplet","droplet_ontology.txt"), sep="\t",col.names = T, quote = F)
