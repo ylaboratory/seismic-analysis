@@ -66,7 +66,7 @@ calc_ct_mean <- function(sce, assay_name = "logcounts",
 }
 
 #function to print out magma and fuma tables for later analysis
-print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_table_path = NULL) {
+print_magma_fuma_tbl <- function(mean_mat, table_type, main_table_path,  aux_table_path = NULL, verbose = T) {
   #main table directory
   if (!dir.exists(base::dirname(main_table_path))) {
     message(paste0("The directory of the main table path:", base::dirname(main_table_path) ," does not exist... cerated one.!"))
@@ -74,8 +74,8 @@ print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_tabl
   }
   
   #if output MAGMA table
-  if(table_type=="MAGMA"){
-    main_tbl = sweep(mean_mat, MARGIN = 2, STATS = Matrix::colSums(mean_mat), FUN="/") %>% 
+  if(table_type == "MAGMA"){
+    main_tbl <- sweep(mean_mat, MARGIN = 2, STATS = Matrix::colSums(mean_mat), FUN="/") %>% 
       as.matrix() %>%
       Matrix::t() %>% 
       dplyr::as_tibble(rownames = "hsa_entrez") %>%
@@ -88,7 +88,7 @@ print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_tabl
     write.table(main_tbl,file=main_table_path, col.names = F, row.names = F, sep=" ",quote=F)
   }else{
     #if output FUMA table
-    main_tbl = rbind(mean_mat, Matrix::colMeans(mean_mat)) %>%
+    main_tbl <- rbind(mean_mat, Matrix::colMeans(mean_mat)) %>%
       magrittr::set_rownames(c(rownames(mean_mat), "Average")) %>%
       as.matrix() %>%
       Matrix::t() %>% 
@@ -96,12 +96,14 @@ print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_tabl
       magrittr::set_colnames(c("GENE", paste0("cluster.",1:(ncol(.)-2) ), "Average" ))
     write.table(main_tbl,file=main_table_path, col.names =  T, row.names = F, sep=" ",quote=F)
   }
-  message(paste0("The main table has been printed out as ",main_table_path))
+  if(verbose){
+    message(paste0("The main table has been printed out as ",main_table_path))
+  }
   
   
   #if print auxiliary file
   if(!is.null(aux_table_path)){
-    aux_tbl = dplyr::tibble(cell_type = rownames(mean_mat)) %>%
+    aux_tbl <- dplyr::tibble(cell_type = rownames(mean_mat)) %>%
       dplyr::mutate(encoded_name = paste0("cluster.",1:n())) 
     #print the table
     if (!dir.exists(base::dirname(aux_table_path))) {
@@ -109,6 +111,8 @@ print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_tabl
       dir.create(base::dirname(aux_table_path), recursive = TRUE)
     }
     write.table(aux_tbl,file=aux_table_path, col.names =  T, row.names = F, sep="\t",quote=F)
-    message(paste0("The auxiliary table has been printed out as ",aux_table_path))
+    if(verbose){
+      message(paste0("The auxiliary table has been printed out as ",aux_table_path))
+    }
   }
 }
