@@ -1,28 +1,72 @@
-#function to print out magma and fuma tables for later analysis
+#function to calculate mean: (truncated from calc_specificity)
+calc_ct_mean <- function(sce, assay_name = "logcounts",
+                             ct_label_col = "idents",
+                             min_ct_size = 20) {
+  ct <- N <- nz.count <- ave_exp_ct <- NULL # due to non-standard evaluation notes in R CMD check
+  
+  # data formatting checks
+  if (!inherits(sce, "SingleCellExperiment")) {
+    stop("Only SingleCellExperiment class input is accepted. Please supply an
+         SingleCellExperiment object and try again.")
+  }
+  
+  if (!assay_name %in% SummarizedExperiment::assayNames(sce)) {
+    stop("Assay '", assay_name, "' does not exist in the
+         SingleCellExperiment object. Please choose a valid
+         assay in the SingleCellExperiment.")
+  }
+  
+  if (!ct_label_col %in% names(SummarizedExperiment::colData(sce))) {
+    stop("ct_label_col '", ct_label_col, "' does not exist in the
+         SingleCellExperiment object. Please choose a valid
+         column of cell type labels in the SingleCellExperiment.")
+  }
+  
+  # extract the log normalized counts (dgCMatrix)
+  data_mat <- SummarizedExperiment::assay(sce, assay_name)
+  
+  # extract the cell metadata
+  cell_meta <- SummarizedExperiment::colData(sce)
+  
+  # make sure the cell name exist
+  if (any(is.null(rownames(cell_meta))) || any(is.null(colnames(data_mat)))){
+    rownames(cell_meta) <- colnames(data_mat) <- paste0("cell.",1:ncol(data_mat))
+  }
+  
+  # extract cell type grouping
+  ct_groups <- data.table::data.table(
+    cell = rownames(cell_meta),
+    ct = cell_meta[[ct_label_col]], key = "ct"
+  )
+  
+  # check that there are at least a few different cell types
+  ct_groups_n <- ct_groups[, .N, by = ct]
+  
+  # filter out cell types that do not have minimum # of cells
+  ct_groups_n <- ct_groups_n[N >= min_ct_size]
+  ct_groups <- ct_groups[ct %in% ct_groups_n$ct]
+  data_mat <- data_mat[, ct_groups$cell]
+  
+  # filter out genes that do not have minimal cell coverage
+  stats.dt <- data.table::as.data.table(Matrix::rowSums(data_mat != 0), keep.rownames = T) %>%
+    magrittr::set_colnames(c("gene", "nz.count"))
+  
+  data_mat <- data_mat[stats.dt$gene, ]
+  
+  # calculate mean gene expression per cell type
+  factor_mat <- Matrix::fac2sparse(factor(ct_groups$ct, levels = unique(ct_groups$ct)))
+  sum_mat <- Matrix::t(data_mat %*% Matrix::t(factor_mat))
+  mean_mat <- sum_mat %>%
+    sweep_sparse(margin = 1, stats = ct_groups_n$N, fun = "/") %>%
+    magrittr::set_colnames(rownames(data_mat)) %>%
+    magrittr::set_rownames(unique(ct_groups$ct))
+  
+  
+  return(as(mean_mat, "unpackedMatrix"))
+}
 
-print_magma_fuma_tbl = function(data_obj, table_type,main_table_path,  aux_table_path = NULL) {
-  #' Print expression tables for MAGMA-specificity or FUMA model - which can be taken by MAGMA. 
-  # This function will print out expression table for FUMA and MAGMA analysis. Typically the output will including two tables: one main table including the expression gene set (MAGMA) or 
-  # expression covriate file (FUMA), which could be taken by MAGMA software for cell type enrichment. The cell type are recoded in to "cluster.1, ..., cluster.n"-like format since MAGMA software
-  # may ignore name separator or extreme long string (the order is the same to the cell type presents in the "cell_num" slot of the "group_info" seismicGWAS.data). 
-  # The auxiliary table contains the mapping from the recoded cell type names to the real cell type names.
-  
-  #check input type
-  if (!inherits(data_obj, "SingleCellExperiment")) {
-    stop("Only SingleCellExperiment class input is accepted.")
-  }
-  if (!table_type %in% c("MAGMA","FUMA")){
-    stop("table_type could be only either 'MAGMA' or 'FUMA'")
-  }
-  
-  #if (meta_slot_is_null(data_obj,"group_info") | is.null(get_meta_slot(data_obj,"group_info")[["mean_mat"]])){
-  #if (seismic_slot_is_null(data_obj,"group_info") | is.null(get_seismic_slot(data_obj,"group_info")[["mean_mat"]])){
-  if ( is.null(metadata(data_obj)[["seismicGWAS.data"]][["group_info"]][["mean_mat"]])){
-    stop("The 'gene_info' slot of the metadata is empty. Run cal_stat() first.")
-  }
-  
-  mean_mat = seismicGWAS::get_seismic_ct_info(data_obj,"mean_mat")
-  
+#function to print out magma and fuma tables for later analysis
+print_magma_fuma_tbl = function(mean_mat, table_type, main_table_path,  aux_table_path = NULL) {
   #main table directory
   if (!dir.exists(base::dirname(main_table_path))) {
     message(paste0("The directory of the main table path:", base::dirname(main_table_path) ," does not exist... cerated one.!"))
@@ -31,7 +75,7 @@ print_magma_fuma_tbl = function(data_obj, table_type,main_table_path,  aux_table
   
   #if output MAGMA table
   if(table_type=="MAGMA"){
-    main_tbl = sweep_sparse(mean_mat, margin=2, stats = Matrix::colSums(mean_mat),fun="/") %>% 
+    main_tbl = sweep(mean_mat, MARGIN = 2, STATS = Matrix::colSums(mean_mat), FUN="/") %>% 
       as.matrix() %>%
       Matrix::t() %>% 
       dplyr::as_tibble(rownames = "hsa_entrez") %>%

@@ -1,5 +1,4 @@
 # Analysis scripts for *seismic*
-
 This repository contains all code and scripts required for the analysis for the *seismic* paper. Here is the organization of the repository:
 
 - bin: This directory stores applications, such as MAGMA and scDRS.
@@ -21,3 +20,4 @@ and the download of the package. To download and install the *seismic* package:
 ```{r}
 devtools::install_github("ylaboratory/seismicGWAS")
 ```
+This will be sufficient for the data analysis results. However, for the benchmarking and runtime analysis, where the cross-framework performance is compared, the corresponding environment should be set up. Please refer to the exact README file in the corresponding directory for the setup.

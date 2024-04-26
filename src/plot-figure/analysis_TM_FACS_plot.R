@@ -18,13 +18,13 @@ if (!require("here")){
 }
 
 #color mappings
-color_mapping_vec = c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
+color_mapping_vec <- c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
 
 #encode trait mapping
-neuropsy_disesaes = c("insominia","BD","MDD","Nrt_new","Scz_new")
-immune_diseases = c("AID","Hypothyroidism","RA","ibd","cd","uc")
-others = c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
-trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
+neuropsy_disesaes <- c("insominia","BD","MDD","Nrt_new","Scz_new")
+immune_diseases <- c("AID","Hypothyroidism","RA","ibd","cd","uc")
+others <- c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
+trait_meta <- tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     official_names = c("Insomnia","Bipolar disorder","Depression","Neuroticism","Schizophrenia",
                                         "Autoimmune diseases","Hypothroidism","Rheumatoid arthritis","Inflammatory bowel disease","Crohn's disease","Ulcerative colitis",
                                        "Smoking","BMI","College education","Erythrocyte count","Lymphocyte count","Monocyte count","Type I diabetes","Type II diabetes","Cardiovascular diseases",
@@ -32,13 +32,13 @@ trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     trait_type = factor(c(rep("neuropsy",length(neuropsy_disesaes)), rep("immune",length(immune_diseases)), rep("others",length(others))), levels=c("neuropsy","immune","others")) )
 
 #load results - facs
-facs_res = read.table( here("results","Tabula_muris","FACS","seismic","facs_res.txt"), header = T, sep = "\t") %>% 
+facs_res <- read.table( here("results","Tabula_muris","FACS","seismic","new_facs_res.txt"), header = T, sep = "\t") %>% 
   as_tibble() %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases ,others)))  %>%
   mutate(cell_type = factor(cell_type, levels = sort(cell_type))) %>%
   arrange(cell_type)
 
-facs_scdrs_res = list.files(here("results","Tabula_muris","FACS","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
+facs_scdrs_res <- list.files(here("results","Tabula_muris","FACS","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
   set_names(str_extract(string = ., pattern = "(?<=/)[^/]+$") %>% gsub(pattern = ".scdrs_group.cluster_name", replacement = "", x=.)) %>%
   map(~read.table(.x, header=T, sep="\t") %>% as_tibble()) %>%
   map(~mutate(.x, P_val = pnorm(assoc_mcz, lower.tail = F))) %>%
@@ -49,7 +49,7 @@ facs_scdrs_res = list.files(here("results","Tabula_muris","FACS","scDRS"),patter
   mutate(cell_type = factor(cell_type, levels = levels(facs_res$cell_type))) %>%
   arrange(cell_type)
 
-facs_fuma_res = list.files(here("results","Tabula_muris","FACS","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+facs_fuma_res <- list.files(here("results","new_Tabula_muris","FACS","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -57,7 +57,7 @@ facs_fuma_res = list.files(here("results","Tabula_muris","FACS","FUMA"), pattern
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-facs_magma_res = list.files(here("results","Tabula_muris","FACS","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+facs_magma_res <- list.files(here("results","new_Tabula_muris","FACS","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -66,7 +66,7 @@ facs_magma_res = list.files(here("results","Tabula_muris","FACS","S-MAGMA"), pat
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
 #load auxillary files of fuma/s-magma and harmonise cell type names
-facs_ct_meta = tibble(cell_type = as.character(facs_res$cell_type)) %>%
+facs_ct_meta <- tibble(cell_type = as.character(facs_res$cell_type)) %>%
   mutate(tissue = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[1]) %>% unlist) %>%
   mutate(cell_ontology = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[2]) %>% unlist) %>%
   mutate(tissue = gsub(pattern = "_Non-Myeloid|_Myeloid|Large_|Limb_|_Gland",replacement = "", x = tissue) ) %>%
@@ -82,16 +82,16 @@ facs_ct_meta = tibble(cell_type = as.character(facs_res$cell_type)) %>%
   mutate(ontology_new = ifelse(tissue_new == "Blood/Immune", paste0(tissue,".",cell_ontology),cell_ontology)) 
 
 #harmonise cell types for FUMA/S-MAGMA output
-facs_fuma_ct_mapping = read.table(here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
-facs_magma_ct_mapping = read.table(here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+facs_fuma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_facs.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+facs_magma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_facs.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
 
-facs_fuma_res = facs_fuma_ct_mapping %>% 
+facs_fuma_res <- facs_fuma_ct_mapping %>% 
   left_join(facs_fuma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name )  %>% 
   mutate(cell_type = factor(cell_type, levels = levels(facs_res$cell_type))) %>%
   arrange(cell_type)
 
-facs_magma_res = facs_magma_ct_mapping %>% 
+facs_magma_res <- facs_magma_ct_mapping %>% 
   left_join(facs_magma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name ) %>% 
   mutate(cell_type = factor(cell_type, levels = levels(facs_res$cell_type))) %>%
@@ -101,34 +101,34 @@ facs_magma_res = facs_magma_ct_mapping %>%
 ##### plot venn diagram ######
 #figure 3 B
 library("ggvenn")
-facs_seismic_pair = facs_res %>%
+facs_seismic_pair <- facs_res %>%
   mutate(across(where(is.double) , ~p.adjust(.x, method ="fdr"))) %>%
   pivot_longer(!cell_type, names_to = "trait", values_to = "fdr") %>%
   filter(fdr<=0.05) %>% mutate(pair = paste0(trait,".",cell_type)) %>% 
   pull(pair)
 
-facs_scdrs_pair = facs_scdrs_res %>%
+facs_scdrs_pair <- facs_scdrs_res %>%
   mutate(across(where(is.double) , ~p.adjust(.x, method ="fdr"))) %>%
   pivot_longer(!cell_type, names_to = "trait", values_to = "fdr") %>% 
   filter(fdr<=0.05) %>% mutate(pair = paste0(trait,".",cell_type)) %>% 
   pull(pair)  
 
-facs_fuma_pair = facs_fuma_res %>%
+facs_fuma_pair <- facs_fuma_res %>%
   mutate(across(where(is.double) , ~p.adjust(.x, method ="fdr"))) %>%
   pivot_longer(!cell_type, names_to = "trait", values_to = "fdr") %>% 
   filter(fdr<=0.05) %>% 
   mutate(pair = paste0(trait,".",cell_type)) %>% 
   pull(pair)
 
-facs_magma_pair = facs_magma_res %>%
+facs_magma_pair <- facs_magma_res %>%
   mutate(across(where(is.double) , ~p.adjust(.x, method ="fdr"))) %>%
   pivot_longer(!cell_type, names_to = "trait", values_to = "fdr") %>% 
   filter(fdr<=0.05) %>% 
   mutate(pair = paste0(trait,".",cell_type)) %>% 
   pull(pair)
 
-ordered_colors = c(color_mapping_vec["S-MAGMA"], color_mapping_vec["FUMA"], color_mapping_vec["scDRS"], color_mapping_vec["seismic"])
-facs_venn = list(`S-MAGMA` = facs_magma_pair, FUMA = facs_fuma_pair, scDRS = facs_scdrs_pair, seismic = facs_seismic_pair) 
+ordered_colors <- c(color_mapping_vec["S-MAGMA"], color_mapping_vec["FUMA"], color_mapping_vec["scDRS"], color_mapping_vec["seismic"])
+facs_venn <- list(`S-MAGMA` = facs_magma_pair, FUMA = facs_fuma_pair, scDRS = facs_scdrs_pair, seismic = facs_seismic_pair) 
 ggvenn(facs_venn,text_size = 6,set_name_size=6,show_percentage = F,fill_color = ordered_colors %>% set_names(NULL)  ,fill_alpha = 0.4) +
   coord_cartesian(xlim = c(-3, 3), ylim = c(-2, 1.5))
 
