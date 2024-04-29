@@ -17,11 +17,11 @@ if (!require("here")){
   library("here")
 }
 
-res_saunders = list(fine_cluster = here("results","Saunders","fine_cluster","seismic","fine_cluster_res.txt"),
-                subclass = here("results","Saunders","subclass","seismic","subclass_res.txt"),
-                region_subclass = here("results","Saunders","region_subclass","seismic","region_subclass_res.txt"), 
-                region_class = here("results","Saunders","region_class","seismic","region_classs_res.txt"),
-                region_cluster = here("results","Saunders","region_cluster","seismic","region_cluster_res.txt")) %>%
+res_saunders <- list(fine_cluster = here("results","Saunders","fine_cluster","seismic","new_fine_cluster_res.txt"),
+                subclass = here("results","Saunders","subclass","seismic","new_subclass_res.txt"),
+                region_subclass = here("results","Saunders","region_subclass","seismic","new_region_subclass_res.txt"), 
+                region_class = here("results","Saunders","region_class","seismic","new_region_classs_res.txt"),
+                region_cluster = here("results","Saunders","region_cluster","seismic","new_region_cluster_res.txt")) %>%
   map(~read.table(.x, header = T, sep = "\t")) %>%
   map(~as_tibble(.x)) %>%
   map(~mutate(.x, cell_type = gsub(pattern = "\"", replacement = "", x = cell_type)))
@@ -43,18 +43,18 @@ res_scdrs = list(fine_cluster=here("results","Saunders","fine_cluster","scDRS"),
   map(~arrange(.x, cell_type))
 
 ###load fuma results
-fuma_anno = list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.fuma.aux.txt"), 
-                 subclass = here("data","expr","Saunders","Saunders.subclass.fuma.aux.txt"),
-                 region_subclass = here("data","expr","Saunders","Saunders.region_subclass.fuma.aux.txt"),
-                 region_class = here("data","expr","Saunders","Saunders.region_class.fuma.aux.txt"),
-                 region_cluster = here("data","expr","Saunders","Saunders.region_cluster.fuma.aux.txt")) %>%
+fuma_anno = list(file_cluster = here("data","expr","Saunders","new_Saunders.fine_cluster.fuma.aux.txt"), 
+                 subclass = here("data","expr","Saunders","new_Saunders.subclass.fuma.aux.txt"),
+                 region_subclass = here("data","expr","Saunders","new_Saunders.region_subclass.fuma.aux.txt"),
+                 region_class = here("data","expr","Saunders","new_Saunders.region_class.fuma.aux.txt"),
+                 region_cluster = here("data","expr","Saunders","new_Saunders.region_cluster.fuma.aux.txt")) %>%
   map(~read.table(.x, header = T, sep="\t") %>% as_tibble()) 
 
-res_fuma = list(fine_cluster = here("results","Saunders","fine_cluster","FUMA"), 
-                subclass = here("results","Saunders","subclass","FUMA"),
-                region_subclass = here("results","Saunders","region_subclass","FUMA"), 
-                region_class = here("results","Saunders","region_class","FUMA"),
-                region_cluster = here("results","Saunders","region_cluster","FUMA")) %>%
+res_fuma = list(fine_cluster = here("results","new_Saunders","fine_cluster","FUMA"), 
+                subclass = here("results","new_Saunders","subclass","FUMA"),
+                region_subclass = here("results","new_Saunders","region_subclass","FUMA"), 
+                region_class = here("results","new_Saunders","region_class","FUMA"),
+                region_cluster = here("results","new_Saunders","region_cluster","FUMA")) %>%
   map(~list.files(.x, pattern = "*.gsa.out",full.names = T)) %>%
   map(~set_names(.x, str_extract(string=.x, pattern = "(?<=/)[^/]+$") %>%gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x=.) )) %>% 
   map(~map(.x, ~read.table(.x, header=T) %>% as_tibble())) %>% 
@@ -67,18 +67,18 @@ res_fuma = list(fine_cluster = here("results","Saunders","fine_cluster","FUMA"),
   map(~arrange(.x, cell_type))
 
 #load magma results
-magma_anno = list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.magma.aux.txt"), 
-                 subclass = here("data","expr","Saunders","Saunders.subclass.magma.aux.txt"),
-                 region_subclass = here("data","expr","Saunders","Saunders.region_subclass.magma.aux.txt"),
-                 region_class = here("data","expr","Saunders","Saunders.region_class.magma.aux.txt"),
-                 region_cluster = here("data","expr","Saunders","Saunders.region_cluster.magma.aux.txt")) %>%
+magma_anno = list(file_cluster = here("data","expr","Saunders","new_Saunders.fine_cluster.magma.aux.txt"), 
+                 subclass = here("data","expr","Saunders","new_Saunders.subclass.magma.aux.txt"),
+                 region_subclass = here("data","expr","Saunders","new_Saunders.region_subclass.magma.aux.txt"),
+                 region_class = here("data","expr","Saunders","new_Saunders.region_class.magma.aux.txt"),
+                 region_cluster = here("data","expr","Saunders","new_Saunders.region_cluster.magma.aux.txt")) %>%
   map(~read.table(.x, header = T, sep="\t") %>% as_tibble()) 
 
-res_magma = list(fine_cluster = here("results","Saunders","fine_cluster","S-MAGMA"), 
-                 subclass = here("results","Saunders","subclass","S-MAGMA"),
-                 region_subclass = here("results","Saunders","region_subclass","S-MAGMA"), 
-                 region_class = here("results","Saunders","region_class","S-MAGMA"),
-                 region_cluster = here("results","Saunders","region_cluster","S-MAGMA"))  %>%
+res_magma = list(fine_cluster = here("results","new_Saunders","fine_cluster","S-MAGMA"), 
+                 subclass = here("results","new_Saunders","subclass","S-MAGMA"),
+                 region_subclass = here("results","new_Saunders","region_subclass","S-MAGMA"), 
+                 region_class = here("results","new_Saunders","region_class","S-MAGMA"),
+                 region_cluster = here("results","new_Saunders","region_cluster","S-MAGMA"))  %>%
   map(~list.files(.x, pattern = "*.gsa.out",full.names = T)) %>%
   map(~set_names(.x, str_extract(string=.x, pattern = "(?<=/)[^/]+$") %>%gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x=.) )) %>% 
   map(~map(.x, ~read.table(.x, header=T) %>% as_tibble())) %>% 
@@ -131,10 +131,10 @@ ggplot(pd_plot_df, aes(x=method, y=-log10(FDR),color = neuron_type,alpha=neuron_
   scale_alpha_manual(values=c(0.9,0.5,0.4)) + 
   geom_hline(data= hline_data,aes(yintercept=y,linetype=type),linewidth=0.7,alpha=0.5) + 
   coord_flip() + 
-  ggrepel::geom_text_repel( data = pd_comparison %>% filter(text_label != ""),
+  ggrepel::geom_text_repel( data = pd_plot_df %>% filter(text_label != ""),
                             force = 100,
                             position = ggpp::position_jitternudge(nudge.from = "jittered",
-                                                                  width=0.08, y=4.5 + pd_comparison %>% filter(text_label != "") %>% pull(FDR) %>% log10(), seed=1),
+                                                                  width=0.08, y=4.5 + pd_plot_df %>% filter(text_label != "") %>% pull(FDR) %>% log10(), seed=1),
                             
                             color="black",alpha=1,
                             segment.square = F,

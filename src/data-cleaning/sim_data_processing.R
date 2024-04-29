@@ -49,8 +49,8 @@ set.seed(98)
 selected_traits <- sample(names(z_score_file),10)
 
 #write out the sampled gene sets
-map2(selected_traits, 1:10 , !system(paste0("cp ",z_score_file[[.x]]," ",here("data","gwas","zscore",paste0("gs_",.y,".genes.out")))))
-map2(selected_traits, 1:10 , !system(paste0("cp ",magma_raw_file[[.x]]," ",here("data","gwas","magma_raw",paste0("gs_",.y,".genes.raw")))))
+map2(selected_traits, 1:10 , ~system(paste0("cp ",z_score_file[[.x]]," ",here("data","gwas","null_sim","zscore",paste0("gs_",.y,".genes.out")))))
+map2(selected_traits, 1:10 , ~system(paste0("cp ",magma_raw_file[[.x]]," ",here("data","gwas","null_sim","magma_raw",paste0("gs_",.y,".genes.raw")))))
 
 #write out the shuffled gene sets 
 set.seed(100)

@@ -33,13 +33,14 @@ podman run -it -d --name "$CONTAINER_NAME" "$IMAGE_NAME"
 #data name: data file name header
 data_name_rda=$(basename "$DATA_PATH_RDA")
 data_name_h5ad=$(basename "$DATA_PATH_H5AD")
+
 #data header: data file directory name
 data_header_rda=$(basename "$(dirname "$DATA_PATH_RDA")")
-data_header_h5ad=$(basename "$(dirname "$DATA_PATH_H5AD")")
+#data_header_h5ad=$(basename "$(dirname "$DATA_PATH_H5AD")")
 
 #cp data to container
 podman cp "$BASE_PATH"/"$DATA_PATH_RDA" "$CONTAINER_NAME":data/tmp/"$data_header_rda"."$data_name_rda"
-podman cp "$BASE_PATH"/"$DATA_PATH_H5AD" "$CONTAINER_NAME":data/tmp/"$data_header_h5ad"."$data_name_h5ad"
+#podman cp "$BASE_PATH"/"$DATA_PATH_H5AD" "$CONTAINER_NAME":data/tmp/"$data_header_h5ad"."$data_name_h5ad"
 
 echo "$CONTAINER_NAME":data/tmp/"$data_header_rda"."$data_name_rda"
 
@@ -48,13 +49,13 @@ res_name=$(basename "$OUTPUT_PATH")
 podman exec "$CONTAINER_NAME" Rscript scripts/magma_data_gen.R data/tmp/"$data_header_rda"."$data_name_rda" data/raw_5 data/tmp/"$res_name".magma.rda data/tmp/"$res_name"_test 
 podman exec "$CONTAINER_NAME" Rscript scripts/fuma_data_gen.R data/tmp/"$data_header_rda"."$data_name_rda" data/raw_5 data/tmp/"$res_name".fuma.rda data/tmp/"$res_name"_test 
 podman exec "$CONTAINER_NAME" Rscript scripts/seismic_runtime.R data/tmp/"$data_header_rda"."$data_name_rda" data/zscore_5 data/tmp/"$res_name".seismic.rda 
-podman exec "$CONTAINER_NAME" python scripts/scdrs_runtime.py data/tmp/"$data_header_h5ad"."$data_name_h5ad" data/scdrs_5 data/tmp/"$res_name".scdrs.joblib
+#podman exec "$CONTAINER_NAME" python scripts/scdrs_runtime.py data/tmp/"$data_header_h5ad"."$data_name_h5ad" data/scdrs_5 data/tmp/"$res_name".scdrs.joblib
 
 # Copy data to output path
 podman cp "$CONTAINER_NAME":/grain/ql29/podman_file/data/tmp/"$res_name".magma.rda "$BASE_PATH"/"$OUTPUT_PATH"
 podman cp "$CONTAINER_NAME":/grain/ql29/podman_file/data/tmp/"$res_name".fuma.rda "$BASE_PATH"/"$OUTPUT_PATH"
 podman cp "$CONTAINER_NAME":/grain/ql29/podman_file/data/tmp/"$res_name".seismic.rda "$BASE_PATH"/"$OUTPUT_PATH"
-podman cp "$CONTAINER_NAME":/grain/ql29/podman_file/data/tmp/"$res_name".scdrs.joblib "$BASE_PATH"/"$OUTPUT_PATH"
+#podman cp "$CONTAINER_NAME":/grain/ql29/podman_file/data/tmp/"$res_name".scdrs.joblib "$BASE_PATH"/"$OUTPUT_PATH"
 
 # Remove container
 podman stop "$CONTAINER_NAME"

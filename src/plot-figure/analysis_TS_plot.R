@@ -18,10 +18,10 @@ if (!require("here")){
 }
 
 #encode trait mapping
-neuropsy_disesaes = c("insominia","BD","MDD","Nrt_new","Scz_new")
-immune_diseases = c("AID","Hypothyroidism","RA","ibd","cd","uc")
-others = c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
-trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
+neuropsy_disesaes <- c("insominia","BD","MDD","Nrt_new","Scz_new")
+immune_diseases <- c("AID","Hypothyroidism","RA","ibd","cd","uc")
+others <- c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
+trait_meta <- tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     official_names = c("Insomnia","Bipolar disorder","Depression","Neuroticism","Schizophrenia",
                                        "Autoimmune diseases","Hypothroidism","Rheumatoid arthritis","Inflammatory bowel disease","Crohn's disease","Ulcerative colitis",
                                        "Smoking","BMI","College education","Erythrocyte count","Lymphocyte count","Monocyte count","Type I diabetes","Type II diabetes","Cardiovascular diseases",
@@ -29,14 +29,14 @@ trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     trait_type = factor(c(rep("neuropsy",length(neuropsy_disesaes)), rep("immune",length(immune_diseases)), rep("others",length(others))), levels=c("neuropsy","immune","others")) )
 
 #load results - ts
-ts_res = read.table( here("results","Tabula_sapiens","seismic","ts_res.txt"), header = T, sep = "\t") %>%
+ts_res <- read.table( here("results","Tabula_sapiens","seismic","new_ts_res.txt"), header = T, sep = "\t") %>%
   as_tibble() %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases ,others)))  %>%
   mutate(cell_type = factor(cell_type, levels = sort(cell_type))) %>%
   arrange(cell_type)
 
 #load results - other frameworks
-ts_scdrs_res = list.files(here("results","Tabula_sapiens","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
+ts_scdrs_res <- list.files(here("results","Tabula_sapiens","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
   set_names(str_extract(string = ., pattern = "(?<=/)[^/]+$") %>% gsub(pattern = ".scdrs_group.cluster_name", replacement = "", x=.)) %>%
   map(~read.table(.x, header=T, sep="\t") %>% as_tibble()) %>%
   map(~mutate(.x, P_val = pnorm(assoc_mcz, lower.tail = F))) %>%
@@ -47,7 +47,7 @@ ts_scdrs_res = list.files(here("results","Tabula_sapiens","scDRS"),pattern = "*.
   mutate(cell_type = factor(cell_type, levels = levels(ts_res$cell_type))) %>%
   arrange(cell_type)
 
-ts_fuma_res = list.files(here("results","Tabula_sapiens","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+ts_fuma_res <- list.files(here("results","new_Tabula_sapiens","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -55,7 +55,7 @@ ts_fuma_res = list.files(here("results","Tabula_sapiens","FUMA"), pattern = "*.g
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-ts_magma_res = list.files(here("results","Tabula_sapiens","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+ts_magma_res <- list.files(here("results","new_Tabula_sapiens","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -64,7 +64,7 @@ ts_magma_res = list.files(here("results","Tabula_sapiens","S-MAGMA"), pattern = 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
 #encode cell types
-ts_ct_meta = tibble(cell_type = as.character(ts_res$cell_type)) %>%
+ts_ct_meta <- tibble(cell_type = as.character(ts_res$cell_type)) %>%
   mutate(tissue = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[1]) %>% unlist) %>%
   mutate(cell_ontology = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[2]) %>% unlist) %>%
   mutate(cell_ontology = gsub(pattern=" positive|-positive","+",x=cell_ontology)) %>%
@@ -74,16 +74,16 @@ ts_ct_meta = tibble(cell_type = as.character(ts_res$cell_type)) %>%
   mutate(ontology_new = ifelse(tissue_new == "Blood/Immune", paste0(tissue,".",cell_ontology),cell_ontology)) 
 
 #harmonise cell types for FUMA/S-MAGMA output
-ts_fuma_ct_mapping = read.table(here("data","expr","Tabula_sapiens","ts.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
-ts_magma_ct_mapping = read.table(here("data","expr","Tabula_sapiens","ts.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+ts_fuma_ct_mapping <- read.table(here("data","expr","Tabula_sapiens","new_ts.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+ts_magma_ct_mapping <- read.table(here("data","expr","Tabula_sapiens","new_ts.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
 
-ts_fuma_res = ts_fuma_ct_mapping %>% 
+ts_fuma_res <- ts_fuma_ct_mapping %>% 
   left_join(ts_fuma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name )  %>% 
   mutate(cell_type = factor(cell_type, levels = levels(ts_res$cell_type))) %>%
   arrange(cell_type)
 
-ts_magma_res = ts_magma_ct_mapping %>% 
+ts_magma_res <- ts_magma_ct_mapping %>% 
   left_join(ts_magma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name ) %>% 
   mutate(cell_type = factor(cell_type, levels = levels(ts_res$cell_type))) %>%
@@ -93,9 +93,9 @@ ts_magma_res = ts_magma_ct_mapping %>%
 library(ComplexHeatmap)
 library(circlize)
 ht_opt(TITLE_PADDING=unit(5,"mm"))
-col_fun = colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
+col_fun <- colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
 
-ts_fdr_mat = ts_res %>%
+ts_fdr_mat <- ts_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type",neuropsy_disesaes,immune_diseases,others))) %>%
   select(where(is.double)) %>%
@@ -123,7 +123,7 @@ Heatmap(-log10(ts_fdr_mat), name = "-log10(FDR)",cluster_rows = F,cluster_column
         })
 
 #### correlation ####
-all_results_ts = list(seismic = ts_res, scDRS = ts_scdrs_res, FUMA = ts_fuma_res, `S-MAGMA` = ts_magma_res) %>%
+all_results_ts <- list(seismic = ts_res, scDRS = ts_scdrs_res, FUMA = ts_fuma_res, `S-MAGMA` = ts_magma_res) %>%
   map(~pivot_longer(.x, !cell_type, names_to = "trait",values_to = "Pvalue")) %>% 
   map2(names(.), ~mutate(.x, method = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>%
@@ -134,7 +134,7 @@ all_results_ts = list(seismic = ts_res, scDRS = ts_scdrs_res, FUMA = ts_fuma_res
   mutate(trait_type = trait_meta$trait_type[match(trait,trait_meta$trait_names)]) %>%
   select(cell_type,trait_name, trait_type, method, Pvalue, fdr)
 
-cor_ts_metric = all_results_ts %>%
+cor_ts_metric <- all_results_ts %>%
   group_by(trait_name, method) %>%
   mutate(method = factor(method, levels=c("S-MAGMA","FUMA","scDRS","seismic"))) %>% 
   arrange(cell_type) %>%

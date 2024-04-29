@@ -53,27 +53,28 @@ ts_obj = logNormCounts(ts_obj, size.factors = size.factor,assay.type = "counts")
 
 
 ##### 3. Calculate specificity score and perform cell type association#######
-###specificity score and enrichment without out groups
-ts_obj = cal_stat(data_obj = ts_obj , meta_data = as.data.frame(colData(ts_obj)), group = "cluster_name") #cluster_name = organ/tissue + cell ontology
-
-#calculate specificity score
-ts_obj  = cal_sscore(data_obj = ts_obj) 
+###specificity score and enrichment
+ts_sscore  <- calc_specificity(sce = ts_obj , ct_label_col = "cluster_name", min_avg_exp_ct = 0.01) #for droplet
 
 #map to human genes
-data("mmu_hsa_mapping")  
-ts_obj = trans_mmu_to_hsa_stat(ts_obj , gene_mapping_table=mmu_hsa_mapping, from="hsa_ensembl", to="hsa_entrez")
-
-#add global statistics
-ts_obj = add_glob_stats(ts_obj, stats = c("det_cell_num","ave_exp_ct","max_exp_ct") ) 
+ts_sscore_hsa <- translate_gene_ids(ts_sscore, from = "hsa_ensembl")
 
 ##enrichment
-gwas_zscore = load_zscore(here("data","gwas","tm_gwas","zscore"))
-ts_obj = cal_ct_asso(ts_obj, gwas_zscore, gene_filter_setting = "det_cell_num>=10& ave_exp_ct > 0.01& max_exp_ct>0.1")
+#magma zscore file
+magma_zscore_file <- list.files(here("data","gwas","tm_gwas","zscore"), full.names = T) %>%
+  set_names(str_extract(string = ., pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.genes\\.out", replacement = "", x=.))
 
-#save results
-ts_res = get_ct_asso(ts_obj, trait_name = "all", asso_model = "linear", merge_output = T)
+#enrichment
+ts_association <- magma_zscore_file %>%
+  map(~get_ct_trait_associations(sscore =ts_sscore_hsa, magma = .x))
 
-write.table(ts_res, here("results","Tabula_sapiens","seismic","ts_res.txt"),quote=F, sep="\t", row.names = F)
+##save results
+ts_res <- ts_association %>%
+  map(~select(.x, cell_type, pvalue)) %>%
+  map2(names(.), ~set_colnames(.x, c("cell_type", .y))) %>%
+  purrr::reduce(~left_join(.x, .y, by="cell_type"))
+
+write.table(ts_res, here("results","Tabula_sapiens","seismic","new_ts_res.txt"),quote=F, sep="\t", row.names = F)
 
 ##save objects for later 
 save(ts_obj, file=here("data","expr","Tabula_sapiens","TS_processed.rda"))

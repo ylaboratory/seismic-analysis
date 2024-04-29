@@ -18,23 +18,26 @@ if (!require("here")){
 }
 
 #color
-color_mapping_vec = c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
+color_mapping_vec <- c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
 
 #quantiles 
-qqpoint = floor(10000/10^ seq(0,3,0.1))
-qqpos = -log10(qqpoint/10000)
+qqpoint <- floor(10000/10^ seq(0,3,0.1))
+qqpos <- -log10(qqpoint/10000)
 
 
 ##### plot for scrambled expression #####
 #load results
-null_res_expr = list.files(here("results","null_sim","expr_rs"),pattern = "\\.null_res\\.txt") %>%
-  set_names(gsub(pattern = "\\.null_res\\.txt", replacement = "", x=unlist(.))) %>%
-  map(~read.table(here("results","null_sim","expr_rs",.x),header = T)) %>% 
+# null_res_expr = list.files(here("results","null_sim","expr_rs"),pattern = "\\.null_res\\.txt") %>%
+#  set_names(gsub(pattern = "\\.null_res\\.txt", replacement = "", x=unlist(.))) %>%
+#  map(~read.table(here("results","null_sim","expr_rs",.x),header = T)) %>% 
+null_res_expr <- list.files(here("results","null_sim","expr_rs"),pattern = "new_ds_[0-9]*.null_res\\.txt",full.names = T) %>%
+  set_names(str_extract(string = ., pattern = "ds_[0-9]*")) %>%
+  map(~read.table(.x,header = T)) %>% 
   map2(names(.), ~mutate(.x, ds = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>% 
   set_colnames(c("index","seismic","S-MAGMA","FUMA","ds"))
 
-null_res_expr_scdrs = list.files(here("results","null_sim","expr_rs"),pattern = "\\.scdrs_null_res\\.txt") %>%
+null_res_expr_scdrs <- list.files(here("results","null_sim","expr_rs"),pattern = "\\.scdrs_null_res\\.txt") %>%
   set_names(gsub(pattern = "\\.scdrs_null_res\\.txt", replacement = "", x=unlist(.))) %>%
   map(~read.table(here("results","null_sim","expr_rs",.x),header = T)) %>% 
   map(~mutate(.x, scDRS = pnorm(assoc_mcz, lower.tail = F)))  %>%
@@ -42,11 +45,11 @@ null_res_expr_scdrs = list.files(here("results","null_sim","expr_rs"),pattern = 
   map2(names(.), ~mutate(.x, ds = .y)) %>%
   purrr::reduce(~rbind(.x,.y))
 
-null_res_expr_all = null_res_expr %>% 
+null_res_expr_all <- null_res_expr %>% 
   left_join(null_res_expr_scdrs, by=c("index"="index", "ds" = "ds")) %>% 
   select(any_of(c("index", "ds", "seismic", "scDRS", "S-MAGMA", "FUMA"))) 
 
-null_res_expr_sum = map(c("seismic","scDRS", "S-MAGMA", "FUMA"), ~select(null_res_expr_all, all_of(c("index","ds",.x)))) %>% #summary info
+null_res_expr_sum <- map(c("seismic","scDRS", "S-MAGMA", "FUMA"), ~select(null_res_expr_all, all_of(c("index","ds",.x)))) %>% #summary info
   set_names(c("seismic","scDRS", "S-MAGMA", "FUMA")) %>%
   map2(names(.), ~pivot_wider(.x, names_from = "ds", values_from = .y)) %>% 
   map(~mutate(.x, across( matches("ds"), ~base::sort(.,na.last=T)))) %>%
@@ -82,14 +85,17 @@ null_res_expr_sum %>% write.csv(here("results","null_sim","null_expr_all.csv"), 
 
 ##### plot for scrambled gene set #####
 #load results
-null_res_gs = list.files(here("results","null_sim","gs_rs"),pattern = "\\.null_res\\.txt") %>%
-  set_names(gsub(pattern = "\\.null_res\\.txt", replacement = "", x=unlist(.))) %>%
-  map(~read.table(here("results","null_sim","gs_rs",.x),header = T)) %>% 
+# null_res_gs = list.files(here("results","null_sim","gs_rs"),pattern = "\\.null_res\\.txt") %>%
+#  set_names(gsub(pattern = "\\.null_res\\.txt", replacement = "", x=unlist(.))) %>%
+#  map(~read.table(here("results","null_sim","gs_rs",.x),header = T)) %>% 
+null_res_gs <- list.files(here("results","null_sim","gs_rs"),pattern = "new_ds_[0-9]*.null_res\\.txt",full.names = T) %>%
+  set_names(str_extract(string = ., pattern = "ds_[0-9]*")) %>%
+  map(~read.table(.x,header = T)) %>%
   map2(names(.), ~mutate(.x, ds = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>% 
   set_colnames(c("index","seismic","ds"))
 
-null_res_gs_scdrs = list.files(here("results","null_sim","gs_rs"),pattern = "\\.scdrs_null_res\\.txt") %>%
+null_res_gs_scdrs <- list.files(here("results","null_sim","gs_rs"),pattern = "\\.scdrs_null_res\\.txt") %>%
   set_names(gsub(pattern = "\\.scdrs_null_res\\.txt", replacement = "", x=unlist(.))) %>%
   map(~read.table(here("results","null_sim","gs_rs",.x),header = T)) %>% 
   map(~mutate(.x, scDRS = pnorm(assoc_mcz, lower.tail = F)))  %>%
@@ -97,11 +103,11 @@ null_res_gs_scdrs = list.files(here("results","null_sim","gs_rs"),pattern = "\\.
   map2(names(.), ~mutate(.x, ds = .y)) %>%
   purrr::reduce(~rbind(.x,.y))
 
-null_res_gs_all = null_res_gs %>% 
+null_res_gs_all <- null_res_gs %>% 
   left_join(null_res_gs_scdrs, by=c("index"="index", "ds" = "ds")) %>% 
   select(any_of(c("index", "ds", "seismic", "scDRS"))) 
 
-null_res_gs_sum = map(c("seismic","scDRS"), ~select(null_res_gs_all, all_of(c("index","ds",.x)))) %>% #summary info
+null_res_gs_sum <- map(c("seismic","scDRS"), ~select(null_res_gs_all, all_of(c("index","ds",.x)))) %>% #summary info
   set_names(c("seismic","scDRS")) %>%
   map2(names(.), ~pivot_wider(.x, names_from = "ds", values_from = .y)) %>% 
   map(~mutate(.x, across( matches("ds"), ~base::sort(.,na.last=T)))) %>%

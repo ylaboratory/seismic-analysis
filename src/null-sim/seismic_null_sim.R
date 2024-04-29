@@ -70,7 +70,7 @@ sim_p_value_by_idx = function(i){
 #result = future_sapply(1:100,sim_p_value_by_idx)
 
 library(parallel)
-result = mclapply(1:50, sim_p_value_by_idx, mc.cores = num_cores)
+result = mclapply(1:10000, sim_p_value_by_idx, mc.cores = num_cores)
 
-result_df = data.frame(index = 1:50, ours_p = unlist(result))
+result_df = data.frame(index = 1:10000, ours_p = unlist(result))
 write.table(result_df, file = output_file, sep = "\t",quote = F,row.names = F)

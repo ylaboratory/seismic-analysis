@@ -18,13 +18,13 @@ if (!require("here")){
 }
 
 #color mappings
-color_mapping_vec = c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
+color_mapping_vec <- c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
 
 #encode trait mapping
-neuropsy_disesaes = c("insominia","BD","MDD","Nrt_new","Scz_new")
-immune_diseases = c("AID","Hypothyroidism","RA","ibd","cd","uc")
-others = c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
-trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
+neuropsy_disesaes <- c("insominia","BD","MDD","Nrt_new","Scz_new")
+immune_diseases <- c("AID","Hypothyroidism","RA","ibd","cd","uc")
+others <- c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
+trait_meta <- tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     official_names = c("Insomnia","Bipolar disorder","Depression","Neuroticism","Schizophrenia",
                                        "Autoimmune diseases","Hypothroidism","Rheumatoid arthritis","Inflammatory bowel disease","Crohn's disease","Ulcerative colitis",
                                        "Smoking","BMI","College education","Erythrocyte count","Lymphocyte count","Monocyte count","Type I diabetes","Type II diabetes","Cardiovascular diseases",
@@ -32,14 +32,14 @@ trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     trait_type = factor(c(rep("neuropsy",length(neuropsy_disesaes)), rep("immune",length(immune_diseases)), rep("others",length(others))), levels=c("neuropsy","immune","others")) )
 
 #load results - droplet
-droplet_res = read.table( here("results","Tabula_muris","droplet","seismic","droplet_res.txt"), header = T, sep = "\t") %>%
+droplet_res <- read.table( here("results","Tabula_muris","droplet","seismic","new_droplet_res.txt"), header = T, sep = "\t") %>%
   as_tibble() %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases ,others)))  %>%
   mutate(cell_type = factor(cell_type, levels = sort(cell_type))) %>%
   arrange(cell_type)
 
 #load results - other frameworks
-droplet_scdrs_res = list.files(here("results","Tabula_muris","droplet","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
+droplet_scdrs_res <- list.files(here("results","Tabula_muris","droplet","scDRS"),pattern = "*.scdrs_group.cluster_name",full.names = T) %>% 
   set_names(str_extract(string = ., pattern = "(?<=/)[^/]+$") %>% gsub(pattern = ".scdrs_group.cluster_name", replacement = "", x=.)) %>%
   map(~read.table(.x, header=T, sep="\t") %>% as_tibble()) %>%
   map(~mutate(.x, P_val = pnorm(assoc_mcz, lower.tail = F))) %>%
@@ -50,7 +50,7 @@ droplet_scdrs_res = list.files(here("results","Tabula_muris","droplet","scDRS"),
   mutate(cell_type = factor(cell_type, levels = levels(droplet_res$cell_type))) %>%
   arrange(cell_type)
 
-droplet_fuma_res = list.files(here("results","Tabula_muris","droplet","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+droplet_fuma_res <- list.files(here("results","new_Tabula_muris","droplet","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -58,7 +58,7 @@ droplet_fuma_res = list.files(here("results","Tabula_muris","droplet","FUMA"), p
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-droplet_magma_res = list.files(here("results","Tabula_muris","droplet","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+droplet_magma_res <- list.files(here("results","new_Tabula_muris","droplet","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -66,7 +66,7 @@ droplet_magma_res = list.files(here("results","Tabula_muris","droplet","S-MAGMA"
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-droplet_ct_meta = tibble(cell_type = as.character(droplet_res$cell_type)) %>%
+droplet_ct_meta <- tibble(cell_type = as.character(droplet_res$cell_type)) %>%
   mutate(tissue = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[1]) %>% unlist) %>%
   mutate(cell_ontology = strsplit(cell_type, split=".", fixed = T) %>% map(~.x[2]) %>% unlist) %>%
   mutate(tissue = gsub(pattern = "Heart_and_|Limb_|_Gland",replacement = "", x = tissue) ) %>%
@@ -81,16 +81,16 @@ droplet_ct_meta = tibble(cell_type = as.character(droplet_res$cell_type)) %>%
   mutate(ontology_new = ifelse(tissue_new == "Blood/Immune", paste0(tissue,".",cell_ontology),cell_ontology)) 
 
 #harmonise cell types for FUMA/S-MAGMA output
-droplet_fuma_ct_mapping = read.table(here("data","expr","Tabula_muris","tm_droplet.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
-droplet_magma_ct_mapping = read.table(here("data","expr","Tabula_muris","tm_droplet.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+droplet_fuma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_droplet.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+droplet_magma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_droplet.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
 
-droplet_fuma_res = droplet_fuma_ct_mapping %>% 
+droplet_fuma_res <- droplet_fuma_ct_mapping %>% 
   left_join(droplet_fuma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name )  %>% 
   mutate(cell_type = factor(cell_type, levels = levels(droplet_res$cell_type))) %>%
   arrange(cell_type)
 
-droplet_magma_res = droplet_magma_ct_mapping %>% 
+droplet_magma_res <- droplet_magma_ct_mapping %>% 
   left_join(droplet_magma_res, by = c("encoded_name" = "cell_type")) %>%
   select( -encoded_name ) %>% 
   mutate(cell_type = factor(cell_type, levels = levels(droplet_res$cell_type))) %>%
@@ -100,9 +100,9 @@ droplet_magma_res = droplet_magma_ct_mapping %>%
 library(ComplexHeatmap)
 library(circlize)
 ht_opt(TITLE_PADDING=unit(5,"mm"))
-col_fun = colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
+col_fun <- colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
 
-droplet_fdr_mat = droplet_res %>%
+droplet_fdr_mat <- droplet_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type",neuropsy_disesaes,immune_diseases,others))) %>%
   select(where(is.double)) %>%
@@ -130,7 +130,7 @@ Heatmap(-log10(droplet_fdr_mat), name = "-log10(FDR)",cluster_rows = F,cluster_c
         })
 
 #### correlation ####
-all_results_droplet = list(seismic = droplet_res, scDRS = droplet_scdrs_res, FUMA = droplet_fuma_res, `S-MAGMA` = droplet_magma_res) %>%
+all_results_droplet <- list(seismic = droplet_res, scDRS = droplet_scdrs_res, FUMA = droplet_fuma_res, `S-MAGMA` = droplet_magma_res) %>%
   map(~pivot_longer(.x, !cell_type, names_to = "trait",values_to = "Pvalue")) %>% 
   map2(names(.), ~mutate(.x, method = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>%
@@ -141,7 +141,7 @@ all_results_droplet = list(seismic = droplet_res, scDRS = droplet_scdrs_res, FUM
   mutate(trait_type = trait_meta$trait_type[match(trait,trait_meta$trait_names)]) %>%
   select(cell_type,trait_name, trait_type, method, Pvalue, fdr)
 
-cor_droplet_metric = all_results_droplet %>%
+cor_droplet_metric <- all_results_droplet %>%
   group_by(trait_name, method) %>%
   mutate(method = factor(method, levels=c("S-MAGMA","FUMA","scDRS","seismic"))) %>% 
   arrange(cell_type) %>%

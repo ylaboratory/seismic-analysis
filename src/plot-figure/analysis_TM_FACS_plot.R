@@ -139,10 +139,10 @@ ggvenn(facs_venn,text_size = 6,set_name_size=6,show_percentage = F,fill_color = 
 library(ComplexHeatmap)
 library(circlize)
 ht_opt(TITLE_PADDING=unit(5,"mm"))
-col_fun = colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
+col_fun <- colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
 
 #seismic heatmap
-facs_fdr_mat = facs_res %>%
+facs_fdr_mat <- facs_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type",neuropsy_disesaes,immune_diseases,others))) %>%
   select(where(is.double)) %>%
@@ -170,7 +170,7 @@ Heatmap(-log10(facs_fdr_mat), name = "-log10(FDR)",cluster_rows = F,cluster_colu
         })
 
 # scDRS heatmap
-facs_scdrs_mat = facs_scdrs_res %>%
+facs_scdrs_mat <- facs_scdrs_res %>%
     mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
     select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) %>%
     select(where(is.double)) %>%
@@ -199,7 +199,7 @@ Heatmap(-log10(facs_scdrs_mat), name = "-log10(FDR)", cluster_rows = F, cluster_
           })
 
 # FUMA heatmap
-facs_fuma_mat = facs_fuma_res %>%
+facs_fuma_mat <- facs_fuma_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) %>%
   select(where(is.double)) %>%
@@ -228,7 +228,7 @@ Heatmap(-log10(facs_fuma_mat), name = "-log10(FDR)", cluster_rows = F, cluster_c
         })
 
 # S-MAGMA heatmap
-facs_magma_mat = facs_magma_res %>%
+facs_magma_mat <- facs_magma_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) %>%
   select(where(is.double)) %>%
@@ -257,7 +257,7 @@ Heatmap(-log10(facs_magma_mat), name = "-log10(FDR)", cluster_rows = F, cluster_
         })
 
 ##### plot correlation #####
-all_results_facs = list(seismic = facs_res, scDRS = facs_scdrs_res, FUMA = facs_fuma_res, `S-MAGMA` = facs_magma_res) %>%
+all_results_facs <- list(seismic = facs_res, scDRS = facs_scdrs_res, FUMA = facs_fuma_res, `S-MAGMA` = facs_magma_res) %>%
   map(~pivot_longer(.x, !cell_type, names_to = "trait",values_to = "Pvalue")) %>% 
   map2(names(.), ~mutate(.x, method = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>%
@@ -268,7 +268,7 @@ all_results_facs = list(seismic = facs_res, scDRS = facs_scdrs_res, FUMA = facs_
   mutate(trait_type = trait_meta$trait_type[match(trait,trait_meta$trait_names)]) %>%
   select(cell_type,trait_name, trait_type, method, Pvalue, fdr)
 
-cor_facs_metric = all_results_facs %>%
+cor_facs_metric <- all_results_facs %>%
   group_by(trait_name, method) %>%
   mutate(method = factor(method, levels=c("S-MAGMA","FUMA","scDRS","seismic"))) %>% 
   arrange(cell_type) %>%
@@ -309,7 +309,7 @@ ggplot( cor_facs_metric %>%
 
 ##### plot difference heatmap ####
 #difference heatmap function
-diff_heatmap = function(fdr_mat_1, fdr_mat_2, color_vec, ...){ #neither, both, method1, method2
+diff_heatmap <- function(fdr_mat_1, fdr_mat_2, color_vec, ...){ #neither, both, method1, method2
   ht_opt(TITLE_PADDING=unit(5,"mm"))
   agree_mat = ((fdr_mat_1<=0.05)==(fdr_mat_2<=0.05))
   color_mat = ifelse(agree_mat,

@@ -47,34 +47,37 @@ load(here("data","expr","Tabula_sapiens","TS_processed.rda"))
 
 ###### magma data preparation #####
 #cpm
-assay(ts_obj, "cpm")  = scuttle::calculateCPM(ts_obj, assay.type = "counts")
+assay(ts_obj, "cpm") <- scuttle::calculateCPM(ts_obj, assay.type = "counts")
 
 #calculate mean expression and map to human gene id
-data("mmu_hsa_mapping")
-ts_obj = cal_stat(ts_obj, meta_data = as.data.frame(colData(ts_obj)), group = "cluster_name",assay_name ="cpm" ,mean_only=T)
-ts_obj= trans_mmu_to_hsa_stat(ts_obj, gene_mapping_table = mmu_hsa_mapping, from = "hsa_ensembl", to = "hsa_entrez")
+ts_mean <- calc_ct_mean(ts_obj, assay_name = "cpm", ct_label_col = "cluster_name")
+
+ts_mean_hsa <- seismicGWAS::translate_gene_ids(t(ts_mean), from = "hsa_ensembl")
 
 #print magma files
-print_magma_fuma_tbl(ts_obj, "MAGMA", main_table_path = here("data","expr","Tabula_sapiens","ts.top10_magma.txt"),
-                     aux_table_path = here("data","expr","Tabula_sapiens","ts.magma.aux.txt"))
+print_magma_fuma_tbl(t(ts_mean_hsa), "MAGMA", main_table_path = here("data","expr","Tabula_sapiens","new_ts.top10_magma.txt"),
+                     aux_table_path = here("data","expr","Tabula_sapiens","new_ts.magma.aux.txt"))
+
 
 ###### fuma data preparation ##### 
 #logcpm
-ts_obj = scuttle::logNormCounts(ts_obj, assay.type = "cpm",size_factors=rep(1, ncol(ts_obj))) #no size factors
+ts_obj <- scuttle::logNormCounts(ts_obj, assay.type = "cpm",size_factors=rep(1, ncol(ts_obj))) #no size factors
 
 #calculate mean expression and map to human gene id (change assay)
-ts_obj = cal_stat(ts_obj, meta_data = as.data.frame(colData(ts_obj)), group = "cluster_name",assay_name ="logcounts", mean_only=T)
-ts_obj= trans_mmu_to_hsa_stat(ts_obj, gene_mapping_table = mmu_hsa_mapping, from = "hsa_ensembl", to = "hsa_entrez")
+ts_mean_log <- calc_ct_mean(ts_obj, assay_name = "logcounts", ct_label_col = "cluster_name")
+
+ts_mean_log_hsa <- seismicGWAS::translate_gene_ids(t(ts_mean_log), from = "hsa_ensembl")
 
 #print fuma files
-print_magma_fuma_tbl(ts_obj, "FUMA", main_table_path = here("data","expr","Tabula_sapiens","ts.fuma.txt"),
-                     aux_table_path = here("data","expr","Tabula_sapiens","ts.fuma.aux.txt"))
+print_magma_fuma_tbl(t(ts_mean_log_hsa), "FUMA", main_table_path = here("data","expr","Tabula_sapiens","new_ts.fuma.txt"),
+                     aux_table_path = here("data","expr","Tabula_sapiens","new_ts.fuma.aux.txt"))
+
 
 ##scdrs 
 #cells to keep (only cell types in the same analysis)
-ts_obj_clean = ts_obj[,ts_obj$cluster_name %in% names(get_seismic_ct_info(ts_obj, "cell_num"))]
+ts_obj_clean <- ts_obj[,ts_obj$cluster_name %in% colnames(ts_mean_log_hsa)]
 
-facs_ad = AnnData(X = assay(ts_obj_clean,"counts")%>% set_rownames(rownames(rowData(ts_obj_clean))) %>% set_colnames(paste0("cell",1:ncol(.))) %>% t(), 
+facs_ad <- AnnData(X = assay(ts_obj_clean,"counts")%>% set_rownames(rownames(rowData(ts_obj_clean))) %>% set_colnames(paste0("cell",1:ncol(.))) %>% t(), 
                   obs = colData(ts_obj_clean) %>% as.data.frame %>% set_rownames(paste0("cell",1:nrow(.))), 
                   var = data.frame(symbol= rownames(ts_obj_clean)) %>% set_rownames(.$symbol) )
 

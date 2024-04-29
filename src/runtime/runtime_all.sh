@@ -15,7 +15,7 @@ do
             mkdir -p results/runtime/"$i"/"$j"
         fi
         #run the script
-        bash src/runtime/podman_run_per_ds.sh container_"$i"_"$j"  data/expr/runtime/expr_rda/"$i"/sample."$j".rda data/expr/runtime/expr_h5ad/"$i"/sample."$j".h5ad data/runtime/"$i"/"$j"
+        nohup bash src/runtime/podman_run_per_ds.sh container_"$i"_"$j"  data/expr/runtime/expr_rda/"$i"/sample."$j".rda data/expr/runtime/expr_h5ad/"$i"/sample."$j".h5ad data/runtime/"$i"/"$j" > data/log/runtime/"$i"_"$j".log 2>&1 &
         echo "Finished running for sample size $i and data set $j"
     done
 done    
