@@ -47,7 +47,7 @@ load(here("data","expr","Tabula_sapiens","TS_processed.rda"))
 
 ###### magma data preparation #####
 #cpm
-assay(ts_obj, "cpm") <- scuttle::calculateCPM(ts_obj, assay.type = "counts")
+assay(ts_obj, "cpm") <- scuttle::calculateCPM(ts_obj, assay.type = "counts", size.factors = colSums(assay(ts_obj, "counts")))
 
 #calculate mean expression and map to human gene id
 ts_mean <- calc_ct_mean(ts_obj, assay_name = "cpm", ct_label_col = "cluster_name")

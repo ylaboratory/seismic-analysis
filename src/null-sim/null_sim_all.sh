@@ -13,6 +13,14 @@ do
         results/null_sim/expr_rs/new_ds_"$i".null_res.txt data/temp &
 done
 
+for i in {8..10}
+do
+    nohup Rscript src/null-sim/fuma_null_sim.R data/expr/null_sim/expr_rda_rs/expr_ds_"$i".rda \
+        data/expr/null_sim/seed_table/sample_cell_idx."$i".txt data/gwas/null_sim/zscore/gs_"$i".genes.out \
+        data/gwas/null_sim/magma_raw/gs_"$i".genes.raw data/log/null_sim/ds_"$i".fuma.process.log  "$NUM_CORE"\
+        results/null_sim/expr_rs/fuma_ds_"$i".null_res.txt data/temp &
+done
+
 #run cross every sample and every seed: scdrs
 for i in {1..10}
 do

@@ -39,9 +39,9 @@ source(here("src","tools","sparse_mat_util.R"))
 load(here("data","expr","Tabula_muris","TM_processed.rda"))
 
 ###### magma data preparation #####
-#cpm
-assay(facs_obj_sce, "cpm")  <- scuttle::calculateCPM(facs_obj_sce, assay.type = "counts")
-assay(droplet_obj_sce, "cpm")  <- scuttle::calculateCPM(droplet_obj_sce, assay.type = "counts")
+#cpm 
+assay(facs_obj_sce, "cpm")  <- scuttle::calculateCPM(facs_obj_sce, assay.type = "counts", size.factors = colSums(assay(facs_obj_sce, "counts")))
+assay(droplet_obj_sce, "cpm")  <- scuttle::calculateCPM(droplet_obj_sce, assay.type = "counts", size.factors = colSums(assay(droplet_obj_sce, "counts")))
 
 #calculate mean expression and map to human gene id
 facs_mean <- calc_ct_mean(facs_obj_sce, assay_name = "cpm", ct_label_col = "cluster_name")
@@ -59,7 +59,7 @@ print_magma_fuma_tbl(t(droplet_mean_hsa), "MAGMA", main_table_path = here("data"
 
 ###### fuma data preparation ##### 
 #logcpm
-facs_obj_sce <- scuttle::logNormCounts(facs_obj_sce, assay.type = "cpm",size_factors=rep(1, ncol(facs_obj_sce))) #no size factors
+facs_obj_sce <- scuttle::logNormCounts(facs_obj_sce, assay.type = "cpm", size_factors=rep(1, ncol(facs_obj_sce))) #no size factors
 droplet_obj_sce <- scuttle::logNormCounts(droplet_obj_sce, assay.type = "cpm",size_factors=rep(1, ncol(droplet_obj_sce))) #no size factors
 
 #calculate mean expression and map to human gene id (change assay)

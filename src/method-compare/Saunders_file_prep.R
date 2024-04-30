@@ -47,7 +47,7 @@ load(here("data","expr","Saunders","Saunders_processed.rda"))
 
 ###### magma data preparation #####
 #cpm
-assay(brain_sce, "cpm")  <- scuttle::calculateCPM(brain_sce, assay.type = "counts")
+assay(brain_sce, "cpm")  <- scuttle::calculateCPM(brain_sce, assay.type = "counts", size.factors = colSums(assay(brain_sce, "counts")))
 
 #calculate mean expression and map to human gene id
 fine_cluster_mean <- calc_ct_mean(brain_sce, assay_name = "cpm", ct_label_col = "fine_cluster")

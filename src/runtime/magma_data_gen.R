@@ -29,15 +29,15 @@ source("scripts/sparse_mat_util.R")
 #load data set
 load(data_path)
 #transform to cpm
-assay(ts.sce, "cpm") = scuttle::calculateCPM(ts.sce, assay.type = "decontXcounts")
+assay(ts.sce, "cpm") = scuttle::calculateCPM(ts.sce, assay.type = "decontXcounts", size.factors = colSums(assay(ts.sce, "decontXcounts")))
 
 #calculate specific genes 
 suppressMessages(library("seismicGWAS"))
 
 #### data set processing for magma
 start = Sys.time()
-mean_mat <- calc_ct_mean(ts.sce, assay_name = "cpm", ct_label_col = group)
-mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "mmu_symbol")
+mean_mat <- calc_ct_mean(ts.sce, assay_name = "cpm", ct_label_col = "cell_ontology_class")
+mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "hsa_ensembl")
 end = Sys.time()
 processing_time = as.numeric(difftime(end, start, units = "secs"))
 

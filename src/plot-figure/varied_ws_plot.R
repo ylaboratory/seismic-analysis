@@ -18,25 +18,25 @@ if (!require("here")){
 }
 
 #load trait meta information
-neuropsy_disesaes = c("insominia","BD","MDD","Nrt_new","Scz_new")
-immune_diseases = c("AID","Hypothyroidism","RA","ibd","cd","uc")
-others = c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
-trait_meta = tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
+neuropsy_disesaes <- c("insominia","BD","MDD","Nrt_new","Scz_new")
+immune_diseases <- c("AID","Hypothyroidism","RA","ibd","cd","uc")
+others <- c("Smoking","BMI","College_edu","RBC","Lymphocyte_count","Monocyte_count","T1D","T2D_2","Cardiovas","SBP","AF","CKD","glucose_q","HDL_q","LDL_q","TG_q")
+trait_meta <- tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others),
                     official_names = c("Insomnia","Bipolar disorder","Depression","Neuroticism","Schizophrenia",
                                        "Autoimmune diseases","Hypothroidism","Rheumatoid arthritis","Inflammatory bowel disease","Crohn's disease","Ulcerative colitis",
                                        "Smoking","BMI","College education","Erythrocyte count","Lymphocyte count","Monocyte count","Type I diabetes","Type II diabetes","Cardiovascular diseases",
                                        "Systolic blood pressure","Atrial fibrillation","Chronic kidney disease","Glucose level","HDL level","LDL level","Triglyceride level"),
                     trait_type = factor(c(rep("neuropsy",length(neuropsy_disesaes)), rep("immune",length(immune_diseases)), rep("others",length(others))), levels=c("neuropsy","immune","others")) )
 
-varied_ws_res = list.files(here("results","varied_ws")) %>%
-  set_names(gsub(pattern = "all_res\\.|\\.txt",  x= unlist(.), replacement = "")) %>%
+varied_ws_res <- list.files(here("results","varied_ws"), pattern="new_all_res") %>%
+  set_names(gsub(pattern = "new_all_res\\.|\\.txt",  x= unlist(.), replacement = "")) %>%
   map(~read.table(here("results","varied_ws",.x), header = T, sep = "\t")) %>% 
   map(~pivot_longer(.x, !cell_type, names_to = "trait",values_to = "Pvalue")) %>%
   map2(names(.), ~mutate(.x, window_range = .y)) %>%
   purrr::reduce(~rbind(.x,.y)) %>%
   mutate(Pvalue = -log10(Pvalue)) #-log10 Pvalues
 
-varied_ws_cor = varied_ws_res %>% 
+varied_ws_cor <- varied_ws_res %>% 
   split(.$trait) %>% 
   map(~select(.x, - trait)) %>% 
   map(~pivot_wider(.x, names_from = window_range, values_from = Pvalue)) %>%

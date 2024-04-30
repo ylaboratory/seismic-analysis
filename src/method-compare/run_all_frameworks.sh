@@ -2,10 +2,10 @@
 granularity=("fine_cluster" "subclass" "region_class" "region_subclass" "region_cluster")
 
 ##### run FUMA and S-MAGMA for the TM FACS datasets and TM droplet datasets
-bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_muris/tm_facs.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_muris/FACS/S-MAGMA
-bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_muris/tm_facs.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_muris/FACS/FUMA
-bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_muris/tm_droplet.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_muris/droplet/S-MAGMA
-bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_muris/tm_droplet.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_muris/droplet/FUMA
+bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_muris/new_tm_facs.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_muris/FACS/S-MAGMA
+bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_muris/new_tm_facs.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_muris/FACS/FUMA
+bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_muris/new_tm_droplet.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_muris/droplet/S-MAGMA
+bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_muris/new_tm_droplet.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_muris/droplet/FUMA
 
 #run scDRS for the TM data FACS set
 conda activate qlrisotto #activate your own environment
@@ -26,8 +26,8 @@ for f in $all_gs_files; do
 done
 
 #### run FUMA and S-MAGMA for the TS data sets
-bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_sapiens/ts.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_sapiens/FACS/S-MAGMA
-bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_sapiens/ts.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_sapiens/FACS/FUMA
+nohup bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_sapiens/new_ts.top10_magma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_sapiens/FACS/S-MAGMA &
+nohup bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_sapiens/new_ts.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/new_Tabula_sapiens/FACS/FUMA &
 
 #run scDRS for the TM data FACS set
 conda activate qlrisotto #activate your own environment

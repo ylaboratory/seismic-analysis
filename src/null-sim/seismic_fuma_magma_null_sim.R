@@ -35,20 +35,6 @@ num_cores <- as.numeric(args[6])
 output_file <- args[7]
 temp_dir <- args[8]
 
-#
-data_path <- "data/expr/null_sim/expr_rda_rs/expr_ds_1.rda"
-load(data_path)
-cell_seed <- read.table("data/expr/null_sim/seed_table/sample_cell_idx.1.txt", header = T, sep="\t")
-z_score_file <- "data/gwas/null_sim/zscore/gs_1.genes.out"
-trait_zscore <- read.table(z_score_file, header = T)
-magma_raw_file <- "data/gwas/null_sim/magma_raw/gs_1.genes.raw"
-process_file <- "data/log/null_sim/ds_1.all.process.log"
-num_cores <- 10
-output_file <- "results/null_sim/expr_rs/new_ds_1.null_res.txt"
-tmp_dir <- "data/temp"
-
-print("NUM_CORE=",num_cores)
-
 #return a seismic p value for a target cell type
 seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type){
   seismic_sscore  <- calc_specificity(sce = data_sce , ct_label_col = group)
@@ -56,14 +42,6 @@ seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type){
   p_value_df <- get_ct_trait_associations(sscore = seismic_sscore_hsa, magma = gwas_zscore_df)
   return(p_value_df$pvalue[p_value_df$cell_type==target_cell_type])
 }
-
-data_sce = sce
-temp_file_header = paste0(tmp_dir,"/test_current")
-magma_raw_path = magma_raw_file
-cell_seed_vec = cell_seed[1,] %>% unlist
-group = "cell_ontology_class"
-target_cell_type = "fake_cell_type"
-colData(data_sce)[[group]][cell_seed_vec] = "fake_cell_type" 
 
 #return a s-magma p value for target cell type
 magma_p_value <- function(data_sce, temp_file_header, magma_raw_path, group, target_cell_type) {

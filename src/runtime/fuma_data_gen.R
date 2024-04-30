@@ -32,15 +32,13 @@ load(data_path)
 #transform to cpm
 assay(ts.sce,"logcounts") <- sweep_sparse(assay(ts.sce,"decontXcounts"),margin=2, stats=sparseMatrixStats::colSums2(assay(ts.sce,"decontXcounts"))/1e6,fun = "/") %>%
   transform_sparse(fun = function(x) log(x+1))
-#log TPM+1
 
 #processing
 start = Sys.time()
-mean_mat <- calc_ct_mean(ts.sce, assay_name = "cpm", ct_label_col = group)
-mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "mmu_symbol")
+mean_mat <- calc_ct_mean(ts.sce, assay_name = "logcounts", ct_label_col = "cell_ontology_class")
+mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "hsa_ensembl")
 end = Sys.time()
 processing_time = as.numeric(difftime(end, start, units = "secs"))
-
 
 #write output
 print_magma_fuma_tbl(t(mean_mat_hsa), table_type = "FUMA", main_table_path = paste0(tmp_file_header,".fuma.txt"))

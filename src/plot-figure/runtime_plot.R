@@ -12,23 +12,51 @@ if (!require("magrittr")){
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("here")){
-  install.packages("here")
-  library("here")
-}
+
 
 #color
 color_mapping_vec = c("scDRS" ="#46B8DAFF" , "seismic" = "#D43F3AFF" , "S-MAGMA"="#EEA236FF" , "FUMA"="#5CB85CFF")
 
+##### load runtime data #####
+#function
+load_and_extract <- function(data_set) {
+  load(data_set)
+  data.frame(processing_time = unlist(processing_time), association_time = unlist(group_time))
+}
+
+#parameters
+sample_size <- c("10k", "25k", "50k", "100k", "150k", "200k", "250k", "300k")
+ds <- paste0("ds_",1:5)
+
 #load data
-all_time = list("seismic" = here("results","runtime","seismic","runtime.txt"),
-                "scDRS" = here("results","runtime","scDRS","runtime.txt"),
-                "FUMA" = here("results","runtime","FUMA","runtime.txt"),
-                "S-MAGMA" = here("results","runtime","S-MAGMA","runtime.txt")) %>%
-  map(~read.table(.x,sep="\t",header=T)) %>% 
-  map(~as_tibble(.x)) %>% 
-  map(~group_by(.x, size)) %>% 
-  map(~mutate(.x, total_time = processing_time + association_time)) %>%
+all_time_seismic <- expand.grid(size = sample_size, ds_index = ds) %>%
+  rowwise() %>%
+  mutate(data = map2(size, ds_index, ~load_and_extract(here("results", "runtime", .x, .y, paste0(.y, ".seismic.rda"))))) %>%
+  unnest(data) %>%
+  mutate(total_time = processing_time + association_time)
+
+all_time_fuma <- expand.grid(size = sample_size, ds_index = ds) %>%
+  rowwise() %>%
+  mutate(data = map2(size, ds_index, ~load_and_extract(here("results", "runtime", .x, .y, paste0(.y, ".fuma.rda"))))) %>%
+  unnest(data) %>% 
+  mutate(total_time = processing_time + association_time)
+
+all_time_magma <- expand.grid(size = sample_size, ds_index = ds) %>%
+  rowwise() %>%
+  mutate(data = map2(size, ds_index, ~load_and_extract(here("results", "runtime", .x, .y, paste0(.y, ".magma.rda"))))) %>%
+  unnest(data) %>% 
+  mutate(total_time = processing_time + association_time)
+
+all_time_scdrs <- read.table(here("results","runtime","scDRS","runtime.txt"), header = T, sep="\t") %>%
+  as_tibble() %>%
+  mutate(total_time = processing_time+score_time+association_time)
+
+#load data
+all_time <- list("seismic" = all_time_seismic,
+                 "scDRS" = all_time_scdrs,
+                 "FUMA" = all_time_fuma,
+                 "S-MAGMA" = all_time_magma) %>%
+  map(~group_by(.x ,size)) %>%
   map(~mutate(.x, time_sd = sd(total_time),total_time = mean(total_time))) %>% 
   map(~ungroup(.x)) %>% 
   map(~distinct(.x, size,total_time,time_sd)) %>%
@@ -47,7 +75,7 @@ ggplot(all_time, aes(x = size, y = total_time, group = method, color = method)) 
        x = "number of cells (thousands, log scale)",
        y = "total running time (seconds, log scale)") +
   scale_color_manual(values=color_mapping_vec)+
-  theme_minimal() +
+  theme_classic() +
   theme(plot.title = element_text(hjust = 0.5))
 
 #print

@@ -20,11 +20,10 @@ suppressMessages(library("seismicGWAS"))
 
 #import data set
 suppressMessages(load(data_path))
-data("mmu_hsa_mapping")
 
 start <- Sys.time()
 seismic_sscore  <- calc_specificity(sce = ts.sce, ct_label_col = "cell_ontology_class")
-seismic_sscore_hsa <- translate_gene_ids(seismic_sscore, from = "mmu_symbol")
+seismic_sscore_hsa <- translate_gene_ids(seismic_sscore, from = "hsa_ensembl")
 end <- Sys.time()
 
 #processing time
@@ -37,7 +36,7 @@ group_time = list()
 
 for (gs_file in gs_file_all){
   gs_file_path <- paste0(gs_dir,"/",gs_file)
-  zscore <- read.table(gs_file, header = T)
+  zscore <- read.table(gs_file_path, header = T)
   t0 = Sys.time()
   p_value_df <- get_ct_trait_associations(sscore = seismic_sscore_hsa, magma = zscore)
   t1 = Sys.time()
