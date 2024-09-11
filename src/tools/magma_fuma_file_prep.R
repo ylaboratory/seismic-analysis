@@ -56,6 +56,7 @@ calc_ct_mean <- function(sce, assay_name = "logcounts",
   # calculate mean gene expression per cell type
   factor_mat <- Matrix::fac2sparse(factor(ct_groups$ct, levels = unique(ct_groups$ct)))
   sum_mat <- Matrix::t(data_mat %*% Matrix::t(factor_mat))
+  #return(list(factor_mat, data_mat, ct_groups))
   mean_mat <- sum_mat %>%
     sweep_sparse(margin = 1, stats = ct_groups_n$N, fun = "/") %>%
     magrittr::set_colnames(rownames(data_mat)) %>%

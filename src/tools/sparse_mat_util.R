@@ -2,8 +2,8 @@
 
 sweep_sparse = function(x, margin, stats, fun = "*") {
   #handle error 
-  if (!class(x)[1] %in% c("dgTMatrix","dgCMatrix","dgRMatrix")){
-    stop("Only several saprse matrix types are supported: dgTMatrix, dgCMatrix, dgRMatrix")
+  if (!class(x)[1] %in% c("dgTMatrix","dgCMatrix","dgRMatrix","dgeMatrix","matrix")){
+    stop("Only several saprse matrix types are supported: dgTMatrix,dgCMatrix,dgRMatrix,dgeMatrix,matrix")
   }
   if((length(stats)!=1) & (length(stats)!=dim(x)[margin])){
     stop("stats doesn't match the dimension of the certain margin")
@@ -16,25 +16,25 @@ sweep_sparse = function(x, margin, stats, fun = "*") {
     stop("Only several saprse matrix types are supported: dgTMatrix, dgCMatrix, dgRMatrix")
   }
   if (class(x)[1]=="dgRMatrix"){
-    i = rep(1:x@Dim[1], diff(x@p)) -1
+    i <- rep(1:x@Dim[1], diff(x@p)) -1
   }else{
-    i = x@i
+    i <- x@i
   }
   if (class(x)[1]=="dgCMatrix"){
-    j = rep(1:x@Dim[2], diff(x@p)) -1
+    j <- rep(1:x@Dim[2], diff(x@p)) -1
   }else{
-    j = x@j
+    j <- x@j
   }
   if (margin == 1) {
-    idx = i + 1
+    idx <- i + 1
   } else {
-    idx = j + 1
+    idx <- j + 1
   }
   if(length(stats )==1){
-    stats = rep(stats, x@Dim[margin])
+    stats <- rep(stats, x@Dim[margin])
   }
-  f = match.fun(fun)
-  x@x = f(x@x, stats[idx])
+  f <- match.fun(fun)
+  x@x <- f(x@x, stats[idx])
   return(x)
 }
 
@@ -43,7 +43,11 @@ transform_sparse = function(x, fun = "log2") {
   if (!class(x)[1] %in% c("dgTMatrix","dgCMatrix","dgRMatrix")){
     stop("Only several saprse matrix types are supported: dgTMatrix, dgCMatrix, dgRMatrix")
   }
-  f = match.fun(fun)
-  x@x = f(x@x)
+  if (class(fun) != "function"){
+    f <- match.fun(fun)
+  }else{
+    f <- fun
+  }
+  x@x <- f(x@x)
   return(x)
 }
