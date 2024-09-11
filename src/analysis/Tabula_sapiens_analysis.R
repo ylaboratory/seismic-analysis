@@ -74,7 +74,7 @@ ts_res <- ts_association %>%
   map2(names(.), ~set_colnames(.x, c("cell_type", .y))) %>%
   purrr::reduce(~left_join(.x, .y, by="cell_type"))
 
-write.table(ts_res, here("results","Tabula_sapiens","seismic","new_ts_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(ts_res, here("results","Tabula_sapiens","seismic","ts_res.txt"),quote=F, sep="\t", row.names = F)
 
 ##save objects for later 
 save(ts_obj, file=here("data","expr","Tabula_sapiens","TS_processed.rda"))

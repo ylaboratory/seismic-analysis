@@ -91,15 +91,15 @@ fine_cluster_res <- fine_cluster_association %>%
   map2(names(.), ~set_colnames(.x, c("cell_type", .y))) %>%
   purrr::reduce(~left_join(.x, .y, by="cell_type"))
 
-write.table(fine_cluster_res , here("results","Saunders","fine_cluster","seismic","new_fine_cluster_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(fine_cluster_res , here("results","Saunders","fine_cluster","seismic","fine_cluster_res.txt"),quote=F, sep="\t", row.names = F)
 write.table(subclass_association %>% select(cell_type, pvalue) %>% set_colnames(c("cell_type","PD")),  
-            here("results","Saunders","subclass","seismic","new_subclass_res.txt"),quote=F, sep="\t", row.names = F)
+            here("results","Saunders","subclass","seismic","subclass_res.txt"),quote=F, sep="\t", row.names = F)
 write.table(region_subclass_association %>% select(cell_type, pvalue) %>% set_colnames(c("cell_type","PD")),
-            here("results","Saunders","region_subclass","seismic","new_region_subclass_res.txt"),quote=F, sep="\t", row.names = F)
+            here("results","Saunders","region_subclass","seismic","region_subclass_res.txt"),quote=F, sep="\t", row.names = F)
 write.table(region_class_association %>% select(cell_type, pvalue) %>% set_colnames(c("cell_type","PD")), 
-            here("results","Saunders","region_class","seismic","new_region_classs_res.txt"),quote=F, sep="\t", row.names = F)
+            here("results","Saunders","region_class","seismic","region_classs_res.txt"),quote=F, sep="\t", row.names = F)
 write.table(region_cluster_association %>% select(cell_type, pvalue) %>% set_colnames(c("cell_type","PD")), 
-            here("results","Saunders","region_cluster","seismic","new_region_cluster_res.txt"),quote=F, sep="\t", row.names = F)
+            here("results","Saunders","region_cluster","seismic","region_cluster_res.txt"),quote=F, sep="\t", row.names = F)
 
 #save data for later file preparation
 save(brain_sce, file = here("data","expr","Saunders","Saunders_processed.rda") )

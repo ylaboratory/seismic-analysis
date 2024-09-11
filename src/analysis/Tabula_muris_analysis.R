@@ -107,8 +107,8 @@ droplet_res <- droplet_association %>%
   map2(names(.), ~set_colnames(.x, c("cell_type", .y))) %>%
   purrr::reduce(~left_join(.x, .y, by="cell_type"))
 
-write.table(facs_res, here("results","Tabula_muris","FACS","seismic","new_facs_res.txt"),quote=F, sep="\t", row.names = F)
-write.table(droplet_res, here("results","Tabula_muris","droplet","seismic","new_droplet_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(facs_res, here("results","Tabula_muris","FACS","seismic","facs_res.txt"),quote=F, sep="\t", row.names = F)
+write.table(droplet_res, here("results","Tabula_muris","droplet","seismic","droplet_res.txt"),quote=F, sep="\t", row.names = F)
 
 ##save objects for later 
 save(facs_obj_sce, droplet_obj_sce, file=here("data","expr","Tabula_muris","TM_processed.rda"))
