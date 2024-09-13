@@ -51,6 +51,9 @@ data/expr/*
 data/gwas/*
 data/ref/*
 
+#result file
+results/*
+
 #raw files
 raw/expr/*
 raw/gwas/*
