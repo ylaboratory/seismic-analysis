@@ -47,16 +47,13 @@ bin/*
 *.Robj
 
 #data files
-data/expr/*
-data/gwas/*
-data/ref/*
+data/*
 
 #result file
 results/*
 
 #raw files
-raw/expr/*
-raw/gwas/*
+raw/*
 
 #magma gene analysis results
 *.genes.out
@@ -92,4 +89,4 @@ nohup.out
 *.json
 
 #test files
-test.R 
+test.*
