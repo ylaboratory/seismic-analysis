@@ -1,5 +1,5 @@
 # Analysis scripts for *seismic*
-This repository contains all code and scripts required for the analysis for the *seismic* paper. Here is the organization of the repository:
+*seismic* is is a computationally efficient, powerful, and interpretable approach for identifying associations between complex traits and cell type-specific expression using GWAS summary statistics and single-cell RNA-seq data. This repository contains all code and scripts required for reproducing the results and figures of the paper, [Disentangling associations between complex traits and cell types with *seismic*](https://www.biorxiv.org/content/10.1101/2024.05.04.592534).  The repository is organized as follows:
 
 - bin: This directory stores applications, such as MAGMA and scDRS.
 
@@ -14,10 +14,9 @@ This repository contains all code and scripts required for the analysis for the 
 - src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
 
 ## Environment set up
-For the basic *seismic* analysis, only the package should be download and installed. Please refer to the package link and vignette to know more about the usage
-and the download of the package. To download and install the *seismic* package:
+The *seismic* framework is packed up as an R package named [*seismicGWAS*](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://ylaboratory.github.io/seismic/seismicGWAS.html) to know more about the usage and the download of the package. To download and install the package:
 
 ```{r}
 devtools::install_github("ylaboratory/seismicGWAS")
 ```
-This will be sufficient for the data analysis results. However, for the benchmarking and runtime analysis, where the cross-framework performance is compared, the corresponding environment should be set up. Please refer to the exact README file in the corresponding directory for the setup.
+This will be sufficient for the *seismic* trait-associated cell type analysis and influential gene analysis. To run the benchmarking analysis, please refer to the script in the `src/method-compare` subdirectory.
