@@ -12,10 +12,7 @@ if (!require("magrittr")){
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("here")){
-  install.packages("here")
-  library("here")
-}
+
 
 #load trait meta information
 neuropsy_disesaes <- c("insominia","BD","MDD","Nrt_new","Scz_new")
@@ -57,6 +54,6 @@ ggplot(varied_ws_cor, aes(Var1,Var2,fill=value)) +
   facet_wrap(~ trait) +
   theme_minimal() +
   labs(x = 'MAGMA gene analysis window size: downstream(kb)_upstream(kb)', y = 'MAGMA gene analysis window size: downstream(kb)_upstream(kb)',fill="correlation") +
-  ggtitle("Correlation of results by semsmicGWAS with varying window sizes")+
+  ggtitle("Correlation of results by semsmic with varying window sizes")+
   viridis::scale_fill_viridis() + 
   theme(axis.text.x = element_text(angle = 60, hjust = 1),plot.title = element_text(hjust = 0.5))

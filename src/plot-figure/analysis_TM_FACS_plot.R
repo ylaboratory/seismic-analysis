@@ -49,7 +49,7 @@ facs_scdrs_res <- list.files(here("results","Tabula_muris","FACS","scDRS"),patte
   mutate(cell_type = factor(cell_type, levels = levels(facs_res$cell_type))) %>%
   arrange(cell_type)
 
-facs_fuma_res <- list.files(here("results","new_Tabula_muris","FACS","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+facs_fuma_res <- list.files(here("results","Tabula_muris","FACS","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -57,7 +57,7 @@ facs_fuma_res <- list.files(here("results","new_Tabula_muris","FACS","FUMA"), pa
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-facs_magma_res <- list.files(here("results","new_Tabula_muris","FACS","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+facs_magma_res <- list.files(here("results","Tabula_muris","FACS","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -142,6 +142,40 @@ ht_opt(TITLE_PADDING=unit(5,"mm"))
 col_fun <- colorRamp2(c(-0.5, -log10(0.05), 4,10), viridis::viridis(4))
 
 #seismic heatmap
+facs_ct_meta_short = facs_ct_meta  %>% 
+  filter(!tissue %in% c("Bladder","Fat","Intestine","Muscle","Lung","Mammary","Skin","Spleen","Thymus","Tongue","Trachea"))
+
+facs_res_short = facs_res %>% filter(cell_type %in% facs_ct_meta_short$cell_type)
+
+facs_fdr_mat_short <- facs_res_short  %>%
+  mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
+  select(all_of(c("cell_type",neuropsy_disesaes,immune_diseases,others))) %>%
+  select(where(is.double)) %>%
+  as.matrix() %>%
+  t() %>%
+  set_colnames(facs_ct_meta_short$cell_type[match(facs_res_short$cell_type,facs_ct_meta_short$cell_type)]) %>%
+  set_rownames(trait_meta$official_names[match(rownames(.), trait_meta$trait_names)])
+
+Heatmap(-log10(facs_fdr_mat_short), name = "-log10(FDR)",cluster_rows = F,cluster_columns = F,show_column_dend = F, show_row_dend = F,rect_gp = gpar(col = "grey", lwd = 0.5), col = col_fun, 
+        column_split =facs_ct_meta_short$tissue_new[match(colnames(facs_fdr_mat_short),facs_ct_meta_short$cell_type)],
+        column_labels =facs_ct_meta_short$ontology_new[match(colnames(facs_fdr_mat_short),facs_ct_meta_short$cell_type)],
+        row_split = trait_meta$trait_type[match(rownames(facs_fdr_mat_short), trait_meta$official_names)] %>% factor(levels = c("neuropsy","immune","others")),
+        row_names_side = "left",
+        column_title_gp = gpar(fontsize=10),
+        row_names_gp = gpar(fontsize=8),
+        column_names_gp = gpar(fontsize=8),
+        column_names_rot = 55,
+        column_title_rot = 30,
+        cell_fun = function(j, i, x, y, w, h, fill) {
+          if(facs_fdr_mat_short[i, j] < 1e-2) {
+            grid.text("**", x, y, gp = gpar(fontsize = 8))
+          } else if(facs_fdr_mat_short[i, j] <= 0.05) {
+            grid.text("*", x, y, gp = gpar(fontsize = 8))
+          }
+        })
+
+
+
 facs_fdr_mat <- facs_res %>%
   mutate(across(where(is.double), ~p.adjust(.x, method ="fdr"))) %>%
   select(all_of(c("cell_type",neuropsy_disesaes,immune_diseases,others))) %>%
@@ -306,6 +340,18 @@ ggplot( cor_facs_metric %>%
   ggtitle("FACS data set, Spearman correlation across all cell types") +
   ylab("Spearman's correlation") + 
   theme(plot.title = element_text(hjust = 0.5))
+
+#calculate max
+#cor_facs_metric %>%
+#  mutate(method1 = strsplit(x=as.character(between), split=" and ") %>% map(~.x[[1]]) %>% unlist) %>%
+#  mutate(method2 = strsplit(x=as.character(between), split=" and ") %>% map(~.x[[2]]) %>% unlist) %>% 
+#  filter(method1 == "seismic" | method2=="seismic")
+
+#compare the most
+#all_results_facs %>%
+#  filter(fdr<=0.05) %>%
+#  group_by(trait_name, cell_type) %>% 
+#  filter(n()>=2, !"seismic" %in% method)
 
 ##### plot difference heatmap ####
 #difference heatmap function

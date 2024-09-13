@@ -34,7 +34,54 @@ process_file <- args[5]
 num_cores <- as.numeric(args[6])
 output_file <- args[7]
 temp_dir <- args[8]
+mmu_hsa_mapping <- args[9]
 
+load(mmu_hsa_mapping)
+mmu_hsa_mapping <- mmu_hsa_mapping %>% 
+  distinct(mmu_symbol, hsa_entrez) %>%
+  drop_na() %>%
+  group_by(mmu_symbol) %>% 
+  filter(n()==1) %>%
+  group_by(hsa_entrez) %>%
+  filter(n()==1) %>%
+  ungroup() %>%
+  mutate(hsa_entrez = as.character(hsa_entrez))
+
+
+#return a s-magma p value for target cell type
+magma_p_value <- function(data_sce, temp_file_header, magma_raw_path, group, target_cell_type) {
+  #prepare s-magma file
+  mean_mat <- calc_ct_mean(data_sce, assay_name = "counts", ct_label_col = group)
+  
+  mean_mat = mean_mat[, colnames(mean_mat) %in%mmu_hsa_mapping$mmu_symbol] %>% 
+    set_colnames(mmu_hsa_mapping$hsa_entrez[match( colnames(.), mmu_hsa_mapping$mmu_symbol)])
+  
+  mean_mat = mean_mat[, which(colSums(mean_mat)>0)]
+  
+  mean_mat <- sweep(mean_mat*1e6, MARGIN=1, STATS=rowSums(mean_mat), FUN="/")
+  
+  print_magma_fuma_tbl(mean_mat, "MAGMA", 
+                       main_table_path = paste0(temp_file_header, ".magma.txt"),
+                       aux_table_path = paste0(temp_file_header, ".magma.aux.txt"), verbose = F)
+  
+  #run magma
+  ms <- system(paste0(here("bin", "magma", "magma"), " --gene-results ", magma_raw_path, " --set-annot ", temp_file_header, ".magma.txt --out ", temp_file_header,".magma"), intern = TRUE)
+  
+  #read in results
+  magma_res_tbl <- read.table(paste0(temp_file_header, ".magma.gsa.out"), header = TRUE)
+  magma_annot_tbl <- read.table(paste0(temp_file_header, ".magma.aux.txt"), header = TRUE, sep="\t")
+  
+  #get the encoded name of the cell type
+  encoded_cell_type <- magma_annot_tbl$encoded_name[which(magma_annot_tbl$cell_type == target_cell_type)] 
+  
+  #get results
+  res_p_value <- magma_res_tbl$P[magma_res_tbl$VARIABLE==encoded_cell_type]
+  
+  #remove unwanted files
+  ms <- system(paste0("rm ", temp_file_header, ".*"), intern = TRUE)
+  
+  return(res_p_value)
+}
 
 fuma_p_value <- function(data_sce,  temp_file_header, magma_raw_path, group, target_cell_type) {
   #prepare fuma file
@@ -44,7 +91,7 @@ fuma_p_value <- function(data_sce,  temp_file_header, magma_raw_path, group, tar
                        main_table_path = paste0(temp_file_header, ".fuma.txt"),
                        aux_table_path = paste0(temp_file_header, ".fuma.aux.txt"), verbose = F)
   
-  ms = system(paste0(here("bin", "magma", "magma"), " --gene-results ", magma_raw_path, " --gene-covar ", temp_file_header, ".fuma.txt --model direction=greater --out ", temp_file_header,".fuma"), intern = TRUE)
+  ms = system(paste0(here("bin", "magma", "magma"), " --gene-results ", magma_raw_path, " --gene-covar ", temp_file_header, ".fuma.txt --model condition-hide=Average direction=greater --out ", temp_file_header,".fuma"), intern = TRUE)
   
   #read in results
   fuma_res_tbl <- read.table(paste0(temp_file_header, ".fuma.gsa.out"), header = TRUE)
@@ -66,6 +113,7 @@ fuma_p_value <- function(data_sce,  temp_file_header, magma_raw_path, group, tar
 get_p_value <- function(data_sce, gwas_zscore_df, magma_raw_path, gene_mapping_table, group, cell_seed_vec, temp_file_header) {
   #set target cell type
   colData(data_sce)[[group]][cell_seed_vec] <- "fake_cell_type" 
+  magma_p <- magma_p_value(data_sce, temp_file_header = temp_file_header, magma_raw_path = magma_raw_path, group = group, target_cell_type = "fake_cell_type")
   fuma_p <- fuma_p_value(data_sce, temp_file_header = temp_file_header, magma_raw_path = magma_raw_path, group = group, target_cell_type = "fake_cell_type")
   
   #when FUMA return nothing because of correlation
@@ -74,7 +122,7 @@ get_p_value <- function(data_sce, gwas_zscore_df, magma_raw_path, gene_mapping_t
   }
   
   #return
-  return(fuma_p)
+  return(c( magma_p, fuma_p))
 }
 
 #function wrapper
@@ -95,20 +143,21 @@ sim_p_value_by_idx <- function(i) {
     gsub(pattern = ".rda", replacement = "", fixed = TRUE, x = .) 
   
   #p avlues
-  p_val <- get_p_value(data_sce = sce, 
-                           gwas_zscore_df = trait_zscore, 
-                           group = "cell_ontology_class", 
-                           cell_seed_vec = cell_seed_vec, 
-                           temp_file_header = paste0(temp_dir, "/", data_name, ".", i),
-                           magma_raw_path = magma_raw_file)
+  p_val_vec <- get_p_value(data_sce = sce, 
+                       gwas_zscore_df = trait_zscore, 
+                       group = "cell_ontology_class", 
+                       cell_seed_vec = cell_seed_vec, 
+                       temp_file_header = paste0(temp_dir, "/", data_name, ".", i),
+                       magma_raw_path = magma_raw_file)
   
-  return(p_val)
+  return(p_val_vec)
 }
 
 
 
 library(parallel)
-result <- mclapply(1:50, sim_p_value_by_idx, mc.cores = num_cores)
+result <- mclapply(1:10000, sim_p_value_by_idx, mc.cores = num_cores)
 
-result_df = data.frame(index = 1:50, fuma_p = unlist(result))
+result_df <- data.frame(index = 1:10000, magma_p = unlist(map(result, ~.x[1])),fuma_p = unlist(map(result, ~.x[2])))
 write.table(result_df, file = output_file, sep = "\t",quote = F,row.names = F)
+

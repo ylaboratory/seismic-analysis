@@ -34,6 +34,18 @@ process_file <- args[5]
 num_cores <- as.numeric(args[6])
 output_file <- args[7]
 temp_dir <- args[8]
+mmu_hsa_mapping <- args[9]
+
+load(mmu_hsa_mapping)
+mmu_hsa_mapping <- mmu_hsa_mapping %>% 
+  distinct(mmu_symbol, hsa_entrez) %>%
+  drop_na() %>%
+  group_by(mmu_symbol) %>% 
+  filter(n()==1) %>%
+  group_by(hsa_entrez) %>%
+  filter(n()==1) %>%
+  ungroup() %>%
+  mutate(hsa_entrez = as.character(hsa_entrez))
 
 #return a seismic p value for a target cell type
 seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type){
@@ -46,9 +58,16 @@ seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type){
 #return a s-magma p value for target cell type
 magma_p_value <- function(data_sce, temp_file_header, magma_raw_path, group, target_cell_type) {
   #prepare s-magma file
-  mean_mat <- calc_ct_mean(data_sce, assay_name = "cpm", ct_label_col = group)
-  mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "mmu_symbol")
-  print_magma_fuma_tbl(t(mean_mat_hsa), "MAGMA", 
+  mean_mat <- calc_ct_mean(data_sce, assay_name = "counts", ct_label_col = group)
+  
+  mean_mat = mean_mat[, colnames(mean_mat) %in%mmu_hsa_mapping$mmu_symbol] %>% 
+    set_colnames(mmu_hsa_mapping$hsa_entrez[match( colnames(.), mmu_hsa_mapping$mmu_symbol)])
+  
+  mean_mat = mean_mat[, which(colSums(mean_mat)>0)]
+  
+  mean_mat <- sweep(mean_mat*1e6, MARGIN=1, STATS=rowSums(mean_mat), FUN="/")
+  
+  print_magma_fuma_tbl(mean_mat, "MAGMA", 
                        main_table_path = paste0(temp_file_header, ".magma.txt"),
                        aux_table_path = paste0(temp_file_header, ".magma.aux.txt"), verbose = F)
   
@@ -73,7 +92,7 @@ magma_p_value <- function(data_sce, temp_file_header, magma_raw_path, group, tar
 
 fuma_p_value <- function(data_sce,  temp_file_header, magma_raw_path, group, target_cell_type) {
   #prepare fuma file
-  mean_mat <- calc_ct_mean(data_sce, assay_name = "cpm", ct_label_col = group)
+  mean_mat <- calc_ct_mean(data_sce, assay_name = "logcpm", ct_label_col = group)
   mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "mmu_symbol")
   print_magma_fuma_tbl(t(mean_mat_hsa), "FUMA", 
                        main_table_path = paste0(temp_file_header, ".fuma.txt"),

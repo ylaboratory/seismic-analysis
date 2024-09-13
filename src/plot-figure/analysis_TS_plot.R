@@ -47,7 +47,7 @@ ts_scdrs_res <- list.files(here("results","Tabula_sapiens","scDRS"),pattern = "*
   mutate(cell_type = factor(cell_type, levels = levels(ts_res$cell_type))) %>%
   arrange(cell_type)
 
-ts_fuma_res <- list.files(here("results","new_Tabula_sapiens","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+ts_fuma_res <- list.files(here("results","Tabula_sapiens","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -55,7 +55,7 @@ ts_fuma_res <- list.files(here("results","new_Tabula_sapiens","FUMA"), pattern =
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-ts_magma_res <- list.files(here("results","new_Tabula_sapiens","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+ts_magma_res <- list.files(here("results","Tabula_sapiens","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -156,6 +156,6 @@ ggplot( cor_ts_metric, aes(x=between, y=correlation, color=is_negative )) +
   ylim(-0.3,1) + 
   coord_flip() + 
   facet_wrap(~trait_name,nrow=5) + 
-  ggtitle("TM ts data set, Spearman correlation across all cell types") +
+  ggtitle("TS dataset, Spearman correlation across all cell types") +
   ylab("Spearman's correlation") + 
   theme(plot.title = element_text(hjust = 0.5))

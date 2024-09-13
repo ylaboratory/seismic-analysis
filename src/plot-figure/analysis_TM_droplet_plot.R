@@ -50,7 +50,7 @@ droplet_scdrs_res <- list.files(here("results","Tabula_muris","droplet","scDRS")
   mutate(cell_type = factor(cell_type, levels = levels(droplet_res$cell_type))) %>%
   arrange(cell_type)
 
-droplet_fuma_res <- list.files(here("results","new_Tabula_muris","droplet","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
+droplet_fuma_res <- list.files(here("results","Tabula_muris","droplet","FUMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%
@@ -58,7 +58,7 @@ droplet_fuma_res <- list.files(here("results","new_Tabula_muris","droplet","FUMA
   purrr::reduce(~left_join(.x, .y, by = "cell_type"))  %>% 
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases, others))) 
 
-droplet_magma_res <- list.files(here("results","new_Tabula_muris","droplet","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
+droplet_magma_res <- list.files(here("results","Tabula_muris","droplet","S-MAGMA"), pattern = "*.gsa.out", full.names = T) %>%
   set_names(str_extract(string = . , pattern = "(?<=/)[^/]+$") %>% gsub(pattern = "\\.[A-Za-z.]+$", replacement = "", x= .)) %>%
   map(~read.table(.x, header = T) %>% as_tibble()) %>%
   map(~select(.x, any_of(c("VARIABLE", "P")))) %>%

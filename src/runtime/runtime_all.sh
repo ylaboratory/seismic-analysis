@@ -19,3 +19,4 @@ do
         echo "Finished running for sample size $i and data set $j"
     done
 done    
+
