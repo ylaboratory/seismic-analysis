@@ -1,4 +1,8 @@
 #for running time analysis
+#parameters:
+# 1. anndata file path
+# 2. gene set directory (all gene sets should contain .gs as the suffix)
+# 3. result file path
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
 
