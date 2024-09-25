@@ -1,0 +1,118 @@
+---
+title: "GWAS preprocessing for _seismic_ input"
+author: "Qiliang Lai"
+date: "9/13/2024"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(magrittr)
+library(dplyr)
+knitr::opts_knit$set(root.dir = '/grain/ql29/seismic-analysis')
+```
+
+## Introduction
+
+The _seismic_ framework takes the output from [MAGMA](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004219) as input. 
+This tutorial will guide you through the preprocessing steps necessary to convert raw GWAS summary statistics into the proper format for _seismic_ analysis.
+Before beginning, ensure you have installed the MAGMA software and obtained the required files:
+- Gene location file
+- SNP synonyms file (dbSNP)
+- Population-specific reference data
+These files can be all downloaded from the [MAGMA website](https://cncr.nl/research/magma/). 
+
+## Step 1: Clean up the GWAS summary statistics file
+The minimum required information in your GWAS summary statistics file includes:
+- Chromosome ID column
+- Base-pair position column
+- P value column
+Additionally, we strongly recommend including SNP IDs (rsIDs) to facilitate MAGMA analysis. Here's an example of how your data might look:
+
+```{r}
+example_gwas <- read.table("data/gwas/sample_gwas/sample_gwas.txt", header = T) %>% as_tibble() #your data path
+
+head(example_gwas)
+```
+
+## Step 2: Map the SNP location to GRCh37 
+For MAGMA gene analysis, the required population-specific reference data is based on the GRCh37 genome build, all SNP location should be converted to GRCh37.
+The example data file shown above is a GWAS summary statistics file based on the GRCh38 genome build.
+To map the SNP location to GRCh37, we can use the [LiftOver tool](https://genome.ucsc.edu/cgi-bin/hgLiftOver) provided by UCSC. 
+Here is an example of how to convert the SNP location with the chain object "hg38ToHg19.over.chain.gz" downloaded from the [UCSC website](https://hgdownload.cse.ucsc.edu/goldenpath/hg19/liftOver/), together with the rtrackler package in R.
+
+```{r}
+library(rtracklayer)
+#load the chain object
+chainObject <- import.chain("/grain/ql29/ad-cell-enrich/data/ref/hg38ToHg19.over.chain") #your downloaded chain object
+
+#Granges object with the bed information. The seqnames are named with "chr" prefix.
+grObject <- GRanges(seqnames=paste0("chr", test_data$Chromosome),
+                   ranges=IRanges(start=as.numeric(test_data$BP), end=as.numeric(test_data$BP)+1))
+
+#lift over
+hg19_res <- liftOver(grObject, chainObject)
+
+#extract the result data frame, select the necessary columns
+hg19_res_df <- as.data.frame(hg19_res) %>%
+  select(group, start, seqnames) %>%
+  mutate(Chromosome = gsub(seqnames, pattern = "chr",replacement = ""))%>%
+  select(group, Chromosome, start) %>%
+  rename("BP" = "start")
+
+#get the 1 to 1 mapping
+hg19_res_df <- hg19_res_df %>% group_by(group) %>% 
+  filter(n()==1) %>%
+  ungroup() 
+
+#merge with the original data frame (the group column indicates the original position in the table)
+example_gwas <- example_gwas %>%
+  mutate(group = 1:n()) %>% 
+  select(-Chromosome, -BP) %>%
+  left_join(hg19_res_df , by = "group") %>%
+  drop_na() 
+
+#write out for later
+write.table(example_gwas %>% mutate(BP = as.character(BP)),  #avoid numerical output 
+            file = "data/gwas/sample_gwas/sample_gwas_hg19.txt", 
+            sep="\t", col.names = T, row.names = F, quote = F)
+
+head(example_gwas)
+```
+
+## Step 3: Map the SNP location to SNP ID
+If the SNP ID is not included in the GWAS summary statistics file, we can use the SNP synonyms file to map the SNP location to SNP ID. 
+To simplify the procedure, we implement a bash script in `tools/annotate_SNP.sh` for the step, where [bedtools](https://bedtools.readthedocs.io/en/latest/) is required.
+This script will require the dbSNP file and the GWAS summary statistics file as input, and output a new file with SNP ID included in the last column.
+To view all specific parameters of the script, you can run the following command in the terminal: 
+
+```{bash, engine.opts='-l'}
+bash src/tools/annotate_SNP.sh -h
+```
+
+Here is an example of how to run the script with the example data file:
+```{bash, engine.opts='-l'}   
+bash src/tools/annotate_SNP.sh -g data/gwas/sample_gwas/sample_gwas_hg19.txt -o data/gwas/sample_gwas/sample_gwas_hg19\
+-c 6 -p 7 -v data/ref/Hg19.dbsnp151.vcf -t bin/bedtools
+```
+
+## Step 4: Generate the input file for MAGMA
+The software takes two input files generated from the previously processed (or unprocessed but with the required columns) GWAS summary statistics file: a SNP location file and a P value file.
+You can simply use the `awk` command to extract the information, for example:
+```{bash}
+awk '{print $1, $2}' GWAS_summary_statistics.txt > SNP_location.txt
+```
+or in R:
+```{r}
+```
+
+## Step 5: Run MAGMA software
+There are two steps: gene annotation and gene analysis. You can use our implemented bash script `tools/magma_gene_zscore_analysis.sh` to run the two steps together. 
+Another paramter to specificy is the gene analysis window size, which is set as 35 kilobase (kb) upstream to 10 kb downstream by default, as recommend by [the previous study](https://www.nature.com/articles/s41588-020-0610-9).
+Although we have shown that output files from various window sizes make only a minor difference in the results of _seismic_ analysis, you can still change the window size by specifying the parameter `--window-size` in the script. 
+To view all specific parameters of the script, you can run the following command in the terminal:
+```{bash}
+bash tools/magma_gene_zscore_analysis.sh -h
+```
+
+
+

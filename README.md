@@ -14,7 +14,7 @@
 - src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
 
 ## Environment set up
-The *seismic* framework is packed up as an R package named [*seismicGWAS*](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://ylaboratory.github.io/seismic/seismicGWAS.html) to know more about the usage and the download of the package. To download and install the package:
+The *seismic* framework is packed up as an R package named [*seismicGWAS*](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://github.com/ylaboratory/seismic/blob/gh_page/vignettes/seismicGWAS.md) to know more about the usage and the download of the package. To download and install the package:
 
 ```{r}
 devtools::install_github("ylaboratory/seismicGWAS")
