@@ -1,25 +1,24 @@
 #load arguments
-#1: parameter df file path
-#2: output directory path
-#3: output directory is organized by which column of the parameter df?
-#4: if the influential gene analysis should be done
-#5: number of cores used
+#1: parameter df file path 
+#2: summarized output file header
+#3: which column (name) indicates the final output file header?
+#4: regular expression contains the pattern of target cell types
+#5: if the statistics of the target cell type should be extracted or not
+#6: if the influential gene analysis should be done or not
+#7: number of cores to use
 
 args <- commandArgs(trailingOnly = TRUE)
 options(warn = -1)
 
 parameter_df_file <- args[1]
 final_res_path <- args[2]
-#organized_by <- args[3]
 output_header_col <- args[3]
 tar_ct <- args[4]
 extract_target_ct <- args[5]
-do_inf_analysis <- args[6] #if it was no/false/False/NO, then no inf analysis will be performed. 
-#Else if it's a regular expression then do influential analysis for the matched cell type
+do_inf_analysis <- args[6]
 num_cores <- args[7]
 
-
-#modify paramters
+#transform parameters
 if(tolower(do_inf_analysis) %in% c("false","f","no","n")){
   do_inf_analysis <- FALSE
 }else{
@@ -50,6 +49,7 @@ final_output_file <- paste0(final_res_path, "/all_res.txt")
 mmu_hsa_mapping_file <- here("data","ref","mapping","mmu_hsa_mapping.rda")
 
 load(mmu_hsa_mapping_file)  
+
 mmu_hsa_mapping <- mmu_hsa_mapping %>% 
   distinct(mmu_symbol, hsa_entrez) %>%
   drop_na() %>%
@@ -214,6 +214,7 @@ get_fdr <- function(data_sce_file, replace_mat_file, cell_anno_file, zscore_file
   return(list(target_cell_type_list, c(seismic_fdr_value, magma_fdr_value, fuma_fdr_value)))
 }
 
+#function for parallel
 get_fdr_by_idx <- function(i){
   if (i %% 10 == 0) {
     cat(paste("Running seed ", i, "\n"), file = process_file, append = TRUE)
@@ -242,12 +243,10 @@ get_fdr_by_idx <- function(i){
 
 
 result <- mclapply(1:nrow(parameter_df), get_fdr_by_idx, mc.cores = num_cores)
-#result <- mclapply(1:50, get_fdr_by_idx, mc.cores = num_cores)
+#result <- mclapply(1:50, get_fdr_by_idx, mc.cores = num_cores) #test
 
 result_df <- data.frame(index = 1:nrow(parameter_df), purrr::list_transpose(map(result, ~.x[[2]]))) %>% 
    set_names(c("index", paste0(result[[1]][[1]], ".seismic_fdr"),  paste0(result[[1]][[1]], ".magma_fdr"), paste0(result[[1]][[1]], ".fuma_fdr")))
-# result_df <- data.frame(index = 1:50, purrr::list_transpose(map(result, ~.x[[2]]))) %>% 
-#   set_names(c("index", paste0(result[[1]][[1]], ".seismic_fdr"),  paste0(result[[1]][[1]], ".magma_fdr"), paste0(result[[1]][[1]], ".fuma_fdr")))
 
 
 write.table(result_df, file = final_output_file, sep = "\t",quote = F, row.names = F)

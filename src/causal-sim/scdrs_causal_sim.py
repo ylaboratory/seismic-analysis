@@ -1,5 +1,15 @@
-#file to do null simulation
+#get causal simulation result for each cell type
+#input arguments for the script are:
+# 1. parameter data frame path
+# 2. output directory
+# 3. output header column
+# 4. target cell type pattern (regular expression to extract the target cell type)
+# 5. extract target cell (extract the statistics of the target cell type or not. Any value that does not match any cell types will return 0.)
+# 6. number of cores to use
+
 import os
+
+#set environment variables
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
 os.environ['MKL_NUM_THREADS'] = '1'
 os.environ['OMP_NUM_THREADS'] = '1'
@@ -20,19 +30,24 @@ from multiprocessing import Pool
 import threadpoolctl #control PCA thread
 
 def worker_init():
-    #os.nice(10)
     thread_id = int(mp.current_process().name.split('-')[1])
+    
+    #set environment variables
     os.environ['OPENBLAS_NUM_THREADS'] = '1'
     os.environ['MKL_NUM_THREADS'] = '1'
     os.environ['OMP_NUM_THREADS'] = '1'
     os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
     os.environ['NUMEXPR_NUM_THREADS'] = '1'
+    
+    #control the number of threads for PCA
     threadpoolctl.threadpool_limits(limits=1)
+    
+    #thread id to cpu id
     thread_id = thread_id%72
     cpu_id = [thread_id*2, thread_id*2+1]
     p = psutil.Process()
-    #p.nice(10)
     p.cpu_affinity(cpu_id) 
+
 
 #adapt from scdrs method for customized anndata preparation
 def prepare_adata(adata_obj, replace_mat, new_cell_anno, group = "cell_ontology_class"):
@@ -80,7 +95,10 @@ def prepare_adata(adata_obj, replace_mat, new_cell_anno, group = "cell_ontology_
     
 
 def preprocess_scdrs(adata_obj):
+    #control the number of threads for PCA
     threadpoolctl.threadpool_limits(1)
+    
+    #preprocessda
     scdrs.preprocess(adata_obj)
     sc.pp.pca(adata_obj, n_comps=20) #default parameters
     sc.pp.neighbors(adata_obj, n_neighbors=15, n_pcs=20) #default paramters
@@ -137,6 +155,7 @@ def scdrs_file_to_res(adata_file, replace_mat_file, cell_anno_file, gs_file, out
         return (["Error_ct"],[0])
     
 def parameter_df_to_res(parameter_df, output_header_col, target_cell_type_pattern, extract_target_cell, idx):
+    #use arguments plus an index (indicating the row of the parameter_df) to get the results of current case
     adata_file = parameter_df.loc[idx, "expr_h5ad_file"]
     replace_mat_file = parameter_df.loc[idx, "perturbed_mat_file"]
     gs_file = parameter_df.loc[idx, "gs_scdrs_file"]

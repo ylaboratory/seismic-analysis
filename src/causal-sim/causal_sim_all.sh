@@ -9,38 +9,38 @@ done
 
 NUM_CORE=15
 #scDesign3 expanded
-nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_prob_extended/tot_1000/perturbed_expr/parameter_df.txt\
-results/causal_sim/sc3_prob_extended/tot_1000 output_header target_cell_type FALSE TRUE $NUM_CORE &
+nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_standard/perturbed_expr/parameter_df.txt\
+results/causal_sim/sc3_standard output_header target_cell_type FALSE TRUE $NUM_CORE &
 
-nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_prob_extended/tot_1000/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_prob_extended/tot_1000 output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_prob_extended/tot_1000/sc3_scdrs_process.log &
+nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_standard/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_standard output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_standard/sc3_scdrs_process.log &
 
 ##multiple cell types
 #random 
-nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct_500/random/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_multi_ct_500/random output_header target_cell_type TRUE TRUE $NUM_CORE &
+nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct/random/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_multi_ct/random output_header target_cell_type TRUE TRUE $NUM_CORE &
 
-nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct_500/random/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_multi_ct_500/random output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct_500/random/sc3_scdrs_process.log &
+nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct/random/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_multi_ct/random output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct/random/sc3_scdrs_process.log &
 
 #no overlap
-nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct_500/no_overlap/perturbed_expr/parameter_df.txt\
-results/causal_sim/sc3_multi_ct_500/no_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
+nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct/no_overlap/perturbed_expr/parameter_df.txt\
+results/causal_sim/sc3_multi_ct/no_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
 
-nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct_500/no_overlap/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_multi_ct_500/no_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct_500/no_overlap/sc3_scdrs_process.log &
+nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct/no_overlap/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_multi_ct/no_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct/no_overlap/sc3_scdrs_process.log &
 
 #ct overlap
-nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct_500/ct_overlap/perturbed_expr/parameter_df.txt\
-results/causal_sim/sc3_multi_ct_500/ct_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
+nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct/ct_overlap/perturbed_expr/parameter_df.txt\
+results/causal_sim/sc3_multi_ct/ct_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
 
-nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct_500/ct_overlap/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_multi_ct_500/ct_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct_500/ct_overlap/sc3_scdrs_process.log &
+nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct/ct_overlap/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_multi_ct/ct_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct/ct_overlap/sc3_scdrs_process.log &
 
 #causal overlap
-nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct_500/causal_overlap/perturbed_expr/parameter_df.txt\
-results/causal_sim/sc3_multi_ct_500/causal_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
+nohup Rscript src/causal-sim/causal_sim.R data/expr/causal_sim/sc3_multi_ct/causal_overlap/perturbed_expr/parameter_df.txt\
+results/causal_sim/sc3_multi_ct/causal_overlap output_header target_cell_type TRUE TRUE $NUM_CORE &
 
-nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct_500/causal_overlap/perturbed_expr/parameter_df.txt \
-results/causal_sim/sc3_multi_ct_500/causal_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct_500/causal_overlap/sc3_scdrs_process.log &
+nohup python -u src/causal-sim/scdrs_causal_sim.py data/expr/causal_sim/sc3_multi_ct/causal_overlap/perturbed_expr/parameter_df.txt \
+results/causal_sim/sc3_multi_ct/causal_overlap output_header target_cell_type FALSE $NUM_CORE > results/causal_sim/sc3_multi_ct/causal_overlap/sc3_scdrs_process.log &
 
