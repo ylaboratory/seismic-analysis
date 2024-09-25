@@ -154,7 +154,7 @@ cor_droplet_metric <- all_results_droplet %>%
   mutate(between = factor(between, levels =rev(c("seismic and scDRS","seismic and FUMA","seismic and S-MAGMA","scDRS and FUMA","scDRS and S-MAGMA","FUMA and S-MAGMA")))) %>%
   select(trait_name, between, correlation) 
 
-ggplot( cor_droplet_metric, aes(x=between, y=correlation)) + 
+ggplot(cor_droplet_metric, aes(x=between, y=correlation)) + 
   geom_point(size=2.5, color="#2B3990FF") +
   geom_segment(aes(xend=between, yend=0), linetype="solid",linewidth=0.75, color="#2B3990FF") +
   theme_classic() + 

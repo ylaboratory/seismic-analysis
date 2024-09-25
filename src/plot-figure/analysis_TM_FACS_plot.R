@@ -32,7 +32,7 @@ trait_meta <- tibble(trait_names = c(neuropsy_disesaes, immune_diseases, others)
                     trait_type = factor(c(rep("neuropsy",length(neuropsy_disesaes)), rep("immune",length(immune_diseases)), rep("others",length(others))), levels=c("neuropsy","immune","others")) )
 
 #load results - facs
-facs_res <- read.table( here("results","Tabula_muris","FACS","seismic","new_facs_res.txt"), header = T, sep = "\t") %>% 
+facs_res <- read.table( here("results","Tabula_muris","FACS","seismic","facs_res.txt"), header = T, sep = "\t") %>% 
   as_tibble() %>%
   select(all_of(c("cell_type", neuropsy_disesaes, immune_diseases ,others)))  %>%
   mutate(cell_type = factor(cell_type, levels = sort(cell_type))) %>%
@@ -82,8 +82,8 @@ facs_ct_meta <- tibble(cell_type = as.character(facs_res$cell_type)) %>%
   mutate(ontology_new = ifelse(tissue_new == "Blood/Immune", paste0(tissue,".",cell_ontology),cell_ontology)) 
 
 #harmonise cell types for FUMA/S-MAGMA output
-facs_fuma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_facs.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
-facs_magma_ct_mapping <- read.table(here("data","expr","Tabula_muris","new_tm_facs.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+facs_fuma_ct_mapping <- read.table(here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
+facs_magma_ct_mapping <- read.table(here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"), header = T, sep = "\t") %>% as_tibble()
 
 facs_fuma_res <- facs_fuma_ct_mapping %>% 
   left_join(facs_fuma_res, by = c("encoded_name" = "cell_type")) %>%

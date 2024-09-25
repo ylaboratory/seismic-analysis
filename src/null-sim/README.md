@@ -1,0 +1,8 @@
+# Null simulation for assessing the calibration of the framworks
+After generating the random seeds for the null simulation, the null simulation can be performed to assess the calibration of the frameworks. For each run a random seed is extracted from the file, which is a random sample of 100 cells, representing the index of the cells in the expression that are assigned as the target cell type. The shuffled expression data and the random trait MAGMA gene-level z-scores are used to calculate the P-values for the null hypothesis. The null simulation is repeated 10,000 times to generate the null distribution of the P-values. 
+
+- `null_sim_all_frameworks.sh` contains all the commands to generate the the null simulation results for the scDRS, FUMA, and S-MAGMA frameworks. 
+
+- `scdrs_null_sim.py` is the Python script for running the null simulation for the scDRS framework. The script reads the shuffled expression data and the random trait scDRS gene set files (generated with the corresponding MAGMA gene-level Z-score file) and calculates the P-values for the null hypothesis. The P-values are saved in the `results/null_sim` directory for the scDRS framework.
+
+- `seismic_fuma_magma_null_sim.R` is used for running the null simulation for the FUMA and S-MAGMA frameworks. The script reads the shuffled expression data take the random seed sample as the target cell type and generates corresponding S-MAGMA analysis file and FUMA analysis file, which are later taken by the MAGMA software to generate the cell type-level enrichment P-values. _seismic_ analysis is also performed. The results are saved in the `results/null_sim` directory for the FUMA and S-MAGMA frameworks.

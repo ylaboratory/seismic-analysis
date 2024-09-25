@@ -71,10 +71,10 @@ facs_mean <- sweep(facs_mean*1e6, MARGIN=1, STATS=rowSums(facs_mean), FUN="/")
 droplet_mean <- sweep(droplet_mean*1e6, MARGIN=1, STATS=rowSums(droplet_mean), FUN="/")
 
 #print magma files
-print_magma_fuma_tbl(facs_mean, "MAGMA", main_table_path = here("data","expr","Tabula_muris","new_tm_facs.top10_magma.txt"),
-                     aux_table_path = here("data","expr","Tabula_muris","new_tm_facs.magma.aux.txt"))
-print_magma_fuma_tbl(droplet_mean, "MAGMA", main_table_path = here("data","expr","Tabula_muris","new_tm_droplet.top10_magma.txt"),
-                     aux_table_path = here("data","expr","Tabula_muris","new_tm_droplet.magma.aux.txt"))
+print_magma_fuma_tbl(facs_mean, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.top10_magma.txt"),
+                     aux_table_path = here("data","expr","Tabula_muris","tm_facs.magma.aux.txt"))
+print_magma_fuma_tbl(droplet_mean, "MAGMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.top10_magma.txt"),
+                     aux_table_path = here("data","expr","Tabula_muris","tm_droplet.magma.aux.txt"))
 
 
 ###### fuma data preparation ##### 
@@ -93,10 +93,10 @@ facs_mean_log_hsa <- seismicGWAS::translate_gene_ids(t(facs_mean_log), from = "m
 droplet_mean_log_hsa <- seismicGWAS::translate_gene_ids(t(droplet_mean_log), from = "mmu_symbol")
 
 #print fuma files
-print_magma_fuma_tbl(t(facs_mean_log_hsa), "FUMA", main_table_path = here("data","expr","Tabula_muris","new_tm_facs.fuma.txt"),
-                     aux_table_path = here("data","expr","Tabula_muris","new_tm_facs.fuma.aux.txt"))
-print_magma_fuma_tbl(t(droplet_mean_log_hsa), "FUMA", main_table_path = here("data","expr","Tabula_muris","new_tm_droplet.fuma.txt"),
-                     aux_table_path = here("data","expr","Tabula_muris","new_tm_droplet.fuma.aux.txt"))
+print_magma_fuma_tbl(t(facs_mean_log_hsa), "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.txt"),
+                     aux_table_path = here("data","expr","Tabula_muris","tm_facs.fuma.aux.txt"))
+print_magma_fuma_tbl(t(droplet_mean_log_hsa), "FUMA", main_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.txt"),
+                     aux_table_path = here("data","expr","Tabula_muris","tm_droplet.fuma.aux.txt"))
 
 ##scdrs 
 #cells to keep (only cell types in the same analysis)

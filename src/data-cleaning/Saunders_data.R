@@ -145,6 +145,10 @@ cell_type_voc = cell_type_voc %>%
   mutate(fine_cluster = ifelse(tissue %in% c("CB","FC","PC") & grepl(pattern="[Ee]ntorhinal",x=common_name), paste0(fine_cluster," EC included"), fine_cluster)) %>%
   mutate(fine_cluster = ifelse(cluster_anno == "Granular neurons_Gabra6", "Granule cells",fine_cluster)) %>% 
   mutate(fine_cluster = ifelse(cluster_anno == "Purkinje Neurons", "Purkinje Neurons",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(fine_cluster == "Neurons_Pvalb", "Neurons_Pvalb-1",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(fine_cluster == "Neurons_Pvalb ", "Neurons_Pvalb-2",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(fine_cluster == "Neurons_Layer 2/3", "Neurons_Layer 2/3-1",fine_cluster)) %>% 
+  mutate(fine_cluster = ifelse(fine_cluster == "Neurons_Layer 2/3 ", "Neurons_Layer 2/3-2",fine_cluster)) %>% 
   mutate(fine_cluster = ifelse(tissue=="FC"&class=="NEURON",ifelse(grepl(pattern = "interneuron",x=cluster_anno),paste0(cluster_anno,".",fine_cluster), cluster_anno), fine_cluster)) %>%
   group_by(fine_cluster, class, tissue) %>% #if automatic cluster assignment failed 
   mutate(n=length(unique(cluster))) %>%

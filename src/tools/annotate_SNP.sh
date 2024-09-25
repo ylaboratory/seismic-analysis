@@ -16,11 +16,13 @@ echo  "
     optional parameters:
     -v | VCF file for the dbsnp version you used. For default it will be located in 'data/ref/Hg19.dbsnp151.vcf'. This can be downloaded online.
     -n | Number of tasks to split the job. The default value is 1. If the memory is not enough, you can split the job into several parts but it will take more time.
+    -t | Customized bedtools command. By default it is 'bedtools'. If you do not have it in your environment, you can specify the path to the bedtools command.
+    -w | The working directory. By default it is the current directory. If you want to specify the working directory, you can use this parameter.
+    -h | Help message.
     "
 }
 #read in parameters
-src_dir=$(dirname "$0")
-base_dir=$(cd "$src_dir"/../ || exit; pwd)
+base_dir=$(dirname "$0")
 vcf_file=${base_dir}/data/ref/Hg19.dbsnp151.vcf
 chr_col=1
 pos_col=2
@@ -28,9 +30,10 @@ base_num=1
 keep_all="True"
 gwas_file="None"
 output_file="None"
+bedtools_command="bedtools"
 
 
-while getopts "o:v:g:c:p:b:k:h" opt; do
+while getopts "o:v:g:c:p:b:k:n:h:t" opt; do
   case $opt in
   h)
     print_help
@@ -59,6 +62,9 @@ while getopts "o:v:g:c:p:b:k:h" opt; do
     ;;
   n)
     num_task=$OPTARG
+    ;;
+  t)
+    bedtools_command=$OPTARG
     ;;
   *)
     echo "Invalid parameters!"
@@ -154,7 +160,7 @@ process_part() {
     awk -v c="$chr_col" -v p="$pos_col" -v b="$base_num" 'BEGIN {OFS="\t"; print "chrom", "from", "to"} {if (NR>1) print $c, $p-b, $p+1-b }' "$gwas_part" > "${output_part}.snp_loc.bed"
 
     # Get the intersected snp
-    bedtools intersect -a "${output_part}.snp_loc.bed" -b "$vcf_part" -wa -wb > "${output_part}.temp_loc.out"
+    "$bedtools_command" intersect -a "${output_part}.snp_loc.bed" -b "$vcf_part" -wa -wb > "${output_part}.temp_loc.out"
 
     # Get unique output for snp map
     awk '!seen[$1, $2]++' "${output_part}.temp_loc.out" > "${output_part}.temp_loc.uniq.out"
