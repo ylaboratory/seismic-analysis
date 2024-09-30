@@ -1,12 +1,31 @@
-The directory `src/analysis` contains the code for the *seismic* analysis of the data, including trait-associated cell type enrichment analysis and influential gene analysis for interested trait-cell type pairs. The expression datasets has been previously prepared and the GWAS summary statistics has been processed and transformed to gene-level MAGMA z-score (to see the detail). The analysis code is organized as follows:
+# seismic Analysis Scripts
 
-- `Saunders_analysis.R` Analysis of the brain single-cell RNA-seq data from Saunders et al. (2018) to identify cell types associated with several neurodegerative disorders (and related traits). Multiple analysis granularities are used.
+The `src/analysis` directory contains scripts for performing seismic analysis on various datasets. These scripts identify trait-associated cell type enrichments and conduct influential gene analysis for selected trait-cell type pairs.
 
-- `Saunders_inf_analysis.R ` Influential gene analysis and influential gene GO enrichment for several intersted trait-cell type pairs resulted from the `Saunders_analysis.R` script. 
+## Prerequisites
 
--  `Tabula_muris_analysis.R` Analysis of the mouse single-cell RNA-seq data from Tabula Muris Consortium (2018), which are comprised of 20 organs, to identify cell types associated with multiple various traits. Analysis of the FACS and droplet datasets are performed separately in the script. 
+- Expression datasets should be prepared in advance (after processing with `src/data-cleaning`).
+- GWAS summary statistics should be processed and transformed to gene-level MAGMA z-scores. (See details in the data preprocessing section of the main README)
 
-- `Tabula_muris_ws.R` Analysis of the TM FACS data sets using the same trait GWAS summary statistics but with a set of varying window sizes as MAGMA gene analysis parameters.
+## Scripts and Their Functions
 
-- `Tabula_sapiens_analysis.R` Analysis of the human single-cell RNA-seq data from Tabula Sapiens Consortium (2019). 
+1. `Saunders_analysis.R`
+   - Analyzes brain single-cell RNA-seq data from Saunders et al. (2018)
+   - Identifies cell types associated with neurodegenerative disorders and related traits
+   - Performs analysis at multiple granularities
 
+2. `Saunders_inf_analysis.R`
+   - Conducts influential gene analysis on results from `Saunders_analysis.R`
+   - Performs GO enrichment analysis on influential genes for selected trait-cell type pairs
+
+3. `Tabula_muris_analysis.R`
+   - Analyzes mouse single-cell RNA-seq data from Tabula Muris Consortium (2018)
+   - Covers 20 organs to identify cell types associated with various traits
+   - Separately analyzes FACS and droplet datasets
+
+4. `Tabula_muris_ws.R`
+   - Analyzes Tabula Muris FACS datasets using the same trait GWAS summary statistics
+   - Employs varying window sizes as MAGMA gene analysis parameters
+
+5. `Tabula_sapiens_analysis.R`
+   - Analyzes human single-cell RNA-seq data from Tabula Sapiens Consortium (2019)

@@ -21,32 +21,35 @@ echo  "
     -h | Help message.
     "
 }
-#read in parameters
-base_dir=$(dirname "$0")
-vcf_file=${base_dir}/data/ref/Hg19.dbsnp151.vcf
+
+# Set the working directory to the current directory
+working_dir=$(pwd)
+
+# Initialize variables
+vcf_file="data/ref/Hg19.dbsnp151.vcf"
 chr_col=1
 pos_col=2
 base_num=1
 keep_all="True"
 gwas_file="None"
 output_file="None"
-bedtools_command="bedtools"
+bedtools_command="None"
+num_task=1
 
-
-while getopts "o:v:g:c:p:b:k:n:h:t" opt; do
+while getopts "o:v:g:c:p:b:k:n:ht:w:" opt; do
   case $opt in
   h)
     print_help
     exit 0
     ;;
   o)
-    output_file=${base_dir}/$OPTARG
+    output_file=$OPTARG
     ;;
   v)
-    vcf_file=${base_dir}/$OPTARG
+    vcf_file=$OPTARG
     ;;
   g)
-    gwas_file=${base_dir}/$OPTARG
+    gwas_file=$OPTARG
     ;;
   c)
     chr_col=$OPTARG
@@ -66,6 +69,9 @@ while getopts "o:v:g:c:p:b:k:n:h:t" opt; do
   t)
     bedtools_command=$OPTARG
     ;;
+  w)
+    working_dir=$OPTARG
+    ;;
   *)
     echo "Invalid parameters!"
     print_help
@@ -73,6 +79,28 @@ while getopts "o:v:g:c:p:b:k:n:h:t" opt; do
     ;;
   esac
 done
+
+# Change to the working directory
+cd "$working_dir" || exit
+
+
+# Update file paths to use working directory
+vcf_file="${working_dir}/${vcf_file}"
+if [ "$gwas_file" != "None" ]; then
+  gwas_file="${working_dir}/${gwas_file}"
+fi
+if [ "$output_file" != "None" ]; then
+  output_file="${working_dir}/${output_file}"
+fi
+
+
+#update the bedtools command if it's specified
+if [ "$bedtools_command" = "None" ]; then
+  bedtools_command="bedtools"
+elif [[ "$bedtools_command" != /* ]]; then
+  # If it's not an absolute path, prepend the working directory
+  bedtools_command="${working_dir}/${bedtools_command}"
+fi
 
 #parameter check
 if [ ! -f "$gwas_file" ]; then
@@ -102,14 +130,14 @@ fi
 
 ori_num=$(wc -l "$gwas_file")
 #make a temporary directory
-mkdir -p "$output_file"
+mkdir -p "$(dirname "$output_file")"
 
 #if n > 1 then split the vcf file
 if [ "$num_task" -gt 1 ]; then
   vcf_file_dir=$(dirname "$vcf_file")
-  split -n l/"$num_task" --numeric-suffixes "$vcf_file"  "$vcf_file_dir"/vcf_split.
+  split -n l/"$num_task" --numeric-suffixes "$vcf_file"  "${vcf_file_dir}/vcf_split."
 
-  for tmp_vcf_file in  "$vcf_file_dir"/vcf_split.*; do
+  for tmp_vcf_file in  "${vcf_file_dir}"/vcf_split.*; do
     vcf_suffix=$(echo "$tmp_vcf_file" | rev | cut -d '.' -f 1 | rev)
     #get the first and last line of the vcf file
 
@@ -142,9 +170,8 @@ if [ "$num_task" -gt 1 ]; then
             (curr_chr < last_chr || (curr_chr == last_chr && $p <= lp)))
             print $0
         }
-    ' "$gwas_file" > "$output_file"/temp_gwas_"$vcf_suffix".txt
+    ' "$gwas_file" > "${output_file}/temp_gwas_${vcf_suffix}.txt"
   done
-
 fi
 
 process_part() {
@@ -188,18 +215,17 @@ process_part() {
 
 #final pipeline
 if [ "$num_task" -gt 1 ]; then
-  for tmp_vcf_file in  "$vcf_file_dir"/vcf_split.*; do
+  for tmp_vcf_file in "${vcf_file_dir}"/vcf_split.*; do
     vcf_suffix=$(echo "$tmp_vcf_file" | rev | cut -d '.' -f 1 | rev)
-    mkdir -p "$output_file"/temp_gwas_"$vcf_suffix"
-    process_part "$output_file"/temp_gwas_"$vcf_suffix".txt "$tmp_vcf_file" "$output_file"/temp_gwas_"$vcf_suffix" "$chr_col" "$pos_col" "$base_num" "$keep_all"
+    mkdir -p "${output_file}/temp_gwas_${vcf_suffix}"
+    process_part "${output_file}/temp_gwas_${vcf_suffix}.txt" "$tmp_vcf_file" "${output_file}/temp_gwas_${vcf_suffix}" "$chr_col" "$pos_col" "$base_num" "$keep_all"
   done
   #merge all the files
-  awk 'NR==1{print $0} FNR>1' "$output_file"/temp_gwas_*.annot.table > "$output_file".annot.table
-  rm -r "$output_file"/temp_gwas_*
+  awk 'NR==1{print $0} FNR>1' "${output_file}"/temp_gwas_*.annot.table > "${output_file}.annot.table"
+  rm -r "${output_file}"/temp_gwas_*
 else
   process_part "$gwas_file" "$vcf_file" "$output_file" "$chr_col" "$pos_col" "$base_num" "$keep_all"
 fi
 
 #end
-echo "Final output file is already in '$output_file'.annot.table"
-
+echo "Final output file is already in '${output_file}.annot.table'"

@@ -1,12 +1,48 @@
-The directory `src/causal-sim` is used for simulating cell groups trait-specific gene expression and assessing the performance of the different methods in detecting them. All synthetic data are generated using the [scDesign3](https://www.nature.com/articles/s41587-023-01772-1) approach. The step-by-step usage for generating the synthetic data works as follows:
+# Causal Simulation for Cell Type-Trait Association Methods
 
-- Sample cells from datasets as the cell group to be perturbed. This is achieved in the `sample_cells.R` script. After running the script, the new cell type information will be printed and saved. 
+This directory (`src/causal-sim`) contains scripts for simulating trait-specific gene expression in cell groups and evaluating the performance of different cell type-trait association detection methods. We use the [scDesign3](https://www.nature.com/articles/s41587-023-01772-1) approach to generate synthetic data.
 
-- Fit corresponding scDeisng3 models for datasets with new cell type information. This is achieved in the `fit_scDesign3.R` script. The command line arguments for the script are the dataset file path and the cell type information file path and the final output directory.  After fitting the 10 scDesign3 models, each individual model will be merged into a whole object with `merge_scDesign3_model_obj.R`.
+## Workflow
 
-- Simulate new expression profiles with the fitted scDesign3 models. In the `causal_sim_data_gene.R` script, the target gene sets (genes to be perturbed) are sampled based on different sampling strategies. After determing the gene sets and the target cell lists, the saved scDesign3 models are reloaded and set as the parameters for the simulation. The synthetic data matices and the target gene set information are saved.
+- **Sample Cells**
+   - Script: `sample_cells.R`
+   - Purpose: Sample cells from datasets to create cell groups for perturbation
+   - Output: New cell type information (printed and saved)
 
-- Run the methods on the simulated data and asses the performance. `causal_sim.R` are used to run across  *seismic*, S-MAGMA, and FUMA in batch for all the simulated datasets, while `scdsrs_causal_sim.py` is used to run the scDSRS method. The two scripts are scheduled as parallel program to accelerate the process. The output files include reported results for all cell types plus *seismic*'s influential gene analysis for the target cell type.
+- **Fit scDesign3 Models**
+   - Script: `fit_scDesign3.R`
+   - Usage: `Rscript fit_scDesign3.R <dataset_file_path> <cell_type_info_file_path> <output_directory>`
+   - Purpose: Fit scDesign3 models for datasets with new cell type information
+   - Output: 10 individual scDesign3 models
 
-- The shell script `causal_sim.sh` contains all commands for fitting the scDesign3 models (run `fit_scDesign3`, `causal_sim.R` and `scdrs_causal_sim.py`) and assessing the performance. 
+- **Merge scDesign3 Models**
+   - Script: `merge_scDesign3_model_obj.R`
+   - Purpose: Merge individual scDesign3 models into a single object
 
+- **Simulate Expression Profiles**
+   - Script: `causal_sim_data_gene.R`
+   - Purpose: 
+     - Sample target gene sets for perturbation
+     - Reload saved scDesign3 models
+     - Simulate new expression profiles
+   - Output: 
+     - Synthetic data matrices
+     - Target gene set information
+
+- **Run Methods and Assess Performance**
+   - Scripts: 
+     - `causal_sim.R` (for _seismic_, S-MAGMA, and FUMA)
+     - `scdsrs_causal_sim.py` (for scDSRS)
+   - Purpose: Run methods on simulated data and evaluate performance
+   - Output: 
+     - Results for all cell types
+     - _seismic_'s influential gene analysis for the target cell type
+
+## Full Pipeline Execution
+
+The `causal_sim.sh` shell script contains all commands to:
+- Fit scDesign3 models
+- Run `causal_sim.R` and `scdrs_causal_sim.py`
+- Assess performance
+
+Note: `causal_sim.R` and `scdsrs_causal_sim.py` are designed to run in parallel for faster processing.

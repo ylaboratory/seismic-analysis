@@ -26,7 +26,7 @@ res_saunders <- list(fine_cluster = here("results","Saunders","fine_cluster","se
   map(~as_tibble(.x)) %>%
   map(~mutate(.x, cell_type = gsub(pattern = "\"", replacement = "", x = cell_type)))
 
-res_scdrs = list(fine_cluster=here("results","Saunders","fine_cluster","scDRS"),
+res_scdrs <- list(fine_cluster=here("results","Saunders","fine_cluster","scDRS"),
                  subclass = here("results","Saunders","subclass","scDRS"),
                  region_subclass = here("results","Saunders","region_subclass","scDRS"), 
                  region_class =here("results","Saunders","region_class","scDRS"),
@@ -43,14 +43,14 @@ res_scdrs = list(fine_cluster=here("results","Saunders","fine_cluster","scDRS"),
   map(~arrange(.x, cell_type))
 
 ###load fuma results
-fuma_anno = list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.fuma.aux.txt"), 
+fuma_anno <- list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.fuma.aux.txt"), 
                  subclass = here("data","expr","Saunders","Saunders.subclass.fuma.aux.txt"),
                  region_subclass = here("data","expr","Saunders","Saunders.region_subclass.fuma.aux.txt"),
                  region_class = here("data","expr","Saunders","Saunders.region_class.fuma.aux.txt"),
                  region_cluster = here("data","expr","Saunders","Saunders.region_cluster.fuma.aux.txt")) %>%
   map(~read.table(.x, header = T, sep="\t") %>% as_tibble()) 
 
-res_fuma = list(fine_cluster = here("results","Saunders","fine_cluster","FUMA"), 
+res_fuma <- list(fine_cluster = here("results","Saunders","fine_cluster","FUMA"), 
                 subclass = here("results","Saunders","subclass","FUMA"),
                 region_subclass = here("results","Saunders","region_subclass","FUMA"), 
                 region_class = here("results","Saunders","region_class","FUMA"),
@@ -67,14 +67,14 @@ res_fuma = list(fine_cluster = here("results","Saunders","fine_cluster","FUMA"),
   map(~arrange(.x, cell_type))
 
 #load magma results
-magma_anno = list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.magma.aux.txt"), 
+magma_anno <- list(file_cluster = here("data","expr","Saunders","Saunders.fine_cluster.magma.aux.txt"), 
                  subclass = here("data","expr","Saunders","Saunders.subclass.magma.aux.txt"),
                  region_subclass = here("data","expr","Saunders","Saunders.region_subclass.magma.aux.txt"),
                  region_class = here("data","expr","Saunders","Saunders.region_class.magma.aux.txt"),
                  region_cluster = here("data","expr","Saunders","Saunders.region_cluster.magma.aux.txt")) %>%
   map(~read.table(.x, header = T, sep="\t") %>% as_tibble()) 
 
-res_magma = list(fine_cluster = here("results","Saunders","fine_cluster","S-MAGMA"), 
+res_magma <- list(fine_cluster = here("results","Saunders","fine_cluster","S-MAGMA"), 
                  subclass = here("results","Saunders","subclass","S-MAGMA"),
                  region_subclass = here("results","Saunders","region_subclass","S-MAGMA"), 
                  region_class = here("results","Saunders","region_class","S-MAGMA"),
@@ -91,7 +91,7 @@ res_magma = list(fine_cluster = here("results","Saunders","fine_cluster","S-MAGM
   map(~arrange(.x, cell_type))
 
 ##### plot figure 4 #####
-data_all = list("seismic" = res_saunders, "scDRS" = res_scdrs, "FUMA" = res_fuma, "S-MAGMA" = res_magma) %>% 
+data_all <- list("seismic" = res_saunders, "scDRS" = res_scdrs, "FUMA" = res_fuma, "S-MAGMA" = res_magma) %>% 
   map(~map(.x, ~pivot_longer(.x, !cell_type, names_to = "trait", values_to = "Pvalue"))) %>% 
   map(~map2(.x,names(.x), ~mutate(.x, granularity =.y ))) %>%
   map(~purrr::reduce(.x, ~rbind(.x,.y))) %>%
@@ -102,12 +102,12 @@ data_all = list("seismic" = res_saunders, "scDRS" = res_scdrs, "FUMA" = res_fuma
   ungroup()
 
 #important information 
-vn_neurons = c("SN.Neurons_SNc","SN.Neurons_VTA (ventral VTA)","SN.Neurons_SNc/VTA","SN.Neurons_Neurofilament state","SN.Neurons_VTA (dorsal VTA)",
+vn_neurons <- c("SN.Neurons_SNc","SN.Neurons_VTA (ventral VTA)","SN.Neurons_SNc/VTA","SN.Neurons_Neurofilament state","SN.Neurons_VTA (dorsal VTA)",
                "Dopaminergic","SN.Dopaminergic","SN.Neurons","SN.DA neurons")
 
-hline_data = data.frame(y = c(-log10(0.05),-log10(0.01)), type = factor(c("dotted","dashed")))
+hline_data <- data.frame(y = c(-log10(0.05),-log10(0.01)), type = factor(c("dotted","dashed")))
 
-pd_plot_df = data_all %>% 
+pd_plot_df <- data_all %>% 
   filter(trait=="PD") %>% 
   mutate(neuron_type = ifelse(cell_type %in% vn_neurons, "DA neurons", ifelse(grepl(pattern="Endothelial|Oligodendrocytes|Polydendrocytes|Microglia_Macrophage|Astrocytes|Choroid_plexus|Mural|FibroblastLike",x=cell_type), "non-neurons", "other neurons"))) %>%
   mutate(neuron_type =factor(neuron_type, levels= c("DA neurons","other neurons", "non-neurons"))) %>% 
@@ -121,6 +121,7 @@ pd_plot_df = data_all %>%
   arrange(text_label) %>%
   mutate(method = factor(as.character(method),levels= c("S-MAGMA","FUMA","scDRS","seismic")))
 
+#plot figure 4
 ggplot(pd_plot_df, aes(x=method, y=-log10(FDR),color = neuron_type,alpha=neuron_type, label = text_label, size=neuron_type)) + 
   geom_jitter(position = position_jitter(seed = 1, width = 0.08)) + 
   facet_wrap(~granularity, ncol=1,
@@ -152,15 +153,40 @@ ggplot(pd_plot_df, aes(x=method, y=-log10(FDR),color = neuron_type,alpha=neuron_
     strip.background = element_blank())
 
 #write out tables
-pd_pval = pd_plot_df %>% 
+pd_pval <- pd_plot_df %>% 
   dplyr::select(cell_type, Pvalue, method,granularity) %>% 
   split(.$granularity) %>%
   map(~dplyr::select(.x,-granularity)) %>% 
   map(~pivot_wider(.x, names_from = method, values_from = Pvalue))
-pd_fdr = pd_plot_df %>% 
+
+pd_fdr <- pd_plot_df %>% 
   dplyr::select(cell_type, FDR, method,granularity) %>% 
   split(.$granularity) %>%
   map(~dplyr::select(.x,-granularity)) %>% 
   map(~pivot_wider(.x, names_from = method, values_from = FDR))
+
 pd_pval %>% map2(names(.), ~write.csv(.x, here("results","Saunders",.y, "seismic",paste0("PD_pval_",.y,"_association.csv"))))
+
 pd_fdr %>% map2(names(.), ~write.csv(.x, here("results","Saunders",.y, "seismic",paste0("PD_fdr_",.y,"_association.csv"))))
+
+
+##plot figure 5ab
+#export results df
+res_saunders_Kunkle <- res_saunders$fine_cluster %>%
+  select(cell_type, Kunkleetal_2019) %>% 
+  rename("pvalue" = "Kunkleetal_2019") %>%
+  mutate(FDR = p.adjust(pvalue, method="fdr")) 
+
+res_saunders_tau <- res_saunders$fine_cluster %>%
+  select(cell_type, tau) %>% 
+  rename("pvalue" = "tau") %>%
+  mutate(FDR = p.adjust(pvalue, method="fdr")) 
+  
+#figure 5ab
+seismicGWAS::plot_top_associations(res_saunders_Kunkle) + 
+  geom_bar(fill = "#D43F3AFF", stat = "identity") +
+  geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")
+
+seismicGWAS::plot_top_associations(res_saunders_tau) + 
+  geom_bar(fill = "#D43F3AFF", stat = "identity") +
+  geom_hline(aes(yintercept = -log10(0.05)), linetype = "dashed")

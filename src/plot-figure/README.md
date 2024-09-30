@@ -1,33 +1,55 @@
 # Generate all figures in the paper using the result files
 The `plot-figure` directory contains the scripts for generating all the figures in the paper. The scripts are organized as follows:
 
-- `null_sim_plot.R` processes the null simulation results for the scDRS, FUMA, and S-MAGMA frameworks and generates the calibration plots (Figure 2A, Supplementary Figure 1) for the three frameworks.
+`null_sim_plot.R`
+   - Processes null simulation results for scDRS, FUMA, and S-MAGMA
+   - Generates calibration plots (Figure 2A, Supplementary Figure 1)
 
-- `causal_sim_plot.R` processes the causal simulation results for the four frameworks in various conditions and generates:
-    - The power plots (Figure 2B, Supplementary Figure 2-3). 
-    - The influential gene precision recall plots (Figure 2C, Supplementary figure 4).
+`causal_sim_plot.R`
+   - Processes causal simulation results for all four frameworks
+   - Generates power plots (Figure 2B, Supplementary Figures 2-3)
+   - Produces influential gene precision-recall plots (Figure 2C, Supplementary Figure 4)
 
-- `runtime_plot.R` processes the runtime evaluation results for the four frameworks and generates the runtime plots (Figure 2D) for the four frameworks. 
+`runtime_plot.R`
+   - Processes runtime evaluation results
+   - Generates runtime comparison plots (Figure 2D)
 
-- `analysis_TM_FACS_plot.R` processes the analysis results for the Tabula Muris FACS dataset and generates the fllowing plots: 
-    - Trait-cell type association plots for _seismic_ (Figure 3A), scDRS (Supplementary figure 6), FUMA (Supplementary figure 7), and S-MAGMA (Supplementary figure 8).
-    - Difference heatmaps for all trait-cell type pairs between _seismic_ and any alternative method (Supplementary figure 9-11).
-    - Venn diagrams for the number of significant association pairs for _seismic_, scDRS, FUMA, and S-MAGMA (Figure 3B).
-    - Cross-method correlation plots for all traits (Figure 3D, Supplementary figure 12).
+`analysis_TM_FACS_plot.R`
+   - Processes Tabula Muris FACS dataset analysis results
+   - Generates:
+     - Trait-cell type association plots for seismic (Figure 3A), scDRS (Supp. Fig. 6), FUMA (Supp. Fig. 7), and S-MAGMA (Supp. Fig. 8)
+     - Difference heatmaps between seismic and other methods (Supp. Figs. 9-11)
+     - Venn diagrams of significant associations (Figure 3B)
+     - Cross-method correlation plots (Figure 3D, Supp. Fig. 12)
 
-- `varied_ws_plot.R` collecting cell-type association using MAGMA gene-level Z-score with different window size arguments and generates correlation between the results (Supplementary figure 5).
+`varied_ws_plot.R`
+   - Analyzes MAGMA gene-level Z-scores with different window sizes
+   - Generates correlation plots (Supplementary Figure 5)
 
-- `analysis_TM_droplet_plot.R` processes the analysis results for the Tabula Muris droplet dataset and generates the fllowing plots: 
-    - Trait-cell type association plots for _seismic_ (Supplementary figure 13).
-    - Cross-method correlation plots for all traits (=Supplementary figure 16).
+`analysis_TM_droplet_plot.R`
+   - Processes Tabula Muris droplet dataset results
+   - Generates:
+     - Trait-cell type association plots for seismic (Supp. Fig. 13)
+     - Cross-method correlation plots (Supp. Fig. 16)
 
-- `analysis_TS_plot.R` processes the analysis results for the Tabula sapiens dataset and generates the fllowing plots: 
-    - Trait-cell type association plots for _seismic_ (Supplementary figure 14).
-    - Cross-method correlation plots for all traits (Supplementary figure 17).
+`analysis_TS_plot.R`
+   - Processes Tabula Sapiens dataset results
+   - Generates:
+     - Trait-cell type association plots for seismic (Supp. Fig. 14)
+     - Cross-method correlation plots (Supp. Fig. 17)
 
-- `cross_ds_plot.R` maps the cell type labels between different datasets (while kepping cell types with only similar tissues and cell ontology) and generates the cross-dataset correlation plots (Supplementary figure 15).
+`cross_ds_plot.R`
+   - Maps cell type labels across datasets
+   - Generates cross-dataset correlation plots (Supp. Fig. 15)
 
-- `analysis_Saunders_plot.R` processes the analysis results for the Saunders et al. mouse whole brain scRNA-seq dataset and generates the fllowing plots: 
-    - Parkinson's disease(PD) associated cell types across multiple analysis granularities using _seismic_ (Figure 4).
-    - Plots for top associated cell type for Alzheimer's disease(AD) GWAS with different endpoints (clinical AD diagnosis and cerebrospinal fluid tau level) using _seismic_ (Figure 5AB).
+`analysis_Saunders_plot.R`
+   - Processes Saunders et al. mouse brain scRNA-seq dataset results
+   - Generates:
+     - PD-associated cell types across granularities (Figure 4)
+     - AD-associated cell types for different GWAS endpoints (Figure 5AB)
 
+1`inf_analysis_plot.R`
+    - Processes influential gene analysis results
+    - Generates:
+      - Influential gene plots for specific trait-cell type associations (Figure 5CD, left)
+      - Enriched GO pathway plots (Figure 5CD, right)
