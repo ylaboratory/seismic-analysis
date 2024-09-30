@@ -59,7 +59,7 @@ echo "this is header: $HEADER"
 echo "${OUTPUT_DIR}/${HEADER}.${ws_fn}"
 
 # Convert window sizes string to array
-IFS=':' read -ra ws_set <<< "$WINDOW_SIZES"
+ws_set=($(echo "$WINDOW_SIZES" | sed 's/:/ /g'))
 
 # MAGMA annotation
 echo "Starting MAGMA annotation..."
