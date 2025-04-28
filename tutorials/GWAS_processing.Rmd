@@ -1,8 +1,11 @@
 ---
 title: "GWAS preprocessing for _seismic_ input"
 author: "Qiliang Lai"
-date: "9/13/2024"
-output: github_document
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GWAS preprocessing for seismic input}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}
