@@ -30,7 +30,7 @@ calc_spec_two_comp <- function(sce, assay_name = "logcounts",
   cell_meta <- SummarizedExperiment::colData(sce)
   
   # make sure the cell name exist
-  if (any(is.null(rownames(cell_meta))) || any(is.null(colnames(data_mat)))){
+  if (any(is.null(rownames(cell_meta))) || any(is.null(colnames(data_mat)))) {
     rownames(cell_meta) <- colnames(data_mat) <- paste0("cell.",1:ncol(data_mat))
   }
   

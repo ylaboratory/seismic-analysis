@@ -3,7 +3,9 @@ import os
 import pandas as pd
 from joblib import load
 
-os.chdir("/grain/ql29/seismic-analysis")
+working_path = "seismic-analysis" #make it your working directory path
+
+os.chdir(working_path)
 
 #load all files 
 sample_size = ["10k", "25k", "50k", "100k", "150k", "200k", "250k", "300k", "400k", "500k"]

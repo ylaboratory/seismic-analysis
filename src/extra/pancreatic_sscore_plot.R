@@ -1,17 +1,17 @@
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("seismicGWAS")){
-  if (!requireNamespace("devtools", quietly = TRUE)){
+if (!require("seismicGWAS")) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
   }
   devtools::install_github("ylaboratory/seismicGWAS")
@@ -90,7 +90,7 @@ pancreas_sscore_rank_plot_list <- pancreas_sscore_rank_all %>%
 empty_plot <- ggplot() + theme_void()
 
 pancreas_sscore_rank_plot_list <- pancreas_sscore_rank_plot_list %>%
-  map(~{if (length(.x) == 5) .x else c(.x, list(empty_plot)[rep(1, 5 - length(.x))])}) %>%
+  map(~ {if (length(.x) == 5) .x else c(.x, list(empty_plot)[rep(1, 5 - length(.x))])}) %>%
   purrr::reduce(~c(.x, .y))
 
 final_grid <- final_grid <- cowplot::plot_grid(plotlist = pancreas_sscore_rank_plot_list,ncol = 4, nrow = 5,align = "hv",byrow = F)

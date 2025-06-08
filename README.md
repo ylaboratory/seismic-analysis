@@ -1,17 +1,19 @@
 # Analysis scripts for _seismic_
 *seismic* is is a computationally efficient, powerful, and interpretable approach for identifying associations between complex traits and cell type-specific expression using GWAS summary statistics and single-cell RNA-seq data. This repository contains all code and scripts required for reproducing the results and figures of the paper, [Disentangling associations between complex traits and cell types with *seismic*](https://www.biorxiv.org/content/10.1101/2024.05.04.592534).  The repository is organized as follows:
 
-- bin: This directory stores applications, such as MAGMA and scDRS.
+- bin: This directory stores executable binary software or scripts, such as MAGMA and scDRS.
 
-- data: All processed expression and GWAS data will be put here, as well as the intermediate files.
+- data: All processed expression and GWAS data will be put here, as well as the intermediate files. These processed datasets are also available on the [zenodo repository](https://zenodo.org/records/15582078). 
 
 - results: The results of all the analyses, including all real dataset analyses, simulation, runtime analysis, and benchmarking.
 
 - raw: This directory contains the raw and unprocessed data.
 
-- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory. Such as MAGMA auxillary files. 
+- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory. Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's webpage](https://ylaboratory.github.io/seismicGWAS-page/). 
 
 - src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
+
+- tutorials: This directory contains two RMarkdown files with detailed instructions on how to process data for similar analyses. The tutorials can also be reviewed in [the package's website](https://ylaboratory.github.io/seismicGWAS-page/).
 
 ## Environment set up
 The *seismic* framework is packed up as an R package named [*seismicGWAS*](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://github.com/ylaboratory/seismic/blob/gh_page/vignettes/seismicGWAS.md) to know more about the usage and the download of the package. To download and install the package:

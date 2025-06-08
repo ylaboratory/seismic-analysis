@@ -38,24 +38,6 @@ cl_class.loc[cl_class.cell_ontology_class=="schwann cell","official_name"] = "Sc
 cl_class.loc[cl_class.cell_ontology_class=="artery endothelial cell","official_name"] = "endothelial cell of artery"
 cl_class.loc[cl_class.cell_ontology_class=="pancreatic pp cell","official_name"] = "pancreatic PP cell"
 
-"""
-cl_class.loc[cl_class.cell_ontology_class=="pericyte cell","official_name"] = "pericyte"
-cl_class.loc[cl_class.cell_ontology_class=="muller cell","official_name"] = "Mueller cell"
-cl_class.loc[cl_class.cell_ontology_class=="corneal keratocyte","official_name"] = "corneal epithelial cell"
-cl_class.loc[cl_class.cell_ontology_class=="leucocyte","official_name"] = "leukocyte"
-cl_class.loc[cl_class.cell_ontology_class=="pancreatic beta cell","official_name"] = "type B pancreatic cell"
-cl_class.loc[cl_class.cell_ontology_class=="t follicular helper cell","official_name"] = "T follicular helper cell"
-cl_class.loc[cl_class.cell_ontology_class=="adipocyte","official_name"] = "fat cell"
-cl_class.loc[cl_class.cell_ontology_class=="lymphatic endothelial cell","official_name"] = "endothelial cell of lymphatic vessel"
-cl_class.loc[cl_class.cell_ontology_class=="paneth cell of epithelium of large intestine","official_name"] = "paneth cell of colon"
-cl_class.loc[cl_class.cell_ontology_class=="alveolar fibroblast","official_name"] = "fibroblast of lung"
-cl_class.loc[cl_class.cell_ontology_class=="pancreatic alpha cell","official_name"] = "pancreatic A cell"
-cl_class.loc[cl_class.cell_ontology_class=="nkt cell","official_name"] = "mature NK T cell"
-cl_class.loc[cl_class.cell_ontology_class=="immature enterocyte","official_name"] = "enterocyte"
-cl_class.loc[cl_class.cell_ontology_class=="mature enterocyte","official_name"] = "enterocyte"
-cl_class.loc[cl_class.cell_ontology_class=="transit amplifying cell of large intestine","official_name"] = "transit amplifying cell of colon"
-cl_class.loc[cl_class.cell_ontology_class=="transit amplifying cell of large intestine","official_name"] = "transit amplifying cell of colon"
-"""
 
 #find cell ontology that is poorly annotated
 name_to_id = {data.get('name'):id for id, data in cl_graph.nodes(data=True)}
@@ -77,6 +59,5 @@ cl_class = cl_class.dropna(subset=["cl_term"])
 cl_class = cl_class[["cl_term","cell_ontology_class","official_name"]]
 cl_class = cl_class[cl_class["cl_term"].str.startswith("CL")]
 
-#cl_class.to_csv("data/expr/Tabula_sapiens/all_cell_ontology_class.annotated.csv", index=False)
 cl_class.to_csv("data/expr/Tabula_sapiens/all_cell_ontology_class.annotated.new.csv", index=False)
 

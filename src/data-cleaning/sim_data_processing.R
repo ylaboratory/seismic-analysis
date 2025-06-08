@@ -1,23 +1,23 @@
 #script for null simulation
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("scran")){
+if (!require("scran")) {
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
   BiocManager::install("scran")
   library("scran")
 } #to do normalization 
-if (!require("anndata")){
+if (!require("anndata")) {
   install.packages("anndata")
   library("anndata")
 }
@@ -54,7 +54,7 @@ map2(selected_traits, 1:10 , ~system(paste0("cp ",magma_raw_file[[.x]]," ",here(
 
 #write out the shuffled gene sets 
 set.seed(100)
-for (i in 1:10){
+for (i in 1:10) {
   #selected trait
   trait = selected_traits[i]
   
@@ -137,7 +137,7 @@ facs.logcpm <- facs.cpm %>%
 
 ###random sample and output 
 set.seed(99)
-for (i in 1:10){
+for (i in 1:10) {
   #random select by cell index
   cell_idx <- sample(1:ncol(facs.adjusted.log), size=10000) #select 10000 cells
   
@@ -157,8 +157,6 @@ for (i in 1:10){
                                                         cpm= facs.cpm[gene_idx, cell_idx],
                                                         logcpm = facs.logcpm[gene_idx,cell_idx]),
                                                    colData=DataFrame(cell_anno))
-  
-  #save(sce, cell_anno, file = here("data","expr","null_sim","expr_rda",paste0("expr_ds_",i,".rda")) )
   
   #save expression dataset with random gene symbol permutation
   #i.e. reset the gene symbols to the original 
@@ -183,10 +181,10 @@ for (i in 1:10){
 
 ##### 3. random sample seeds (cell index) for later analysis: simu_data_gene.R ####
 set.seed(101)
-for (i in 1:10){
+for (i in 1:10) {
   idx_mat <- matrix(nrow=10000,ncol=100)
   #index 
-  for (j in 1:10000){
+  for (j in 1:10000) {
     idx_mat[j,] <- sample(1:10000,size=100)
   }
   idx_mat <- idx_mat %>% 

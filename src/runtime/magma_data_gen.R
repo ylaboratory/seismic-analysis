@@ -15,7 +15,7 @@ tmp_file_header <- args[4]
 mmu_hsa_mapping <- args[5]
 
 #parameters
-magma_path = "bin/magma"
+magma_path = "bin/magma" #your path to MAGMA binary 
 
 #load packages
 suppressMessages(library("SingleCellExperiment"))
@@ -48,16 +48,14 @@ assay(ts.sce, "cpm") = scuttle::calculateCPM(ts.sce, assay.type = "decontXcounts
 start = Sys.time()
 #calculate mean expression
 mean_mat <- calc_ct_mean(ts.sce, assay_name = "decontXcounts", ct_label_col = "cell_ontology_class")
-#print("step1",as.numeric(difftime(Sys.time(), start, units = "secs")))
 
 #remove not 1 to 1 gene mapping
 mean_mat = mean_mat[, colnames(mean_mat) %in%mmu_hsa_mapping$hsa_ensembl] %>% 
   set_colnames(mmu_hsa_mapping$hsa_entrez[match( colnames(.), mmu_hsa_mapping$hsa_ensembl)])
-#print("step2",as.numeric(difftime(Sys.time(), start, units = "secs")))
+
 
 #filter non-expressed genes
 mean_mat = mean_mat[, which(colSums(mean_mat)>0)]
-#print("step3",as.numeric(difftime(Sys.time(), start, units = "secs")))
 
 end = Sys.time()
 processing_time = as.numeric(difftime(end, start, units = "secs"))
@@ -70,13 +68,14 @@ print_magma_fuma_tbl(mean_mat, table_type = "MAGMA", main_table_path = paste0(tm
 magma_raw_file_all <- list.files(gs_dir, pattern = ".genes.raw")
 
 group_time <- list()
-for(magma_file in magma_raw_file_all){
+
+for(magma_file in magma_raw_file_all) {
   magma_raw_path <- paste0(gs_dir,"/",magma_file)
-  tm <- system.time(system(paste("/grain/ql29/podman_file/bin/magma","--gene-results", magma_raw_path,"--set-annot",paste0(tmp_file_header,".magma.txt"),
+  tm <- system.time(system(paste(magma_path,"--gene-results", magma_raw_path,"--set-annot",paste0(tmp_file_header,".magma.txt"),
                                 "--out",paste0(tmp_file_header, magma_file,".magma.txt"))))
   group_time  <- append(group_time , tm["elapsed"])
 }
 
-#system(paste("rm",paste0(tmp_file_header, "*")))
+
 save(group_time, processing_time, file = output_file) 
 

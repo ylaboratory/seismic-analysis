@@ -1,24 +1,24 @@
 #Preprocessing steps for Tabula muris data set
 ##### 1. load packages and data#######
 ### 1 load packages
-if(!require("Seurat")){
+if(!require("Seurat")) {
   install.packages("Seurat")
   library("Seurat")
 }
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("SingleCellExperiment")){
-  if (!requireNamespace("BiocManager", quietly = TRUE)){
+if (!require("SingleCellExperiment")) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
   BiocManager::install("SingleCellExperiment")
@@ -59,7 +59,6 @@ colData(droplet_obj_sce) = colData(droplet_obj_sce) %>%
   mutate(cell_ontology_class = cell_ontology_class[1]) %>%
   ungroup %>%
   DataFrame()
-
 
 save(facs_obj_sce, file = here("data","expr","Tabula_muris","facs_clean.rda"))
 save(droplet_obj_sce, file = here("data","expr","Tabula_muris","droplet_clean.rda"))

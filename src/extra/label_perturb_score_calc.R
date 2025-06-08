@@ -45,7 +45,7 @@ assay(facs_obj_sce, "logcpm") <-  assay(facs_obj_sce, "cpm") %>% transform_spars
 parameter_df <- read.table(parameter_df_file , header = T, sep = "\t")
 process_file <- paste0(final_res_path, "/process.log")
 
-get_seismic_sscore <- function(data_sce, target_gene_list, assay_name = "logcounts", group = "cell_ontology_class", target_cell_type = "target_cell_type"){
+get_seismic_sscore <- function(data_sce, target_gene_list, assay_name = "logcounts", group = "cell_ontology_class", target_cell_type = "target_cell_type") {
   spec_score <- calc_specificity(data_sce, assay_name = assay_name, ct_label_col = group, min_ct_size = 5) 
   gene_idx <- match(target_gene_list, rownames(spec_score)) %>% .[!is.na(.)]
   spec_score <- spec_score %>%
@@ -57,7 +57,7 @@ get_seismic_sscore <- function(data_sce, target_gene_list, assay_name = "logcoun
 }
 
 #the Bryois et al specificity
-get_spc <- function(data_sce, target_gene_list, assay_name = "logcpm", group = "cell_ontology_class", target_cell_type = "target_cell_type"){
+get_spc <- function(data_sce, target_gene_list, assay_name = "logcpm", group = "cell_ontology_class", target_cell_type = "target_cell_type") {
   ct_mean <- calc_ct_mean(data_sce, assay_name = "counts", ct_label_col = "cell_ontology_class")
   ct_mean <- sweep(ct_mean*1e6, MARGIN=1, STATS=rowSums(ct_mean), FUN="/")
   spec_score <- sweep(ct_mean, MARGIN = 2, STATS = colSums(ct_mean), FUN = "/")
@@ -69,7 +69,7 @@ get_spc <- function(data_sce, target_gene_list, assay_name = "logcpm", group = "
 }
 
 #descore vector
-get_de_score <- function(data_sce, target_gene_list, assay_name = "logcpm", group = "cell_ontology_class", target_cell_type = "target_cell_type"){
+get_de_score <- function(data_sce, target_gene_list, assay_name = "logcpm", group = "cell_ontology_class", target_cell_type = "target_cell_type") {
   #limma fitting
   design <- model.matrix(~factor(data_sce[[group]] ==  target_cell_type))
   colnames(design) <- c("Intercept", target_cell_type)
@@ -86,7 +86,7 @@ get_de_score <- function(data_sce, target_gene_list, assay_name = "logcpm", grou
 }
 
 #get specificity index
-get_si <- function(data_sce, target_gene_list, assay_name = "cpm", group = "cell_ontology_class", target_cell_type = "target_cell_type"){
+get_si <- function(data_sce, target_gene_list, assay_name = "cpm", group = "cell_ontology_class", target_cell_type = "target_cell_type") {
   ct_mean <- calc_ct_mean(data_sce, assay_name = assay_name, ct_label_col = group) %>%
     .[,match(target_gene_list, colnames(.))] %>%
     t() %>%
@@ -102,7 +102,7 @@ get_si <- function(data_sce, target_gene_list, assay_name = "cpm", group = "cell
 
 
 #get all values
-get_all_score <- function(data_sce, seed_sample_file, output_header, analysis_group = "cell_ontology_class",  target_cell_type = "target_cell_type"){
+get_all_score <- function(data_sce, seed_sample_file, output_header, analysis_group = "cell_ontology_class",  target_cell_type = "target_cell_type") {
   sce <- data_sce
   seed_tbl <- read.table(seed_sample_file, header=T, sep="\t")
   target_gene_list <- rownames(sce)
@@ -136,12 +136,12 @@ get_all_score <- function(data_sce, seed_sample_file, output_header, analysis_gr
   sampled_cell_anno <- colnames(seed_tbl) %>%
     set_names(colnames(seed_tbl)) %>%
     map(~set_names(sce[[analysis_group]], sce$cellid)) %>%
-    map2(names(.), ~{tmp = .x; tmp[seed_tbl[[.y]]] = target_cell_type; tmp}) %>%
+    map2(names(.), ~ {tmp = .x; tmp[seed_tbl[[.y]]] = target_cell_type; tmp}) %>%
     map(~as_tibble(.x, rownames = "cellid")) %>%
     map(~group_by(.x, value) %>% add_count() %>% ungroup() %>% filter(n>=5))
   
   all_res <- sampled_cell_anno[1:5] %>%
-    map2(names(.)[1:5], ~{
+    map2(names(.)[1:5], ~ {
       print(.y)
       tmp_sce <- sce[, sce[["cellid"]] %in% .x[["cellid"]] ];
       tmp_sce[[analysis_group]] <- .x[["value"]][match(tmp_sce[["cellid"]], .x[["cellid"]])];
@@ -166,9 +166,9 @@ get_all_score <- function(data_sce, seed_sample_file, output_header, analysis_gr
 
 
 #function by index
-get_value_by_idx <- function(i){
+get_value_by_idx <- function(i) {
   print(paste0("running ",i))
-  tryCatch({
+  tryCatch( {
     data_sce <- facs_obj_sce
     output_header <- parameter_df[[output_header_col]][i]
     seed_sample_file <- parameter_df$seed_sample_file[i]

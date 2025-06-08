@@ -2,22 +2,22 @@
 
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
 
-if (!require("SingleCellExperiment")){
-  if (!requireNamespace("BiocManager", quietly = TRUE)){
+if (!require("SingleCellExperiment")) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
   BiocManager::install("SingleCellExperiment")
@@ -25,7 +25,7 @@ if (!require("SingleCellExperiment")){
 } 
 
 #create anndata object and print out
-if (!require("anndata")){
+if (!require("anndata")) {
   install.packages("anndata")
   library("anndata")
 }

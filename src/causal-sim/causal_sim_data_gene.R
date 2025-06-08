@@ -1,24 +1,25 @@
 # script to generate data for causal simulation
 #### load packages/functions and external data####
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("SingleCellExperiment")){
-  if (!requireNamespace("BiocManager", quietly = TRUE))
+if (!require("SingleCellExperiment")) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
+  }
   BiocManager::install("SingleCellExperiment")
   library("SingleCellExperiment")
 } 
-if (!require("scDesign3", quietly = TRUE)){
+if (!require("scDesign3", quietly = TRUE)) {
   if(!requireNamespace("devtools")){
     install.packages("devtools")
   }
@@ -49,8 +50,8 @@ z_score_list <- list.files(zscore_dir) %>%
 #load expression data
 expr_list <- list.files(expr_dir) %>%
   set_names(gsub(pattern = ".rda", replacement = "", x = ., fixed = T)) %>%
-  map(~{load(paste0(expr_dir,"/",.x)); return(sce)})  %>%
-  map(~{colnames(.x) <- .x$cellid; .x})
+  map(~ {load(paste0(expr_dir,"/",.x)); return(sce)}) %>%
+  map(~ {colnames(.x) <- .x$cellid; .x})
 
 #keep genes in original expression data sets
 z_score_list <- z_score_list %>%
@@ -64,7 +65,7 @@ z_score_list <- z_score_list %>%
 
 
 ##### function definition for scdDesign3 data generation ######
-perturb_count_matrix <- function(sce, covar_df, cellids, geneids, effect_size_para, copula_para_list, para_list ){
+perturb_count_matrix <- function(sce, covar_df, cellids, geneids, effect_size_para, copula_para_list, para_list ) {
   gene_idx <- match(geneids, rownames(sce))
   gene_loc <- match(geneids, colnames(copula_para_list$`1`)) #gene index in copula matrix
   cell_idx <- match(cellids, colnames(sce))
@@ -118,7 +119,7 @@ candidate_gene_list <- map(expr_list, ~assay(.x, "counts") > 0) %>%
   map2(names(.), ~intersect(.x, colnames(sc_para_list[[.y]]$para$mean_mat)[colSums(sc_para_list[[.y]]$para$mean_mat)<1e20])) 
 
 #make gene annotation
-gene_anno_all <- map(candidate_gene_list, ~{
+gene_anno_all <- map(candidate_gene_list, ~ {
   gl <- .x
   map(z_score_list, ~mutate(.x, in_perturb_list = ifelse(mmu_symbol %in% gl & in_expr, TRUE, FALSE)))}) %>%
   map(~map(.x, ~filter(.x, in_perturb_list))) %>%
@@ -126,7 +127,7 @@ gene_anno_all <- map(candidate_gene_list, ~{
 
 #gene weights
 gene_weight <- gene_anno_all %>%
-  map(~map(.x, ~{
+  map(~map(.x, ~ {
     gene_pos_zscore <- filter(.x, ZSTAT > 0)
     pull(gene_pos_zscore, ZSTAT) %>% set_names(pull(gene_pos_zscore, mmu_symbol))
   }))
@@ -135,18 +136,18 @@ gene_weight <- gene_anno_all %>%
 set.seed(100)
 gene_anno <- c(0.2,  0.4, 0.5, 0.6, 0.8) %>%
   set_names(c("gr_0.2","gr_0.4","gr_0.5", "gr_0.6", "gr_0.8")) %>%
-  map(~{
+  map(~ {
     gr<- .x
     map2(gene_anno_all, gene_weight , ~map2(.x,.y, ~mutate(.x,  is_causal = ifelse(mmu_symbol %in% sample(names(.y), gr*1000, prob = .y), T, F)))) %>%
       map(~map(.x, ~mutate(.x, is_ct_specific = ifelse(mmu_symbol %in% sample(filter(.x, !is_causal)$mmu_symbol, 1000 - gr*1000), T, F))))}) 
 
 #write out gene tables
-map2(gene_anno, names(gene_anno), ~{
+map2(gene_anno, names(gene_anno), ~ {
   gr <- .y
-  map2(.x,names(.x), ~{
+  map2(.x,names(.x), ~ {
     expr_name <- .y
-    map2(.x, names(.x), ~{
-      if (! file.exists( paste0(sc3_gene_anno_dir, "/",gr,".",expr_name,".", .y,".gene_anno.txt"))){
+    map2(.x, names(.x), ~ {
+      if (! file.exists( paste0(sc3_gene_anno_dir, "/",gr,".",expr_name,".", .y,".gene_anno.txt"))) {
         write.table(.x, file= paste0(sc3_gene_anno_dir, "/",gr,".",expr_name,".", .y,".gene_anno.txt"), quote = F,row.names = F)
       }} )
   })})
@@ -158,7 +159,7 @@ effect_size = c(0.05, 0.1, 0.5, 1, 2, 5) %>% set_names(c("es_0.05", "es_0.1", "e
 #perturb
 set.seed(123)
 
-map2(gene_anno, names(gene_anno), ~{
+map2(gene_anno, names(gene_anno), ~ {
   
   gene_anno_list <- .x #gene annotation for current causal gene ratio
   
@@ -168,21 +169,21 @@ map2(gene_anno, names(gene_anno), ~{
   
   dir.create(paste0(sc3_perturbed_expr_dir, "/",gr_name), showWarnings = FALSE)
   
-  map2(effect_size, names(effect_size), ~{
+  map2(effect_size, names(effect_size), ~ {
     
     es <- .x #current effect size 
     es_name <- .y
     
     dir.create(paste0(sc3_perturbed_expr_dir, "/",gr_name, "/",es_name), showWarnings = FALSE)
     
-    map2(gene_anno_list, names(gene_anno_list), ~{
+    map2(gene_anno_list, names(gene_anno_list), ~ {
       expr_name <- .y #current expression dataset id
       
       sce <- expr_list[[expr_name]]
       
       cell_anno_tbl = cell_anno_all[[expr_name]]
       
-      map2(.x, names(.x), ~{
+      map2(.x, names(.x), ~ {
         
         gs_name <- .y #current gene set id
         
@@ -253,7 +254,7 @@ multi_ct_candidate_gene_list <- map(expr_list, ~assay(.x, "counts") > 0) %>%
   map2(names(.), ~intersect(.x, colnames(sc_para_list[[.y]]$para$mean_mat)[colSums(sc_para_list[[.y]]$para$mean_mat)<1e20] )) #get genes without starange parameter fitted
 
 #process gene annotation
-multi_ct_gene_anno_all <- map(multi_ct_candidate_gene_list, ~{
+multi_ct_gene_anno_all <- map(multi_ct_candidate_gene_list, ~ {
   gl <- .x
   map(z_score_list, ~mutate(.x, in_perturb_list = ifelse(mmu_symbol %in% gl & in_expr, TRUE, FALSE)))
 }) %>%
@@ -262,7 +263,7 @@ multi_ct_gene_anno_all <- map(multi_ct_candidate_gene_list, ~{
 
 #gene weight
 multi_cell_gene_weight <- multi_ct_gene_anno_all %>%
-  map(~map(.x, ~{
+  map(~map(.x, ~ {
     gene_pos_zscore <- filter(.x, ZSTAT > 0)
     pull(gene_pos_zscore, ZSTAT) %>% set_names(pull(gene_pos_zscore, mmu_symbol))
   }))
@@ -281,8 +282,8 @@ multi_ct_gene_anno_random = multi_ct_gene_anno_all %>%
 #sample genes exclusively 
 multi_ct_gene_anno_no_overlap = multi_ct_gene_anno_all %>%
   map2(multi_cell_gene_weight , ~map2(.x,.y, ~mutate(.x,  is_causal_1 = ifelse(mmu_symbol %in% sample(names(.y), 500, prob = .y), T, F)))) %>%
-  map2(multi_cell_gene_weight , ~map2(.x,.y, ~{gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1), mmu_symbol)]; mutate(.x,  is_causal_2 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
-  map2(multi_cell_gene_weight , ~map2(.x,.y, ~{gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1 & !is_causal_2), mmu_symbol)]; mutate(.x,  is_causal_3 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
+  map2(multi_cell_gene_weight , ~map2(.x,.y, ~ {gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1), mmu_symbol)]; mutate(.x,  is_causal_2 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
+  map2(multi_cell_gene_weight , ~map2(.x,.y, ~ {gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1 & !is_causal_2), mmu_symbol)]; mutate(.x,  is_causal_3 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
   map(~map(.x, ~mutate(.x,  is_ct_specific_1 = ifelse(mmu_symbol %in% sample(filter(., !is_causal_1 & !is_causal_2 & !is_causal_3)$mmu_symbol, 500), T, F)))) %>%
   map(~map(.x, ~mutate(.x,  is_ct_specific_2 = ifelse(mmu_symbol %in% sample(filter(., !is_causal_1 & !is_causal_2 & !is_causal_3 & !is_ct_specific_1)$mmu_symbol, 500), T, F)))) %>%
   map(~map(.x, ~mutate(.x,  is_ct_specific_3 = ifelse(mmu_symbol %in% sample(filter(., !is_causal_1 & !is_causal_2 & !is_causal_3 & !is_ct_specific_1 & !is_ct_specific_2)$mmu_symbol, 500), T, F)))) 
@@ -290,8 +291,8 @@ multi_ct_gene_anno_no_overlap = multi_ct_gene_anno_all %>%
 #sample genes with shared other genes
 multi_ct_gene_anno_ct_overlap = multi_ct_gene_anno_all %>%
   map2(multi_cell_gene_weight , ~map2(.x,.y, ~mutate(.x,  is_causal_1 = ifelse(mmu_symbol %in% sample(names(.y), 500, prob = .y), T, F)))) %>%
-  map2(multi_cell_gene_weight , ~map2(.x,.y, ~{gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1), mmu_symbol)]; mutate(.x,  is_causal_2 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
-  map2(multi_cell_gene_weight , ~map2(.x,.y, ~{gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1 & !is_causal_2), mmu_symbol)]; mutate(.x,  is_causal_3 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
+  map2(multi_cell_gene_weight , ~map2(.x,.y, ~ {gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1), mmu_symbol)]; mutate(.x,  is_causal_2 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
+  map2(multi_cell_gene_weight , ~map2(.x,.y, ~ {gl <- .y[names(.y) %in% pull(filter(.x, !is_causal_1 & !is_causal_2), mmu_symbol)]; mutate(.x,  is_causal_3 = ifelse(mmu_symbol %in% sample(names(gl), 500, prob = gl), T, F))})) %>%
   map(~map(.x, ~mutate(.x,  is_ct_specific = ifelse(mmu_symbol %in% sample(filter(., !is_causal_1 & !is_causal_2 & !is_causal_3)$mmu_symbol, 500), T, F)))) 
 
 #sample genes with shared causal genes
@@ -303,19 +304,19 @@ multi_ct_gene_anno_causal_overlap = multi_ct_gene_anno_all %>%
 
 
 ##write out gene tables
-map2(multi_ct_gene_anno_random, names(multi_ct_gene_anno_random), ~{
+map2(multi_ct_gene_anno_random, names(multi_ct_gene_anno_random), ~ {
   gs_name <- .y
   map2(.x,names(.x), ~write.table(.x,file= paste0(sc3_multi_ct_gene_anno_dir_random, "/",gs_name,".", .y,".gene_anno.txt"), quote = F,row.names = F))})
 
-map2(multi_ct_gene_anno_no_overlap, names(multi_ct_gene_anno_no_overlap), ~{
+map2(multi_ct_gene_anno_no_overlap, names(multi_ct_gene_anno_no_overlap), ~ {
   gs_name <- .y
   map2(.x,names(.x), ~write.table(.x,file= paste0(sc3_multi_ct_gene_anno_dir_no_overlap, "/",gs_name,".", .y,".gene_anno.txt"), quote = F,row.names = F))})
 
-map2(multi_ct_gene_anno_ct_overlap, names(multi_ct_gene_anno_ct_overlap), ~{
+map2(multi_ct_gene_anno_ct_overlap, names(multi_ct_gene_anno_ct_overlap), ~ {
   gs_name <- .y
   map2(.x,names(.x), ~write.table(.x,file= paste0(sc3_multi_ct_gene_anno_dir_ct_overlap, "/",gs_name,".", .y,".gene_anno.txt"), quote = F,row.names = F))})
 
-map2(multi_ct_gene_anno_causal_overlap, names(multi_ct_gene_anno_causal_overlap), ~{
+map2(multi_ct_gene_anno_causal_overlap, names(multi_ct_gene_anno_causal_overlap), ~ {
   gs_name <- .y
   map2(.x,names(.x), ~write.table(.x,file= paste0(sc3_multi_ct_gene_anno_dir_causal_overlap, "/",gs_name,".", .y,".gene_anno.txt"), quote = F,row.names = F))})
 
@@ -324,21 +325,21 @@ effect_size = c(0.05, 0.1, 0.5, 1, 2, 5) %>% set_names(c("es_0.05", "es_0.1", "e
 
 #perturb
 set.seed(123)
-map2(effect_size, names(effect_size), ~{
+map2(effect_size, names(effect_size), ~ {
   es <- .x
   
   es_name <- .y
   
   dir.create(paste0(sc3_multi_ct_perturbed_expr_dir_random, "/",es_name), showWarnings = FALSE)
   
-  map2(multi_ct_gene_anno_random, names(multi_ct_gene_anno_random), ~{
+  map2(multi_ct_gene_anno_random, names(multi_ct_gene_anno_random), ~ {
     expr_name <- .y
     
     sce <- expr_list[[expr_name]]
     
     coldata_df <- multi_ct_cell_anno[[expr_name]] %>% as.data.frame() %>% set_rownames(.$cellid) %>% select(new_cell_ontology_class, library_size) %>% set_colnames(c("cell_ontology_class","library_size"))
     
-    map2(.x, names(.x), ~{
+    map2(.x, names(.x), ~ {
       gs_name <- .y
       
       gene_list_1 <- filter(.x, is_causal_1 | is_ct_specific_1) %>% pull(mmu_symbol)
@@ -369,21 +370,21 @@ map2(effect_size, names(effect_size), ~{
 
 
 set.seed(456)
-map2(effect_size, names(effect_size), ~{
+map2(effect_size, names(effect_size), ~ {
   es <- .x
   
   es_name <- .y
   
   dir.create(paste0(sc3_multi_ct_perturbed_expr_dir_no_overlap, "/",es_name), showWarnings = FALSE)
   
-  map2(multi_ct_gene_anno_no_overlap, names(multi_ct_gene_anno_no_overlap), ~{
+  map2(multi_ct_gene_anno_no_overlap, names(multi_ct_gene_anno_no_overlap), ~ {
     expr_name <- .y
     
     sce <- expr_list[[expr_name]]
     
     coldata_df <- multi_ct_cell_anno[[expr_name]] %>% as.data.frame() %>% set_rownames(.$cellid) %>% select(new_cell_ontology_class, library_size) %>% set_colnames(c("cell_ontology_class","library_size"))
     
-    map2(.x, names(.x), ~{
+    map2(.x, names(.x), ~ {
       gs_name <- .y
       
       gene_list_1 <- filter(.x, is_causal_1 | is_ct_specific_1) %>% pull(mmu_symbol)
@@ -413,21 +414,21 @@ map2(effect_size, names(effect_size), ~{
 })
 
 set.seed(789)
-map2(effect_size, names(effect_size), ~{
+map2(effect_size, names(effect_size), ~ {
   es <- .x
   
   es_name <- .y
   
   dir.create(paste0(sc3_multi_ct_perturbed_expr_dir_ct_overlap, "/",es_name), showWarnings = FALSE)
   
-  map2(multi_ct_gene_anno_ct_overlap, names(multi_ct_gene_anno_ct_overlap), ~{
+  map2(multi_ct_gene_anno_ct_overlap, names(multi_ct_gene_anno_ct_overlap), ~ {
     expr_name <- .y
     
     sce <- expr_list[[expr_name]]
     
     coldata_df <- multi_ct_cell_anno[[expr_name]] %>% as.data.frame() %>% set_rownames(.$cellid) %>% select(new_cell_ontology_class, library_size) %>% set_colnames(c("cell_ontology_class","library_size"))
     
-    map2(.x, names(.x), ~{
+    map2(.x, names(.x), ~ {
       gs_name <- .y
       
       gene_list_1 <- filter(.x, is_causal_1 | is_ct_specific) %>% pull(mmu_symbol)
@@ -457,21 +458,21 @@ map2(effect_size, names(effect_size), ~{
 })
 
 set.seed(012)
-map2(effect_size, names(effect_size), ~{
+map2(effect_size, names(effect_size), ~ {
   es <- .x
   
   es_name <- .y
   
   dir.create(paste0(sc3_multi_ct_perturbed_expr_dir_causal_overlap, "/",es_name), showWarnings = FALSE)
   
-  map2(multi_ct_gene_anno_causal_overlap, names(multi_ct_gene_anno_causal_overlap), ~{
+  map2(multi_ct_gene_anno_causal_overlap, names(multi_ct_gene_anno_causal_overlap), ~ {
     expr_name <- .y
     
     sce <- expr_list[[expr_name]]
     
     coldata_df <- multi_ct_cell_anno[[expr_name]] %>% as.data.frame() %>% set_rownames(.$cellid) %>% select(new_cell_ontology_class, library_size) %>% set_colnames(c("cell_ontology_class","library_size"))
     
-    map2(.x, names(.x), ~{
+    map2(.x, names(.x), ~ {
       gs_name <- .y
       
       gene_list_1 <- filter(.x, is_causal | is_ct_specific_1) %>% pull(mmu_symbol)

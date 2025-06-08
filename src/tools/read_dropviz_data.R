@@ -1,6 +1,6 @@
 #Script with functions to modify function implemented in "DropSeq.util" package for reading in data of DropViz 
 #Original function did not work well
-if (!require("Matrix")){
+if (!require("Matrix")) {
   install.packages("Matrix")
   library("Matrix")
 }
@@ -34,7 +34,7 @@ loadSparseDgeNames = function (file)
   return(list(genes = genes, cell_barcodes = cell_barcodes))
 }
 
-loadSparseDge = function(file, column_compressed = FALSE){
+loadSparseDge = function(file, column_compressed = FALSE) {
   genes_and_cell_barcodes = loadSparseDgeNames(file)
   ret = readMM(file)
   rownames(ret) = genes_and_cell_barcodes$genes

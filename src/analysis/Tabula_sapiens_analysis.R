@@ -2,29 +2,29 @@
 
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("scran")){
-  if (!requireNamespace("BiocManager", quietly = TRUE)){
+if (!require("scran")) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
   BiocManager::install("scran")
   library("scran")
 }  #normalize data
 
-if (!require("seismicGWAS")){
-  if (!requireNamespace("devtools", quietly = TRUE)){
+if (!require("seismicGWAS")) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
   }
   devtools::install_github("ylaboratory/seismicGWAS")

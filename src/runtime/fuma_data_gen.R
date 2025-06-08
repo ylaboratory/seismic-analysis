@@ -46,7 +46,7 @@ print_magma_fuma_tbl(t(mean_mat_hsa), table_type = "FUMA", main_table_path = pas
 #run magma
 magma_raw_file_all <- list.files(gs_dir, pattern = ".genes.raw")
 group_time <- list()
-for(magma_file in magma_raw_file_all){
+for(magma_file in magma_raw_file_all) {
   magma_raw_path <- paste0(gs_dir,"/",magma_file)
   tf <- system.time(system(paste(magma_path,"--gene-results",magma_raw_path,"--gene-covar",paste0(tmp_file_header,".fuma.txt"),
                                 "--model condition-hide=Average direction=greater --out",paste0(tmp_file_header, magma_file,".fuma.txt"))))

@@ -34,7 +34,7 @@ gs_file_all <- list.files(gs_dir, pattern = ".genes.out")
 
 group_time = list()
 
-for (gs_file in gs_file_all){
+for (gs_file in gs_file_all) {
   gs_file_path <- paste0(gs_dir,"/",gs_file)
   zscore <- read.table(gs_file_path, header = T)
   t0 = Sys.time()

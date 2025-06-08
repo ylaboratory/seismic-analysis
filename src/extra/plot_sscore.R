@@ -1,17 +1,17 @@
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("seismicGWAS")){
-  if (!requireNamespace("devtools", quietly = TRUE)){
+if (!require("seismicGWAS")) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
   }
   devtools::install_github("ylaboratory/seismicGWAS")
@@ -90,7 +90,7 @@ pancreas_sscore_rank_plot_list <- pancreas_sscore_rank_all %>%
 empty_plot <- ggplot() + theme_void()
 
 pancreas_sscore_rank_plot_list <- pancreas_sscore_rank_plot_list %>%
-  map(~{if (length(.x) == 5) .x else c(.x, list(empty_plot)[rep(1, 5 - length(.x))])}) %>%
+  map(~ {if (length(.x) == 5) .x else c(.x, list(empty_plot)[rep(1, 5 - length(.x))])}) %>%
   purrr::reduce(~c(.x, .y))
 
 final_grid <- final_grid <- cowplot::plot_grid(plotlist = pancreas_sscore_rank_plot_list,ncol = 4, nrow = 5,align = "hv",byrow = F)
@@ -256,7 +256,7 @@ facs_gene_ct_entropy <-  map(rownames(facs_gene_ct_entropy), ~infotheo::discreti
 parameter_df <- read.table(here("data", "expr", "score_sim", "parameter_df.txt"), header=T) %>%
   as_tibble()
 
-all_res <- map(parameter_df$output_header, ~{if (file.exists(paste0(.x, ".score_df.txt" ))) read.csv(paste0(.x, ".score_df.txt" )) else NA}) %>%
+all_res <- map(parameter_df$output_header, ~ {if (file.exists(paste0(.x, ".score_df.txt" ))) read.csv(paste0(.x, ".score_df.txt" )) else NA}) %>%
   map(~dplyr::rename(.x, "gene" = "X")) %>%
   map2(parameter_df$es_name, ~mutate(.x, effect_size = .y)) %>%
   map2(parameter_df$rep, ~mutate(.x, rep = .y)) %>%
@@ -334,9 +334,9 @@ parameter_df <- read.table(here("data", "expr", "score_sim", "parameter_df.txt")
   as_tibble()
 
 seismic_score_res <- paste0(parameter_df$output_header, ".seismic_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -345,9 +345,9 @@ seismic_score_res <- paste0(parameter_df$output_header, ".seismic_score.txt") %>
   distinct()
 
 seismic_p_res <- paste0(parameter_df$output_header, ".seismic_p.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -356,9 +356,9 @@ seismic_p_res <- paste0(parameter_df$output_header, ".seismic_p.txt") %>%
   distinct()
 
 seismic_r_res <- paste0(parameter_df$output_header, ".seismic_r.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -367,9 +367,9 @@ seismic_r_res <- paste0(parameter_df$output_header, ".seismic_r.txt") %>%
   distinct()
 
 descore_res <- paste0(parameter_df$output_header, ".de_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -378,9 +378,9 @@ descore_res <- paste0(parameter_df$output_header, ".de_score.txt") %>%
   distinct()
 
 mean_res <- paste0(parameter_df$output_header, ".mean_val.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -389,9 +389,9 @@ mean_res <- paste0(parameter_df$output_header, ".mean_val.txt") %>%
   distinct()
 
 spc_score_res <- paste0(parameter_df$output_header, ".spc_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
-  map2(parameter_df$es_name, ~{if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (!is.data.frame(.x)) NA else pivot_longer(.x, cols = !gene, names_to = "cell_type")}) %>% 
+  map2(parameter_df$es_name, ~ {if (!is_tibble(.x)) NA else mutate(.x, effect_size = .y)}) %>%
   keep(~is_tibble(.)) %>% 
   purrr::reduce(~rbind(.x, .y)) %>% 
   group_by(effect_size, gene, cell_type) %>%
@@ -435,20 +435,20 @@ target_gene_list <- parameter_df$perturbed_mat_file %>%
   map(~rownames(.x))
   
 seismic_score_res <- paste0(parameter_df$output_header, ".seismic_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
   #map(~select(.x, gene, target_cell_type)) %>%
   map(~pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
   map2(target_gene_list, ~mutate(.x, gene_type = ifelse(gene %in% .y, "target genes", "others"))) %>%
   map(~drop_na(.x)) 
 
 de_score_res <- paste0(parameter_df$output_header, ".de_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
   map(~pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
   map2(target_gene_list, ~mutate(.x, gene_type = ifelse(gene %in% .y, "target genes", "others"))) %>%
   map(~drop_na(.x)) 
 
 mean_res <- paste0(parameter_df$output_header, ".mean_val.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
   map(~pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
   map2(target_gene_list, ~mutate(.x, gene_type = ifelse(gene %in% .y, "target genes", "others"))) %>%
   map(~drop_na(.x)) 
@@ -597,8 +597,7 @@ parameter_df <- c("causal_overlap" = here("data", "expr", "score_causal", "multi
 
 all_gene_anno <-  parameter_df$gene_anno_file %>%
   map(~read.table(.x, header = T)) %>% 
-  map(~{data_tbl <- .x; map(c(1,2,3), ~select(data_tbl, 
-                                              any_of(c("mmu_symbol", "is_ct_specific", paste0("is_ct_specific_", .x), "is_causal", paste0("is_causal_", .x)))))}) %>%
+  map(~ {data_tbl <- .x; map(c(1,2,3), ~select(data_tbl, any_of(c("mmu_symbol", "is_ct_specific", paste0("is_ct_specific_", .x), "is_causal", paste0("is_causal_", .x)))))}) %>%
   map(~map(.x, ~filter(.x, .[[2]] | .[[3]]))) %>%
   map(~map(.x, ~select(.x, mmu_symbol))) %>%
   map(~map2(.x, c(1,2,3), ~mutate(.x, cell_type = paste0("target_cell_type_", .y)))) %>%
@@ -607,31 +606,29 @@ all_gene_anno <-  parameter_df$gene_anno_file %>%
   
 #load results
 seismic_score_res <- paste0(parameter_df$output_header, ".seismic_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  #map(~select(.x, gene, target_cell_type)) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
   map(~pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
   map2(all_gene_anno, ~mutate(.x, gene_type = ifelse(paste0(gene, cell_type) %in% paste0(.y[["gene"]], .y[["cell_type"]]), "target genes", "others"))) %>%
   map(~drop_na(.x)) 
 
 de_score_res <- paste0(parameter_df$output_header, ".de_score.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~{if (is.data.frame(.x)) pivot_longer(.x, cols = !gene, names_to = "cell_type") else NA}) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ {if (is.data.frame(.x)) pivot_longer(.x, cols = !gene, names_to = "cell_type") else NA}) %>%
   map2(all_gene_anno, ~{if (is_tibble(.x)) mutate(.x, gene_type = ifelse(paste0(gene, cell_type) %in% paste0(.y[["gene"]], .y[["cell_type"]]), "target genes", "others")) else NA}) %>%
-  map(~{if (is_tibble(.x)) drop_na(.x) else NA}) 
+  map(~ {if (is_tibble(.x)) drop_na(.x) else NA}) 
 
 mean_res <- paste0(parameter_df$output_header, ".mean_val.txt") %>%
-  map(~{if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
-  map(~pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
+  map(~ {if (file.exists(.x)) read.table(.x, header = T, sep = "\t") else NA}) %>%
+  map(~ pivot_longer(.x, cols = !gene, names_to = "cell_type")) %>%
   map2(all_gene_anno, ~mutate(.x, gene_type = ifelse(paste0(gene, cell_type) %in% paste0(.y[["gene"]], .y[["cell_type"]]), "target genes", "others"))) %>%
   map(~drop_na(.x)) 
 
 #calculate mi
 seismic_score_mi <- seismic_score_res %>%
   map(~filter(.x, grepl(pattern = "target_cell_type", x = cell_type))) %>%
-  map(~ group_by(.x, cell_type)) %>%
-  map(~ mutate(.x, discrete_value = infotheo::discretize(value))) %>%
-  map(~ summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type)))) %>%
-  #map(~summarise(.x, nmi = mpmi::mmi.pw(cts = value, disc = as.integer(as.factor(gene_type)))$mi))%>%
+  map(~group_by(.x, cell_type)) %>%
+  map(~mutate(.x, discrete_value = infotheo::discretize(value))) %>%
+  map(~summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type)))) %>%
   map2(parameter_df$es_name, ~mutate(.x, effect_size = as.numeric(gsub(pattern = "es_", replacement = "", x = .y)))) %>% 
   map2(parameter_df$gs_name, ~mutate(.x, gs_name = .y)) %>% 
   map2(parameter_df$simulation_type, ~mutate(.x, simulation_type = .y)) %>%
@@ -639,12 +636,10 @@ seismic_score_mi <- seismic_score_res %>%
   mutate(score_type = "seismic specificity")
 
 de_score_mi <- de_score_res %>% 
-  map(~{if (is_tibble(.x)) filter(.x, grepl(pattern = "target_cell_type", x = cell_type)) NA}) %>%
-  # map(~infotheo::mutinformation( infotheo::discretize(.x$target_cell_type), .x$gene_type)) 
+  map(~ {if (is_tibble(.x)) filter(.x, grepl(pattern = "target_cell_type", x = cell_type)) NA}) %>%
   map(~ {if (is_tibble(.x)) group_by(.x, cell_type) else NA})%>%
   map(~ {if (is_tibble(.x)) mutate(.x, discrete_value = infotheo::discretize(value)) else NA}) %>%
   map(~ {if (is_tibble(.x)) summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type))) else NA}) %>%
-  #map(~{if (is_tibble(.x)) summarise(.x, nmi = mpmi::mmi.pw(cts = value, disc = as.integer(as.factor(gene_type)))$mi) else NA})%>%
   map2(parameter_df$es_name, ~{if (is_tibble(.x)) mutate(.x, effect_size = as.numeric(gsub(pattern = "es_", replacement = "", x = .y))) else NA}) %>% 
   map2(parameter_df$gs_name, ~{if (is_tibble(.x)) mutate(.x, gs_name = .y) else NA}) %>% 
   map2(parameter_df$simulation_type, ~{if (is_tibble(.x)) mutate(.x, simulation_type = .y) else NA}) %>%
@@ -654,11 +649,9 @@ de_score_mi <- de_score_res %>%
 
 mean_mi <- mean_res %>% 
   map(~filter(.x, grepl(pattern = "target_cell_type", x = cell_type))) %>%
-  # map(~infotheo::mutinformation( infotheo::discretize(.x$target_cell_type), .x$gene_type)) 
-  map(~ group_by(.x, cell_type)) %>%
-  map(~ mutate(.x, discrete_value = infotheo::discretize(value))) %>%
-  map(~ summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type)))) %>%
-  #map(~summarise(.x, nmi = mpmi::mmi.pw(cts = value, disc = as.integer(as.factor(gene_type)))$mi))%>%
+  map(~group_by(.x, cell_type)) %>%
+  map(~mutate(.x, discrete_value = infotheo::discretize(value))) %>%
+  map(~summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type)))) %>%
   map2(parameter_df$es_name, ~mutate(.x, effect_size = as.numeric(gsub(pattern = "es_", replacement = "", x = .y)))) %>% 
   map2(parameter_df$gs_name, ~mutate(.x, gs_name = .y)) %>% 
   map2(parameter_df$simulation_type, ~mutate(.x, simulation_type = .y)) %>%
@@ -684,10 +677,10 @@ mean_res_null <- mean_res %>%
   mutate(score_type = "mean expression")
 
 de_score_res_null <- de_score_res %>% 
-  map(~{if (is_tibble(.x)) filter(.x, gene_type != "target genes", grepl(pattern = "target_cell_type", x = cell_type)) else NA}) %>%
-  map2(parameter_df$es_name, ~{if (is_tibble(.x)) mutate(.x, effect_size = as.numeric(gsub(pattern = "es_", replacement = "", x = .y))) else NA}) %>% 
-  map2(parameter_df$gs_name, ~{if (is_tibble(.x)) mutate(.x, gs_name = .y) else NA}) %>% 
-  map2(parameter_df$simulation_type, ~{if (is_tibble(.x)) mutate(.x, simulation_type = .y) else NA}) %>%
+  map(~ {if (is_tibble(.x)) filter(.x, gene_type != "target genes", grepl(pattern = "target_cell_type", x = cell_type)) else NA}) %>%
+  map2(parameter_df$es_name, ~ {if (is_tibble(.x)) mutate(.x, effect_size = as.numeric(gsub(pattern = "es_", replacement = "", x = .y))) else NA}) %>% 
+  map2(parameter_df$gs_name, ~ {if (is_tibble(.x)) mutate(.x, gs_name = .y) else NA}) %>% 
+  map2(parameter_df$simulation_type, ~ {if (is_tibble(.x)) mutate(.x, simulation_type = .y) else NA}) %>%
   keep(!is.na(.)) %>%
   purrr::reduce(~rbind(.x, .y)) %>%
   mutate(score_type = "DE score")
@@ -718,7 +711,7 @@ target_gene_list <- parameter_df$perturbed_mat_file %>%
   map(~rownames(.x))
 
 all_results <- parameter_df$output_header %>%
-  map(~{file_header = .x; map(1:10, ~read.table(paste0(file_header, ".sample_", .x, ".score_df.txt"), header = T))})
+  map(~ {file_header = .x; map(1:10, ~read.table(paste0(file_header, ".sample_", .x, ".score_df.txt"), header = T))})
 
 #load calculate specificity score of previous 
 

@@ -2,28 +2,28 @@
 
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("scran")){
-  if (!requireNamespace("BiocManager", quietly = TRUE)){
+if (!require("scran")) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }
   BiocManager::install("scran")
   library("scran")
 }  #normalize data
 
-if (!require("seismicGWAS")){
+if (!require("seismicGWAS")) {
   if (!requireNamespace("devtools", quietly = TRUE)){
     install.packages("devtools")
   }
@@ -37,7 +37,7 @@ load(here("data","expr","Saunders","Saunders_processed.rda") )
 ##### specificity score at different cell number filter #####
 all_sscore <- c(10, 20, 50) %>%
   set_names(c("10", "20", "50")) %>%
-  map(~{ct_filter = .x; map(c("fine_cluster", "subclass", "region_class","region_subclass", "region_cluster"), ~calc_specificity(brain_sce, ct_label_col = .x, min_ct_size = ct_filter, min_avg_exp_ct = 0.01))}) %>%
+  map(~ {ct_filter = .x; map(c("fine_cluster", "subclass", "region_class","region_subclass", "region_cluster"), ~calc_specificity(brain_sce, ct_label_col = .x, min_ct_size = ct_filter, min_avg_exp_ct = 0.01))}) %>%
   map(~map(.x, ~translate_gene_ids(.x, from = "mmu_symbol")))
 
 

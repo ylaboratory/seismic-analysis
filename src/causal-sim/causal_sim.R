@@ -19,15 +19,15 @@ do_inf_analysis <- args[6]
 num_cores <- args[7]
 
 #transform parameters
-if(tolower(do_inf_analysis) %in% c("false","f","no","n")){
+if(tolower(do_inf_analysis) %in% c("false","f","no","n")) {
   do_inf_analysis <- FALSE
 }else{
   do_inf_analysis <- TRUE
 }
 
-if(tolower(extract_target_ct) %in% c("true","t")){
+if(tolower(extract_target_ct) %in% c("true","t")) {
   extract_target_ct <- TRUE
-}else{
+}else {
   extract_target_ct <- FALSE
 }
 
@@ -61,7 +61,7 @@ mmu_hsa_mapping <- mmu_hsa_mapping %>%
   mutate(hsa_entrez = as.character(hsa_entrez))
 
 
-perturb_sce <- function(data_sce, replace_mat, new_cell_anno, group = "cell_ontology_class"){
+perturb_sce <- function(data_sce, replace_mat, new_cell_anno, group = "cell_ontology_class") {
   #change cell type annotation
   colData(data_sce)[[group]][match(names(new_cell_anno), colnames(data_sce))] = new_cell_anno
   
@@ -88,7 +88,7 @@ perturb_sce <- function(data_sce, replace_mat, new_cell_anno, group = "cell_onto
 
 
 #function for seismic analysis
-seismic_fdr <- function(data_sce, assay_name = "logcounts", gwas_zscore_df, output_header, group = "cell_ontology_class", target_cell_type_list = "target_cell_type", influential_analysis = T){
+seismic_fdr <- function(data_sce, assay_name = "logcounts", gwas_zscore_df, output_header, group = "cell_ontology_class", target_cell_type_list = "target_cell_type", influential_analysis = T) {
   #seismic workflow
   sscore <- calc_specificity(data_sce, assay_name = assay_name, ct_label_col = group)
   sscore_hsa <- translate_gene_ids(sscore, from = "mmu_symbol")
@@ -98,8 +98,8 @@ seismic_fdr <- function(data_sce, assay_name = "logcounts", gwas_zscore_df, outp
   target_ct_idx = match(target_cell_type_list, all_association$cell_type)
   
   #influential analysis
-  if(influential_analysis){
-    for (cur_ct_idx in target_ct_idx[which(!is.na(target_ct_idx))]){
+  if(influential_analysis) {
+    for (cur_ct_idx in target_ct_idx[which(!is.na(target_ct_idx))]) {
       example_inf_genes <- find_inf_genes(all_association$cell_type[cur_ct_idx], sscore_hsa, magma = gwas_zscore_df)
       write.table(example_inf_genes, file = paste0(output_header,".", all_association$cell_type[cur_ct_idx] ,".inf_genes.txt"), col.names = T, row.names = F, quote = F, sep="\t")
     }
@@ -108,7 +108,7 @@ seismic_fdr <- function(data_sce, assay_name = "logcounts", gwas_zscore_df, outp
   #save results
   write.table(all_association, file = paste0(output_header, ".results.txt"), col.names = T, row.names = F, quote = F, sep="\t")
   
-  if (!extract_target_ct){
+  if (!extract_target_ct) {
     return(rep(NA, length(target_cell_type_list)))
   }
   
@@ -117,7 +117,7 @@ seismic_fdr <- function(data_sce, assay_name = "logcounts", gwas_zscore_df, outp
 }
 
 #function for S-MAGMA analysis
-magma_fdr <- function(data_sce, assay_name = "counts", magma_raw_path, output_header, gene_mapping_tbl, group = "cell_ontology_class", target_cell_type_list = "target_cell_type"){
+magma_fdr <- function(data_sce, assay_name = "counts", magma_raw_path, output_header, gene_mapping_tbl, group = "cell_ontology_class", target_cell_type_list = "target_cell_type") {
   mean_mat <- calc_ct_mean(data_sce, assay_name = assay_name, ct_label_col = group)
   
   mean_mat = mean_mat[, colnames(mean_mat) %in% gene_mapping_tbl$mmu_symbol] %>% 
@@ -135,7 +135,7 @@ magma_fdr <- function(data_sce, assay_name = "counts", magma_raw_path, output_he
   ms <- system(paste0(here("bin", "magma", "magma"), " --gene-results ", magma_raw_path, " --set-annot ", output_header, ".magma.txt --out ", output_header,".magma"), intern = TRUE)
   
   #extract results or not
-  if (!extract_target_ct){
+  if (!extract_target_ct) {
     return(rep(NA, length(target_cell_type_list)))
   }
   
@@ -155,7 +155,7 @@ magma_fdr <- function(data_sce, assay_name = "counts", magma_raw_path, output_he
 }
 
 #function for FUMA analysis
-fuma_fdr <- function(data_sce, assay_name="logcpm", magma_raw_path, output_header, group = "cell_ontology_class", target_cell_type_list = "target_cell_type"){
+fuma_fdr <- function(data_sce, assay_name="logcpm", magma_raw_path, output_header, group = "cell_ontology_class", target_cell_type_list = "target_cell_type") {
   #prepare fuma file
   mean_mat <- calc_ct_mean(data_sce, assay_name =  assay_name, ct_label_col = group)
   mean_mat_hsa <- translate_gene_ids(t(mean_mat), from = "mmu_symbol")
@@ -166,7 +166,7 @@ fuma_fdr <- function(data_sce, assay_name="logcpm", magma_raw_path, output_heade
   ms = system(paste0(here("bin", "magma", "magma"), " --gene-results ", magma_raw_path, " --gene-covar ", output_header, ".fuma.txt --model condition-hide=Average direction=greater --out ", output_header,".fuma"), intern = TRUE)
   
   #extract results or not
-  if (!extract_target_ct | !file.exists(paste0(output_header, ".fuma.gsa.out"))){ #if the result does not exist due to 
+  if (!extract_target_ct | !file.exists(paste0(output_header, ".fuma.gsa.out"))) { #if the result does not exist due to 
     return(rep(NA, length(target_cell_type_list)))
   }
   
@@ -215,11 +215,11 @@ get_fdr <- function(data_sce_file, replace_mat_file, cell_anno_file, zscore_file
 }
 
 #function for parallel
-get_fdr_by_idx <- function(i){
+get_fdr_by_idx <- function(i) {
   if (i %% 10 == 0) {
     cat(paste("Running seed ", i, "\n"), file = process_file, append = TRUE)
   }
-  tryCatch({
+  tryCatch( {
     data_sce_file <- parameter_df$expr_rda_file[i]
     replace_mat_file <- parameter_df$perturbed_mat_file[i]
     cell_anno_file <- parameter_df$cell_anno_file[i]
@@ -243,10 +243,8 @@ get_fdr_by_idx <- function(i){
 
 
 result <- mclapply(1:nrow(parameter_df), get_fdr_by_idx, mc.cores = num_cores)
-#result <- mclapply(1:50, get_fdr_by_idx, mc.cores = num_cores) #test
 
 result_df <- data.frame(index = 1:nrow(parameter_df), purrr::list_transpose(map(result, ~.x[[2]]))) %>% 
    set_names(c("index", paste0(result[[1]][[1]], ".seismic_fdr"),  paste0(result[[1]][[1]], ".magma_fdr"), paste0(result[[1]][[1]], ".fuma_fdr")))
-
 
 write.table(result_df, file = final_output_file, sep = "\t",quote = F, row.names = F)

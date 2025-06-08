@@ -57,8 +57,6 @@ names(assays(ts_obj)) <- "counts"
 cell_ontology_class <- colData(ts_obj) %>% as_tibble %>% distinct(cell_ontology_class)
 write.table(cell_ontology_class, here("data","expr","Tabula_sapiens","all_cell_ontology_class.csv"),row.names = F,quote = F)
 
-#system(paste0("python ",here("src","data_cleaning","Tabula_sapiens_ontology.py"))) #use the script tp annotate ontology
-#cell_ontology_anno <- read.csv(here("data","expr","Tabula_sapiens","all_cell_ontology_class.annotated.csv")) %>% as_tibble()
 cell_ontology_anno <- read.csv(here("data","expr","Tabula_sapiens","all_cell_ontology_class.annotated.new.csv")) %>% as_tibble()
 
 #filter out cell ontology class without annotation
@@ -92,6 +90,5 @@ rowData(ts_obj) <- gene_anno %>%
   set_rownames(.$ensembl)
 
 #save 
-#save(ts_obj, file = here("data","expr","Tabula_sapiens","TS_clean.rda"))
 save(ts_obj, file = here("data","expr","Tabula_sapiens","TS_clean.new.rda"))
 

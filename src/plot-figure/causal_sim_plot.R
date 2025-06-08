@@ -1,14 +1,14 @@
 #load results
 ##### load packages and results ####
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
@@ -24,7 +24,7 @@ standard_para_df <- read.table(standard_para_df_file,header=T, sep = " ")
 #load data
 pr_curve_data <- list()
 
-standard_res_df <- map2(standard_para_df$output_header, standard_para_df$gene_anno_file, ~{
+standard_res_df <- map2(standard_para_df$output_header, standard_para_df$gene_anno_file, ~ {
   #FUMA results
   fuma_res <- read.table(paste0(.x, ".fuma.gsa.out"), header = T) %>% 
     mutate(FDR = p.adjust(P, method="fdr"))
@@ -230,7 +230,7 @@ extended_para_df_multi <- rbind(extended_para_df_random, extended_para_df_no_ove
 
 #load results
 pr_curve_data_multi <- list()
-extended_res_df_multi <- map2(extended_para_df_multi$output_header, extended_para_df_multi$gene_anno_file, ~{
+extended_res_df_multi <- map2(extended_para_df_multi$output_header, extended_para_df_multi$gene_anno_file, ~ {
   target_cell_type <- c("target_cell_type_1", "target_cell_type_2", "target_cell_type_3")
   
   #import FUMA results
@@ -289,7 +289,7 @@ extended_res_df_multi <- map2(extended_para_df_multi$output_header, extended_par
   if ("is_causal" %in% colnames(gene_anno)) {
     gene_anno <- map(1:3, ~select(gene_anno, "GENE", "is_causal")) %>%
       map(~set_names(.x, c("gene", "is_causal")))
-  }else{
+  }else {
     gene_anno <- map(1:3, ~select(gene_anno, "GENE", paste0("is_causal_", .x))) %>%
       map(~set_names(.x, c("gene", "is_causal")))
   }

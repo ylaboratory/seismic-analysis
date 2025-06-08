@@ -27,8 +27,10 @@ def comp_seed_table_ass(seed_table, score_df, anndata, num_core):
         res = p.map(f, range(0,10000))
     return res
 
+working_path = "seismic-analysis" #make it your working directory path
+
 if __name__ == "__main__":
-    os.chdir("/grain/ql29/seismic-analysis") #set the working directory
+    os.chdir(working_path) 
  
     #parse the argument
     #input parameters: 
@@ -65,5 +67,3 @@ if __name__ == "__main__":
     dump(ass_mcz_res_all,args.output_path[:-3]+"joblib") #dump temp object
     out_df = pd.DataFrame({"index": range(1,10001), "assoc_mcz":ass_mcz_res_all})
     out_df.to_csv(args.output_path, sep="\t",index=False)
-
-#%%

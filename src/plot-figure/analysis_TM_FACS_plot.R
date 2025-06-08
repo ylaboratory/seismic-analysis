@@ -1,22 +1,22 @@
 #generate plots for results of the Tabula Muris FACS dataset
 ##### load packages and results from scdrs/ours/fuma/magma #####
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("UpSetR")){
+if (!require("UpSetR")) {
   install.packages("UpSetR")
   library("UpSetR")
 }
@@ -379,21 +379,10 @@ ggplot( cor_facs_metric %>%
   ylab("Spearman's correlation") + 
   theme(plot.title = element_text(hjust = 0.5))
 
-#calculate max
-#cor_facs_metric %>%
-#  mutate(method1 = strsplit(x=as.character(between), split=" and ") %>% map(~.x[[1]]) %>% unlist) %>%
-#  mutate(method2 = strsplit(x=as.character(between), split=" and ") %>% map(~.x[[2]]) %>% unlist) %>% 
-#  filter(method1 == "seismic" | method2=="seismic")
-
-#compare the most
-#all_results_facs %>%
-#  filter(fdr<=0.05) %>%
-#  group_by(trait_name, cell_type) %>% 
-#  filter(n()>=2, !"seismic" %in% method)
 
 ##### plot difference heatmap ####
 #difference heatmap function
-diff_heatmap <- function(fdr_mat_1, fdr_mat_2, color_vec, ...){ #neither, both, method1, method2
+diff_heatmap <- function(fdr_mat_1, fdr_mat_2, color_vec, ...) { #neither, both, method1, method2
   ht_opt(TITLE_PADDING=unit(5,"mm"))
   agree_mat = ((fdr_mat_1<=0.05)==(fdr_mat_2<=0.05))
   color_mat = ifelse(agree_mat,
@@ -402,8 +391,8 @@ diff_heatmap <- function(fdr_mat_1, fdr_mat_2, color_vec, ...){ #neither, both, 
   #scale alpha value
   alpha_mat = ifelse(agree_mat, 1, 
                      ifelse(fdr_mat_1<=0.05, ((log(5e-2) - log(fdr_mat_1))/log(5e4))*0.9+0.1 , ((log(5e-2) - log(fdr_mat_2))/log(5e4))*0.9+0.1 ))
-  for( i in 1:nrow(fdr_mat_1)){
-    for(j in 1:ncol(fdr_mat_1)){
+  for( i in 1:nrow(fdr_mat_1)) {
+    for(j in 1:ncol(fdr_mat_1)) {
       color_mat[i,j] = scales::alpha(color_mat[i,j],alpha_mat[i, j])
     }
   }

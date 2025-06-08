@@ -7,7 +7,7 @@ bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_muris/tm_droplet
 bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_muris/tm_droplet.fuma.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_muris/droplet/FUMA
 
 #run scDRS for the TM data FACS set
-conda activate qlrisotto #activate your own environment
+conda activate xxx #activate your own environment
 all_gs_files=$(ls data/gwas/tm_gwas/scdrs_gs/*.gs)
 for f in $all_gs_files; do
     g_prefix=$(basename "$f" | cut -d'.' -f1)
@@ -30,7 +30,7 @@ nohup bash src/tools/FUMA_MAGMA_batch.sh -m MAGMA -e data/expr/Tabula_sapiens/ts
 nohup bash src/tools/FUMA_MAGMA_batch.sh -m FUMA -e data/expr/Tabula_sapiens/ts.fuma.new.txt -g data/gwas/tm_gwas/magma_raw -o results/Tabula_sapiens/FUMA_new &
 
 #run scDRS for TS
-conda activate qlrisotto #activate your own environment
+conda activate xxx  #activate your own environment
 all_gs_files=$(ls data/gwas/tm_gwas/scdrs_gs/*.gs)
 for f in $all_gs_files; do
     g_prefix=$(basename "$f" | cut -d'.' -f1)
@@ -48,7 +48,8 @@ for g in "${granularity[@]}"; do
 done
 
 # Run scDRS for the Saunders et al. data set
-conda activate qlrisotto #activate your own environment
+conda activate xxx #activate your own environment
+
 #list all files in data/gwas/brain_gwas/scdrs_gs
 all_gs_files=$(ls data/gwas/brain_gwas/scdrs_gs/*.gs)
 for g in "${granularity[@]}"; do

@@ -48,7 +48,7 @@ mmu_hsa_mapping <- mmu_hsa_mapping %>%
   mutate(hsa_entrez = as.character(hsa_entrez))
 
 #return a seismic p value for a target cell type
-seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type){
+seismic_p_value <- function(data_sce, gwas_zscore_df, group, target_cell_type) {
   seismic_sscore  <- calc_specificity(sce = data_sce , ct_label_col = group)
   seismic_sscore_hsa <- translate_gene_ids(seismic_sscore, from = "mmu_symbol")
   p_value_df <- get_ct_trait_associations(sscore = seismic_sscore_hsa, magma = gwas_zscore_df)

@@ -1,22 +1,22 @@
 #Analysis of Tabula muris data set - split the data by donor ID
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
 
-if (!require("seismicGWAS")){
-  if (!requireNamespace("devtools", quietly = TRUE)){
+if (!require("seismicGWAS")) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
   }
   devtools::install_github("ylaboratory/seismicGWAS")
@@ -55,7 +55,7 @@ magma_zscore_file <- list.files(here("data","gwas","tm_gwas","zscore"), full.nam
 
 #get associations
 facs_ind_association <- magma_zscore_file %>%
-  map(~{zscore_file <- .x; map(facs_sscore_ind, ~get_ct_trait_associations(.x, magma = zscore_file))}) 
+  map(~ {zscore_file <- .x; map(facs_sscore_ind, ~get_ct_trait_associations(.x, magma = zscore_file))}) 
 
 
 ##### 2.5 Calculate the correlation of specificity score #####
@@ -68,7 +68,7 @@ facs_score_cor <- all_sscore_5 %>%
   purrr::reduce(~c(.x, .y)) %>%
   unique() %>%
   set_names(.) %>%
-  map(~{ct = .x; map(all_sscore_5, ~.x[,which(colnames(.x) == ct)])}) %>% 
+  map(~ {ct = .x; map(all_sscore_5, ~.x[,which(colnames(.x) == ct)])}) %>% 
   map(~map(.x, ~tibble(gene = names(.x), value = as.vector(.x)))) %>%
   map(~map2(.x, names(.x), ~set_colnames(.x, c("gene", .y)))) %>%
   map(~keep(.x, ~ncol(.) > 1)) %>%
@@ -81,7 +81,7 @@ facs_score_cor <- all_sscore_5 %>%
 num_ct <- map(names(facs_score_cor), ~length(which(facs_obj_sce$cluster_name == .x)))
 
 num_ind <- map(names(facs_score_cor), ~facs_obj_sce$mouse.id[facs_obj_sce$cluster_name == .x]) %>%
-  map(~{tot_id = .x; map(names(all_sscore_5), ~length(which(tot_id == .x)))}) %>%
+  map(~ {tot_id = .x; map(names(all_sscore_5), ~length(which(tot_id == .x)))}) %>%
   map(~keep(.x, .>=3)) %>%
   map(~min(unlist(.x)))
 

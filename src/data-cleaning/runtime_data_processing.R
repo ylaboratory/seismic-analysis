@@ -1,31 +1,31 @@
 ####load packages
-if (!require("reshape2")){
+if (!require("reshape2")) {
   install.packages("reshape2")
   library("reshape2")
 }
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("scran")){
+if (!require("scran")) {
   if (!requireNamespace("BiocManager", quietly = TRUE)){
     install.packages("BiocManager")
   }
   BiocManager::install("scran")
   library("scran")
 }  #normalize data
-if (!require("zellkonverter")){
+if (!require("zellkonverter")) {
   if (!requireNamespace("BiocManager", quietly = TRUE)){
     install.packages("BiocManager")
   }
   BiocManager::install("zellkonverter")
   library("zellkonverter")
 } 
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
@@ -67,8 +67,8 @@ ts_obj_symbol <- munge_sce_mat(ts_obj, rowData(ts_obj) %>% as_tibble(rownames = 
 ###subset data set
 all_k <- rev(c(300000, 250000, 200000, 150000,100000, 50000,25000, 10000))
 set.seed(101)
-for (i in 1:5){
-  for (k in all_k){
+for (i in 1:5) {
+  for (k in all_k) {
     seed_sample <- sample(ncol(ts_obj), k)
     seed_table <- data.frame(cell = paste0("cell_",1:k), cell_idx = seed_sample)
     write.table(seed_table, file=here("data","expr","seed_table",paste0("ds_",i), paste0("seed_table.",k/1000,"k.txt")), quote = F, col.names = T, row.names = T, sep="\t")
@@ -86,8 +86,8 @@ for (i in 1:5){
 ###upsampling 
 extra_k <- c(400000, 500000)
 set.seed(100)
-for (i in 1:5){
-  for (k in extra_k){
+for (i in 1:5) {
+  for (k in extra_k) {
     #sample seed
     seed_sample <- sample(ncol(ts_obj), k, replace = T)
     seed_table <- data.frame(cell = paste0("cell_",1:k), cell_idx = seed_sample)

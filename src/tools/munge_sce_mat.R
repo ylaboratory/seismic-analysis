@@ -1,16 +1,16 @@
 munge_sce_mat = function(data_obj,  mapping_df, assay_name = "all",multi_mapping = "sum") {
   #check if the assay exists
-  if ( assay_name != "all" & !assay_name %in% SummarizedExperiment::assayNames(data_obj)){
+  if ( assay_name != "all" & !assay_name %in% SummarizedExperiment::assayNames(data_obj)) {
     stop("The assay you are indicating does not exist")
   }
   #check if the feature name is correct
-  if( is.null(rownames(data_obj)) | !any( rownames(data_obj) %in% (mapping_df %>% dplyr::pull(1))) ){
+  if( is.null(rownames(data_obj)) | !any( rownames(data_obj) %in% (mapping_df %>% dplyr::pull(1)))) {
     stop("The feature names do not match the first column of the mapping_df")
   }
-  if(any(duplicated(rownames(data_obj)))){
+  if(any(duplicated(rownames(data_obj)))) {
     stop("The feature names isn't unique. Make it unique or change the feature name into unique ones and then use the function to map non-unique features to unique features.")
   }
-  if (assay_name=="all"){
+  if (assay_name=="all") {
     assay_name =  SummarizedExperiment::assayNames(data_obj)
   }
   
@@ -18,7 +18,7 @@ munge_sce_mat = function(data_obj,  mapping_df, assay_name = "all",multi_mapping
   new_assay = list()
   mapping_df = mapping_df %>% dplyr::mutate_all(~as.character(.))  %>% dplyr::distinct_at(c(1,2))
   
-  for (assay_name_i in assay_name){
+  for (assay_name_i in assay_name) {
     data_mat = SummarizedExperiment::assay(data_obj, assay_name_i)
     #filter mapping
     all_mapping = mapping_df %>% 
@@ -43,7 +43,7 @@ munge_sce_mat = function(data_obj,  mapping_df, assay_name = "all",multi_mapping
     
     #transform mapping 
     fac_mat = Matrix::fac2sparse(factor(multiple_mapping[[2]], levels = unique(multiple_mapping[[2]]))) 
-    if(multi_mapping=="mean"){
+    if(multi_mapping=="mean") {
       fac_mat = sweep_sparse(fac_mat, margin=1, stats = Matrix::rowSums(fac_mat), fun = "/")
     }
     #merge and set rownames

@@ -1,22 +1,22 @@
 #Analysis of Tabula muris data set using Spearman's correlation model
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
 
-if (!require("seismicGWAS")){
-  if (!requireNamespace("devtools", quietly = TRUE)){
+if (!require("seismicGWAS")) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
     install.packages("devtools")
   }
   devtools::install_github("ylaboratory/seismicGWAS")

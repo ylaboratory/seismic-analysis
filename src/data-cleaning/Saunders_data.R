@@ -2,15 +2,15 @@
 
 ##### 1. load packages and data#######
 ### 1 load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
@@ -186,7 +186,7 @@ cell_info = cell_info %>%
   dplyr::rename(region = tissue_type)
 
 #### 4 merge to sce
-if (!require("SingleCellExperiment")){
+if (!require("SingleCellExperiment")) {
   if (!requidplyr::renamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
   BiocManager::install("SingleCellExperiment")

@@ -1,20 +1,22 @@
 #Analysis of Saunders et al data set
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
 
-if (!require("seismicGWAS")){
+if (!require("seismicGWAS")) {
   if (!requireNamespace("devtools", quietly = TRUE)){
     install.packages("devtools")
   }
@@ -22,18 +24,19 @@ if (!require("seismicGWAS")){
   library("seismicGWAS")
 }
 
-if (!require("anndata")){
+if (!require("anndata")) {
   install.packages("anndata")
   library("anndata")
 }
 
-if (!require("clusterProfiler")){
+if (!require("clusterProfiler")) {
   if (!requireNamespace("BiocManager", quietly = TRUE)){
     install.packages("BiocManager")
   }
   BiocManager::install("clusterProfiler")
   library("clusterProfiler")
 } 
+
 library(org.Hs.eg.db)
 
 #load data

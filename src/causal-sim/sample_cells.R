@@ -1,17 +1,17 @@
 #script to generate data for causal simulation
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("SingleCellExperiment")){
+if (!require("SingleCellExperiment")) {
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
   BiocManager::install("SingleCellExperiment")
@@ -28,8 +28,8 @@ expr_dir <- here("data","expr","null_sim","expr_rda_rs")
 #load expression data
 expr_list <- list.files(expr_dir) %>%
   set_names(gsub(pattern = ".rda", replacement = "", x = ., fixed = T)) %>%
-  map(~{load(paste0(expr_dir,"/",.x)); return(sce)})  %>%
-  map(~{colnames(.x) <- .x$cellid; .x})
+  map(~ {load(paste0(expr_dir,"/",.x)); return(sce)})  %>%
+  map(~ {colnames(.x) <- .x$cellid; .x})
 
 #### sample datasets with 1 causal cell types ####
 set.seed(98)

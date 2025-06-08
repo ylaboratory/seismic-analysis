@@ -1,16 +1,16 @@
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if(!require("tidyverse")){
+if(!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
-if (!require("SingleCellExperiment")){
+if (!require("SingleCellExperiment")) {
   if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
   BiocManager::install("SingleCellExperiment")
@@ -23,7 +23,7 @@ sc_para_file <- list.files(here("data","expr","causal_sim","standard_scdesign3_m
   set_names(str_extract(., pattern = "expr_ds_[0-9]*")) 
 
 sc_para_list <- sc_para_file %>%
-  map(~{
+  map(~ {
     load(.x)
     list(copula = sce_copula,
          para = sce_para)
@@ -37,7 +37,7 @@ sc_para_file <- list.files(here("data","expr","causal_sim","multi_ct_scdesign3_m
   set_names(str_extract(., pattern = "expr_ds_[0-9]*")) 
 
 sc_para_list <- sc_para_file %>%
-  map(~{
+  map(~ {
     load(.x)
     list(copula = sce_copula,
          para = sce_para)

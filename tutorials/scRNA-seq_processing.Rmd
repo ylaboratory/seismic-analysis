@@ -6,7 +6,8 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/grain/ql29/seismic-analysis')#set root directory
+root_dir = "seismic-analysis" #change it to the repo directory
+knitr::opts_knit$set(root.dir = root_dir)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -16,7 +17,7 @@ The _seismic_ framework takes the SingleCellExperiment object as input while req
 Before the _seismic_ analysis, the data should be preprocessed to ensure the data quality and compatibility with the _seismic_ framework.
 
 ## Step1: Load the scRNA-seq data and metadata
-Assume now we already have the scRNA-seq data and metadata in the form of SingleCellExperiment object. 
+Assume now we already have the scRNA-seq data and metadata in the form of SingleCellExperiment object. The data object used in the following documentation can be downloaded from the `sample_data` directory of the the [zenodo repository](https://zenodo.org/records/15362163). 
 We will follow some tips from [single-cell best practice](https://www.sc-best-practices.org/preprocessing_visualization/normalization.html).
 ```{r}
 #load packages

@@ -5,7 +5,7 @@ library(SingleCellExperiment)
 library(magrittr)
 
 l1_similarity_normalized <- function(x, y, valid_idx = NULL) {
-  if (!is.null(valid_idx)){
+  if (!is.null(valid_idx)) {
     x <- x[valid_idx]
     y <- y[valid_idx]
   }
@@ -28,16 +28,16 @@ parameter_df <- read.table(here("data", "expr", "score_robustness", "cell_type_s
 all_ref <- map(parameter_df$output_header, ~read.table(paste0(.x, ".all.original_score_df.txt"), header = T)) %>%
   map(~as_tibble(.x))
 
-all_sample <- map(parameter_df$output_header, ~{header = .x; map(1:5, ~read.table(paste0(header, ".all.sample_",.x,".score_df.txt"), header = T))})
+all_sample <- map(parameter_df$output_header, ~ {header = .x; map(1:5, ~read.table(paste0(header, ".all.sample_",.x,".score_df.txt"), header = T))})
 
 #measuring the distance 
 all_ref <- all_ref %>% 
-  map(~{data_tbl <- .x; map(colnames(data_tbl)[2:ncol(data_tbl)], ~dplyr::select(data_tbl, all_of(c("gene", .x))))}) %>%
+  map(~ {data_tbl <- .x; map(colnames(data_tbl)[2:ncol(data_tbl)], ~dplyr::select(data_tbl, all_of(c("gene", .x))))}) %>%
   map(~set_names(.x, map(.x, ~colnames(.x)[2]) %>% unlist )) %>%
   map(~map(.x, ~set_colnames(.x, c("gene", "reference"))))
 
 all_sample <- all_sample %>% 
-  map(~map(.x, ~{data_tbl <- .x; map(colnames(data_tbl)[2:ncol(data_tbl)], ~dplyr::select(data_tbl, all_of(c("gene", .x))))})) %>%
+  map(~map(.x, ~ {data_tbl <- .x; map(colnames(data_tbl)[2:ncol(data_tbl)], ~dplyr::select(data_tbl, all_of(c("gene", .x))))})) %>%
   map(~list_transpose(.x)) %>%
   map(~map(.x, ~purrr::reduce(.x, ~full_join(.x, .y, by = "gene")))) %>%
   map(~map(.x, ~set_colnames(.x, c("gene", paste0("sample_", 1:5)))))  %>%
@@ -68,7 +68,6 @@ all_results <- all_results %>% filter(score_type %in% c("seismic_score", "si", "
 ggplot(all_results,
        aes(x = cell_ratio, y = l1_similarity, fill = score_type)) +
   geom_boxplot(alpha = 0.8, width = 0.5, outlier.alpha = 0.5) +
-  #scale_y_continuous(limits = c(0,1)) +
   theme_classic() +
   ggsci::scale_fill_npg(labels = c("seismic specificity", "DE score","Bryois gene specificity", "specificity index")) +
   xlab("ratio of extra sampled cells (relative to the original number of cells)") +
@@ -77,7 +76,7 @@ ggplot(all_results,
 
 
 ###correlation across cell ratio
-my_cor_func <- function(x, y){
+my_cor_func <- function(x, y) {
   valid_idx <- which(!is.na(x) & !is.na(y) & !is.infinite(x) & !is.infinite(y))
   return(cor(x[valid_idx], y[valid_idx], method = "pearson"))
 }

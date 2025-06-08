@@ -9,7 +9,8 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_knit$set(root.dir = '/grain/ql29/seismic-analysis')
+root_dir = "seismic-analysis" #change it to the repo directory
+knitr::opts_knit$set(root.dir = root_dir)
 ```
 
 ## Introduction

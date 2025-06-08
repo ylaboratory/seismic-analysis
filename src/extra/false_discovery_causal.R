@@ -1,21 +1,21 @@
 #Analysis of Tabula muris data set
 ##### 1. load packages and data#######
 ###load packages
-if (!require("here")){
+if (!require("here")) {
   install.packages("here")
   library("here")
 }
 
-if (!require("magrittr")){
+if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
-if (!require("tidyverse")){
+if (!require("tidyverse")) {
   install.packages("tidyverse")
   library("tidyverse")
 }
 
-if (!require("seismicGWAS")){
+if (!require("seismicGWAS")) {
   if (!requireNamespace("devtools", quietly = TRUE)){
     install.packages("devtools")
   }
@@ -32,7 +32,7 @@ standard_para_df_file<- here("data","expr","causal_sim","sc3_standard","perturbe
 standard_para_df <- read.table(standard_para_df_file,header=T, sep = " ") 
 
 #load data
-standard_res_df <- map2(standard_para_df$output_header, standard_para_df$gene_anno_file, ~{
+standard_res_df <- map2(standard_para_df$output_header, standard_para_df$gene_anno_file, ~ {
   #FUMA results
   fuma_res <- read.table(paste0(.x, ".fuma.gsa.out"), header = T) %>% 
     mutate(FDR = p.adjust(P, method="fdr"))
