@@ -67,14 +67,14 @@ colData(droplet_obj_sce) <- colData(droplet_obj_sce) %>%
 
 #normalization
 #clustering
-cluster.facs <- quickCluster(facs_obj_sce, assay.type = "counts") 
-cluster.droplet <- quickCluster(droplet_obj_sce, assay.type = "counts")
+cluster_facs <- quickCluster(facs_obj_sce, assay.type = "counts") 
+cluster_droplet <- quickCluster(droplet_obj_sce, assay.type = "counts")
 #calculating normalization factors
-facs.factor <- calculateSumFactors(facs_obj_sce, cluster=cluster.facs, min.mean=0.1)
-droplet.factor <- calculateSumFactors(droplet_obj_sce, cluster=cluster.droplet, min.mean=0.1 )
+facs_factor <- calculateSumFactors(facs_obj_sce, cluster=cluster_facs, min.mean=0.1)
+droplet_factor <- calculateSumFactors(droplet_obj_sce, cluster=cluster_droplet, min.mean=0.1 )
 #normalize
-facs_obj_sce <- logNormCounts(facs_obj_sce, size.factors = facs.factor )
-droplet_obj_sce <- logNormCounts(droplet_obj_sce, size.factors = droplet.factor )
+facs_obj_sce <- logNormCounts(facs_obj_sce, size.factors = facs_factor )
+droplet_obj_sce <- logNormCounts(droplet_obj_sce, size.factors = droplet_factor )
 
 ##### 3. seismic analysis: calculate specificity score and perform cell type association#######
 ###specificity score 
