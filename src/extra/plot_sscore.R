@@ -636,7 +636,7 @@ seismic_score_mi <- seismic_score_res %>%
   mutate(score_type = "seismic specificity")
 
 de_score_mi <- de_score_res %>% 
-  map(~ {if (is_tibble(.x)) filter(.x, grepl(pattern = "target_cell_type", x = cell_type)) NA}) %>%
+  map(~ {if (is_tibble(.x)) filter(.x, grepl(pattern = "target_cell_type", x = cell_type)) else NA}) %>%
   map(~ {if (is_tibble(.x)) group_by(.x, cell_type) else NA})%>%
   map(~ {if (is_tibble(.x)) mutate(.x, discrete_value = infotheo::discretize(value)) else NA}) %>%
   map(~ {if (is_tibble(.x)) summarise(.x, nmi = infotheo::mutinformation(discrete_value, gene_type)/ min(infotheo::entropy(discrete_value), infotheo::entropy(gene_type))) else NA}) %>%

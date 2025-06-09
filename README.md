@@ -12,11 +12,11 @@ The repository is organized as follows:
 - raw: This directory contains the raw and unprocessed data.
 
 - ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory. 
-Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's web page](https://ylaboratory.github.io/seismicGWAS-page/).
+Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's page](https://ylaboratory.github.io/seismicGWAS-page/).
 
 - src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
 
-- tutorials: This directory contains two RMarkdown files with detailed instructions on how to process data for similar analyses. The tutorials can also be reviewed in [the package's web site](https://ylaboratory.github.io/seismicGWAS-page/).
+- tutorials: This directory contains two RMarkdown files with detailed instructions on how to process data for similar analyses. The tutorials can also be reviewed in [the package's site](https://ylaboratory.github.io/seismicGWAS-page/).
 
 ## Environment set up
 The _seismic_ framework is packed up as an R package named [_seismicGWAS_](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://github.com/ylaboratory/seismic/blob/gh_page/vignettes/seismicGWAS.md) to know more about the usage and the download of the package. To download and install the package:

@@ -1,5 +1,3 @@
-hon
-
 # import libraries
 import os
 import pandas as pd
@@ -31,5 +29,3 @@ final_df = pd.concat(list_of_dfs, ignore_index=True)
 
 # print out as a csv
 final_df.to_csv("results/runtime/scDRS/runtime.txt", index=False, sep="\t")
-# print out as a cvs
-all_df.to_csv("results/runtime/scDRS/runtime.txt", index=False, sep="\t")

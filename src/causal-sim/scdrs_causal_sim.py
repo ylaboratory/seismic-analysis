@@ -30,6 +30,7 @@ os.environ['OMP_NUM_THREADS'] = '1'
 os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
 os.environ['NUMEXPR_NUM_THREADS'] = '1'
 
+working_path="seismic-analysis" #replace to your own working directory
 
 def worker_init():
     thread_id = int(mp.current_process().name.split('-')[1])
@@ -191,12 +192,13 @@ def parameter_df_to_res(parameter_df, output_header_col, target_cell_type_patter
 
 def main():
     """Main function to run the script."""
-    os.chdir("/grain/ql29/seismic-analysis")  # set the working directory
+    os.chdir(working_path)  # set the working directory
 
     parser = argparse.ArgumentParser(
-        description="Input parameters are: parameter data frame, output directory, organized_by column and number of cores"
+        description=("Input parameters are: parameter data frame, output directory, "
+                     "organized_by column and number of cores")
     )
-
+    
     parser.add_argument('parameter_df_path', type=str, help='Path of the parameter data frame')
     parser.add_argument('final_res_path', type=str, help='Path of the output file')
     parser.add_argument(
@@ -206,7 +208,8 @@ def main():
     parser.add_argument('target_ct_pattern', type=str, help='Regular expression to extract the target cell type')
     parser.add_argument(
         'extract_target_cell', type=str,
-        help='Extract the statistics of the target cell type or not. Any value that does not match any cell types will return 0.'
+        help=("Extract the statistics of the target cell type or not. "
+              "Any value that does not match any cell types will return 0.")
     )
     parser.add_argument('num_cores', type=int, help='Number of cores')
 

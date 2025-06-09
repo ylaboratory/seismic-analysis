@@ -128,7 +128,6 @@ if [ "$keep_all" != "True" ] && [ "$keep_all" != "False" ]; then
   exit 
 fi
 
-ori_num=$(wc -l "$gwas_file")
 #make a temporary directory
 mkdir -p "$(dirname "$output_file")"
 

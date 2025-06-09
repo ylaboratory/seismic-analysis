@@ -42,12 +42,22 @@ do
 done
 
 measure_time() {
-  local cmd="$1"
-  local start="$(date +%s%3N)" # start time in milliseconds
+  local cmd
+  cmd="$1"
+  
+  local start
+  start="$(date +%s%3N)" # start time in milliseconds
+  
   eval "${cmd}"
-  local end=$(date +%s%3N)   # end time in milliseconds
-  local duration_ms=$((end-start))
-  local duration_s=$(echo "scale=3; ${duration_ms} / 1000" | bc)
+  local end
+  end=$(date +%s%3N)   # end time in milliseconds
+  
+  local duration_ms
+  duration_ms=$((end-start))
+  
+  local duration_s
+  duration_s=$(echo "scale=3; ${duration_ms} / 1000" | bc)
+  
   echo "Running time for \"${cmd}\": ${duration_s} s"
 }
 

@@ -8,39 +8,39 @@ cl_graph = obonet.read_obo("data/ref/cell_ontology/cl.obo")
 
 # fix name for cell ontology
 cl_class["official_name"] = cl_class["cell_ontology_class"]
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="cd", value="CD", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="nk", value="NK", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace=" t cell", value=" T cell", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="^t cell", value="T cell", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace=" b cell", value=" B cell", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="^b cell", value="B cell", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="type i ", value="type I ", regex=True)
-cl_class["official_name"] = cl_class["official_name"].replace(to_replace="type ii ", value="type II ", regex=True)
-cl_class.loc[cl_class.cell_ontology_class == "cd8-positive alpha-beta t cell", "official_name"] = "CD8-positive, alpha-beta T cell"
-cl_class.loc[cl_class.cell_ontology_class == "cd4-positive alpha-beta t cell", "official_name"] = "CD4-positive, alpha-beta T cell"
-cl_class.loc[cl_class.cell_ontology_class == "muller cell", "official_name"] = "Mueller cell"
-cl_class.loc[cl_class.cell_ontology_class == "nkt cell", "official_name"] = "natural killer cell"
-cl_class.loc[cl_class.cell_ontology_class == "langerhans cell", "official_name"] = "Langerhans cell"
-cl_class.loc[cl_class.cell_ontology_class == "erythroid progenitor", "official_name"] = "erythroid progenitor cell"
-cl_class.loc[cl_class.cell_ontology_class == "myeloid progenitor", "official_name"] = "myeloid lineage restricted progenitor cell"
-cl_class.loc[
-    cl_class.cell_ontology_class == "hillock-club cell of prostate epithelium", "official_name"
-] = "hillock cell of prostatic urethral epithelium"
-cl_class.loc[cl_class.cell_ontology_class == "t follicular helper cell", "official_name"] = "T follicular helper cell"
-cl_class.loc[cl_class.cell_ontology_class == "dn4 thymocyte", "official_name"] = "DN4 thymocyte"
-cl_class.loc[cl_class.cell_ontology_class == "bronchial vessel endothelial cell", "official_name"] = "bronchial epithelial cell"
-cl_class.loc[cl_class.cell_ontology_class == "respiratory mucous cell", "official_name"] = "respiratory goblet cell"
-cl_class.loc[
-    cl_class.cell_ontology_class == "club cell of prostate epithelium", "official_name"
-] = "club-like cell of the urethral epithelium"
-cl_class.loc[
-    cl_class.cell_ontology_class == "hillock cell of prostate epithelium", "official_name"
-] = "hillock cell of prostatic urethral epithelium"
-cl_class.loc[cl_class.cell_ontology_class == "dn3 thymocyte", "official_name"] = "DN3 thymocyte"
-cl_class.loc[cl_class.cell_ontology_class == "dn1 thymic pro-t cell", "official_name"] = "DN1 thymic pro-T cell"
-cl_class.loc[cl_class.cell_ontology_class == "schwann cell", "official_name"] = "Schwann cell"
-cl_class.loc[cl_class.cell_ontology_class == "artery endothelial cell", "official_name"] = "endothelial cell of artery"
-cl_class.loc[cl_class.cell_ontology_class == "pancreatic pp cell", "official_name"] = "pancreatic PP cell"
+
+# Apply general regex replacements first
+cl_class["official_name"] = cl_class["official_name"].replace(
+    to_replace=["cd", "nk", " t cell", "^t cell", " b cell", "^b cell", "type i ", "type ii "],
+    value=["CD", "NK", " T cell", "T cell", " B cell", "B cell", "type I ", "type II "],
+    regex=True
+)
+
+# Define all specific replacements in a dictionary
+name_map = {
+    "cd8-positive alpha-beta t cell": "CD8-positive, alpha-beta T cell",
+    "cd4-positive alpha-beta t cell": "CD4-positive, alpha-beta T cell",
+    "muller cell": "Mueller cell",
+    "nkt cell": "natural killer cell",
+    "langerhans cell": "Langerhans cell",
+    "erythroid progenitor": "erythroid progenitor cell",
+    "myeloid progenitor": "myeloid lineage restricted progenitor cell",
+    "hillock-club cell of prostate epithelium": "hillock cell of prostatic urethral epithelium",
+    "t follicular helper cell": "T follicular helper cell",
+    "dn4 thymocyte": "DN4 thymocyte",
+    "bronchial vessel endothelial cell": "bronchial epithelial cell",
+    "respiratory mucous cell": "respiratory goblet cell",
+    "club cell of prostate epithelium": "club-like cell of the urethral epithelium",
+    "hillock cell of prostate epithelium": "hillock cell of prostatic urethral epithelium",
+    "dn3 thymocyte": "DN3 thymocyte",
+    "dn1 thymic pro-t cell": "DN1 thymic pro-T cell",
+    "schwann cell": "Schwann cell",
+    "artery endothelial cell": "endothelial cell of artery",
+    "pancreatic pp cell": "pancreatic PP cell"
+}
+
+# Apply all specific replacements at once using the dictionary
+cl_class["official_name"] = cl_class["official_name"].replace(name_map)
 
 
 # find cell ontology that is poorly annotated

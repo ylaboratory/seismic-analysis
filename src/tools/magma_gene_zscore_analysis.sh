@@ -59,13 +59,13 @@ echo "this is header: $HEADER"
 echo "${OUTPUT_DIR}/${HEADER}.${ws_fn}"
 
 # Convert window sizes string to array
-ws_set=(${WINDOW_SIZES//,/ })
+ws_set=("${WINDOW_SIZES//,/ }")
 
 # MAGMA annotation
 echo "Starting MAGMA annotation..."
 pids=()
 for ws in "${ws_set[@]}"; do
-    ws_fn=${ws//,/.}
+    ws_fn="${ws//,/.}"
     echo "this is ws: $ws"
     echo "this is fn: $ws_fn"
     echo "this is output file: ${OUTPUT_DIR}/${HEADER}.${ws_fn}"

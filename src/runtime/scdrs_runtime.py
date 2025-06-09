@@ -72,7 +72,7 @@ def main():
             return_ctrl_raw_score=False, return_ctrl_norm_score=True
         )
         time1 = time.time()
-        group_res = scdrs.method.downstream_group_analysis(
+        _ = scdrs.method.downstream_group_analysis(
             adata=adata, df_full_score=df_res, group_cols=["cell_ontology_class"]
         )
         time2 = time.time()
