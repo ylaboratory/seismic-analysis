@@ -52,8 +52,8 @@ brain_sce <- brain_sce[, filtered_cells]
 #cluster
 cluster_brain <- quickCluster(brain_sce, assay.type = "counts")
 #calculate normalization factors
-brain_factor <- calculateSumFactors(brain_sce, 
-                                    cluster = cluster_brain, 
+brain_factor <- calculateSumFactors(brain_sce,
+                                    cluster = cluster_brain,
                                     min.mean = 0.1)
 #normalize
 brain_sce <- logNormCounts(brain_sce, size.factors = brain_factor)
@@ -68,24 +68,24 @@ brain_sce$region_cluster <-
 
 ##### 3. Calculate specificity score and perform cell type association #######
 ###specificity score for all granularities
-fine_cluster_sscore <- calc_specificity(sce = brain_sce, 
-                                        ct_label_col = "fine_cluster", 
+fine_cluster_sscore <- calc_specificity(sce = brain_sce,
+                                        ct_label_col = "fine_cluster",
                                         min_avg_exp_ct = 0.01)
 
-subclass_sscore <- calc_specificity(sce = brain_sce, 
-                                    ct_label_col = "subclass", 
+subclass_sscore <- calc_specificity(sce = brain_sce,
+                                    ct_label_col = "subclass",
                                     min_avg_exp_ct = 0.01)
 
-region_subclass_sscore <- calc_specificity(sce = brain_sce, 
+region_subclass_sscore <- calc_specificity(sce = brain_sce,
                                            ct_label_col = "region_subclass",
                                            min_avg_exp_ct = 0.01)
 
-region_class_sscore <- calc_specificity(sce = brain_sce, 
-                                        ct_label_col = "region_class", 
+region_class_sscore <- calc_specificity(sce = brain_sce,
+                                        ct_label_col = "region_class",
                                         min_avg_exp_ct = 0.01)
 
-region_cluster_sscore <- calc_specificity(sce = brain_sce, 
-                                          ct_label_col = "region_cluster", 
+region_cluster_sscore <- calc_specificity(sce = brain_sce,
+                                          ct_label_col = "region_cluster",
                                           min_avg_exp_ct = 0.01)
 
 #map to human genes
