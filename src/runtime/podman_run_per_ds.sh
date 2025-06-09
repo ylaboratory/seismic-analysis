@@ -8,7 +8,7 @@ fi
 
 #get the base path and set it as the working directory
 BASE_PATH=$(dirname "$(dirname "$(dirname "$(realpath "$0")")")")
-echo "BASE_PATH IS" $BASE_PATH
+echo "BASE_PATH IS" "$BASE_PATH"
 
 CONTAINER_NAME="$1"
 DATA_PATH_RDA="$2" #data path of the rdata

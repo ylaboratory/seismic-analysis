@@ -1,6 +1,8 @@
 # Null Simulation for Framework Calibration Assessment
 
-This directory contains scripts for performing null simulations to assess the calibration of different cell type-trait association frameworks. The simulation process uses randomly generated seeds, shuffled expression data, and random trait MAGMA gene-level z-scores to calculate P-values for the null hypothesis. The process is repeated 10,000 times to generate a null distribution of P-values. The scripts are organized as follows:
+This directory contains scripts for performing null simulations to assess the calibration of different cell type-trait association frameworks.
+The simulation process uses randomly generated seeds, shuffled expression data, and random trait MAGMA gene-level z-scores to calculate P-values for the null hypothesis.
+The process is repeated 10,000 times to generate a null distribution of P-values. The scripts are organized as follows:
 
 - `null_sim_all_frameworks.sh`: A shell script containing commands to generate null simulation results for the scDRS, FUMA, and S-MAGMA frameworks.
 

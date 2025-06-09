@@ -74,7 +74,7 @@ if [ "$mode" = "MAGMA" ] || [ "$mode" = "Magma" ] || [ "$mode" = "magma" ]; then
     base_name=$(basename "$gwas_file")
     base_name=${base_name%.genes.raw}
     start=$(date +%s%3N)
-    nohup $magma_path --gene-results "$gwas_file" --set-annot "$exp_file" --out "$output_dir"/"$base_name" &
+    nohup "$magma_path" --gene-results "$gwas_file" --set-annot "$exp_file" --out "$output_dir"/"$base_name" &
     end=$(date +%s%3N)
     duration=$((end-start))
     time_string+=("for ${gwas_file} is ${duration} ms")
@@ -84,7 +84,7 @@ elif [ "$mode" = "FUMA" ] || [ "$mode" = "Fuma" ] || [ "$mode" = "fuma" ]; then
     base_name=$(basename "$gwas_file")
     base_name=${base_name%.genes.raw}
     start=$(date +%s%3N)
-    nohup $magma_path --gene-results "$gwas_file" --gene-covar "$exp_file" --model condition-hide=Average direction=greater --out "$output_dir"/"$base_name" &
+    nohup "$magma_path" --gene-results "$gwas_file" --gene-covar "$exp_file" --model condition-hide=Average direction=greater --out "$output_dir"/"$base_name" &
     end=$(date +%s%3N)
     duration=$((end-start))
     time_string+=("for ${gwas_file} is ${duration} ms")

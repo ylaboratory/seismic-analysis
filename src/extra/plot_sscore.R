@@ -713,6 +713,5 @@ target_gene_list <- parameter_df$perturbed_mat_file %>%
 all_results <- parameter_df$output_header %>%
   map(~ {file_header = .x; map(1:10, ~read.table(paste0(file_header, ".sample_", .x, ".score_df.txt"), header = T))})
 
-#load calculate specificity score of previous 
 
 

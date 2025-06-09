@@ -2,8 +2,8 @@
 ##get the scDesign3 model
 for i in {1..10}
 do
-nohup Rscript src/data-cleaning/fit_scDesign3.R data/expr/null_sim/expr_rda_rs/expr_ds_${i}.rda data/expr/causal_sim/standard_scdesign3_model/expr_ds_${i}.cell_anno.txt \
-  data/expr/causal_sim/standard_scdesign3_model/expr_ds_${i}.scdesign3_para.rda 10 &
+nohup Rscript src/data-cleaning/fit_scDesign3.R data/expr/null_sim/expr_rda_rs/expr_ds_"${i}".rda data/expr/causal_sim/standard_scdesign3_model/expr_ds_"${i}".cell_anno.txt \
+  data/expr/causal_sim/standard_scdesign3_model/expr_ds_"${i}".scdesign3_para.rda 10 &
 done
 
 

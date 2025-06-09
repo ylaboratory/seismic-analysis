@@ -89,19 +89,19 @@ region_cluster_sscore <- calc_specificity(sce = brain_sce,
                                           min_avg_exp_ct = 0.01)
 
 #map to human genes
-fine_cluster_sscore_hsa <- translate_gene_ids(fine_cluster_sscore, 
+fine_cluster_sscore_hsa <- translate_gene_ids(fine_cluster_sscore,
                                               from = "mmu_symbol")
 
-subclass_sscore_hsa <- translate_gene_ids(subclass_sscore, 
+subclass_sscore_hsa <- translate_gene_ids(subclass_sscore,
                                           from = "mmu_symbol")
 
-region_subclass_sscore_hsa <- translate_gene_ids(region_subclass_sscore, 
+region_subclass_sscore_hsa <- translate_gene_ids(region_subclass_sscore,
                                                  from = "mmu_symbol")
 
-region_class_sscore_hsa <- translate_gene_ids(region_class_sscore, 
+region_class_sscore_hsa <- translate_gene_ids(region_class_sscore,
                                               from = "mmu_symbol")
 
-region_cluster_sscore_hsa <- translate_gene_ids(region_cluster_sscore, 
+region_cluster_sscore_hsa <- translate_gene_ids(region_cluster_sscore,
                                                 from = "mmu_symbol")
 
 ##enrichment
