@@ -11,7 +11,7 @@ The repository is organized as follows:
 
 - raw: This directory contains the raw and unprocessed data.
 
-- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory. 
+- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory.
 Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's page](https://ylaboratory.github.io/seismicGWAS-page/).
 
 - src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.

@@ -30,7 +30,8 @@ os.environ['OMP_NUM_THREADS'] = '1'
 os.environ['VECLIB_MAXIMUM_THREADS'] = '1'
 os.environ['NUMEXPR_NUM_THREADS'] = '1'
 
-working_path="seismic-analysis" #replace to your own working directory
+working_path = "seismic-analysis"  # replace to your own working directory
+
 
 def worker_init():
     thread_id = int(mp.current_process().name.split('-')[1])
@@ -198,7 +199,7 @@ def main():
         description=("Input parameters are: parameter data frame, output directory, "
                      "organized_by column and number of cores")
     )
-    
+
     parser.add_argument('parameter_df_path', type=str, help='Path of the parameter data frame')
     parser.add_argument('final_res_path', type=str, help='Path of the output file')
     parser.add_argument(
