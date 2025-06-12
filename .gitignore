@@ -34,3 +34,65 @@ ipython_config.py
 ###### Windows
 Thumbs.db
 Thumbs.db:encryptable
+
+###### vscode
+.vscode/
+
+###### seismic project specific files
+#magma files
+bin/*
+raw/*
+data/*
+
+#any RData or rda
+*.RData
+*.rda
+*.RDS
+*.Robj
+
+#data files
+data/*
+
+#result file
+results/*
+
+#raw files
+raw/*
+
+#magma gene analysis results
+*.genes.out
+*.genes.annot
+*.genes.raw
+
+#intermediate files
+*.h5ad
+*aux.txt
+*fuma.txt
+*magma.txt
+
+#result files
+*_res.txt
+*_go.txt
+*_dfbetas.txt
+*.gsa.out
+*.score.gz
+*.score
+*.full_score.gz
+*.full_score
+*scdrs_group*
+
+#other files
+*.tsv 
+sample_seed*
+expr_ds*
+*.log
+nohup.out
+*.pdf
+*.csv
+*.txt
+*.json
+*.txt
+*.out
+
+#test files
+test.*

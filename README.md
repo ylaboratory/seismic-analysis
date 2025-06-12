@@ -1,26 +1,32 @@
-# proj-template
-simple template for ylab projects
+# Analysis scripts for _seismic_
+_seismic_ is a computationally efficient, powerful, and interpretable approach for identifying associations between complex traits and cell type-specific expression using GWAS summary statistics and single-cell RNA-seq data.
+This repository contains all code and scripts required for reproducing the results and figures of the paper, [Disentangling associations between complex traits and cell types with _seismic_](https://www.biorxiv.org/content/10.1101/2024.05.04.592534).
+The repository is organized as follows:
 
-This repo includes a basic `.gitignore` with common files to exclude, but this should obviously be pared down / additional files should be added as necessary.
+- bin: This directory stores executable binary software or scripts, such as MAGMA and scDRS.
 
-There is also support for [super-linter](https://github.com/github/super-linter) as a [GitHub action](https://docs.github.com/en/free-pro-team@latest/actions), which essentially just means that all code will be automatically linted on push / when PRs are opened. Make sure all checks pass!
+- data: All processed expression and GWAS data will be put here, as well as the intermediate files. These processed datasets are also available on the [zenodo repository](https://zenodo.org/records/15582078).
 
-The directory structure is inspired by [this article](https://medium.com/outlier-bio-blog/a-quick-guide-to-organizing-data-science-projects-updated-for-2016-4cbb1e6dac71), which is based off of this [classic article](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) on organizing projects, and makes a good starting point for projects.
+- results: The results of all the analyses, including all real dataset analyses, simulation, runtime analysis, and benchmarking.
 
-## conda environment
-The `env.yml` file should be updated accordingly for projects that use python, so that a new conda environment can be easily installed using the following command:
-```sh
-conda env create -f env.yml
+- raw: This directory contains the raw and unprocessed data.
+
+- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory.
+Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's page](https://ylaboratory.github.io/seismicGWAS-page/).
+
+- src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
+
+- tutorials: This directory contains two RMarkdown files with detailed instructions on how to process data for similar analyses. The tutorials can also be reviewed in [the package's site](https://ylaboratory.github.io/seismicGWAS-page/).
+
+## Environment set up
+The _seismic_ framework is packed up as an R package named [_seismicGWAS_](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://github.com/ylaboratory/seismic/blob/gh_page/vignettes/seismicGWAS.md) to know more about the usage and the download of the package. To download and install the package:
+
+```{r}
+devtools::install_github("ylaboratory/seismicGWAS")
 ```
+This will be sufficient for the _seismic_ trait-associated cell type analysis and influential gene analysis. To run the benchmarking analysis, please refer to the script in the `src/method-compare` subdirectory.
 
-Per usual, to activate the environment:
-```sh
-conda activate new_env_name
-```
-
-If the environment is already set up, to update it for new dependencies / resources:
-```sh
-conda env update -n new_env_name -f env.yml --prune
-```
-
-Note that the `--prune` flag will tell conda to remove any dependencies that may no longer be required in the environment.
+## How to preprocess your own data and run _seismic_ analysis
+We provide a detailed tutorial on how to preprocess your own data and run the _seismic_ analysis in the `src/tutorial` subdirectory.
+- [Process your own GWAS data](https://github.com/ylaboratory/seismic-analysis/blob/master/tutorials/GWAS_processing.md)
+- [Process your own scRNA-seq data and run _seismic_ analysis](https://github.com/ylaboratory/seismic-analysis/blob/master/tutorials/scRNA-seq_processing.md)
