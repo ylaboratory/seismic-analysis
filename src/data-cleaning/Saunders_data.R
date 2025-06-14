@@ -1,7 +1,6 @@
-#Preprocessing steps for Saunders et al data set
-
-##### 1. load packages and data#######
-### 1 load packages
+# ***************************************************
+# Preprocessing steps for Saunders et al dataset
+# ***************************************************
 if (!require("here")) {
   install.packages("here")
   library("here")
@@ -15,16 +14,16 @@ if(!require("tidyverse")) {
   library("tidyverse")
 }
 
-#load functions for read dropviz data
+# load functions for read dropviz data
 source(here("src","tools","read_dropviz_data.R"))
 
-##### 2 load data #######
+# load data
 all_files = list.files(here("raw","expr","Saunders"))
 regions = c("Cerebellum_ALT","Cortex_noRep5_FRONTALonly","Cortex_noRep5_POSTERIORonly","EntoPeduncular","GlobusPallidus","Hippocampus","Striatum","SubstantiaNigra","Thalamus")
 rg_formal = c("Cerebellum","Frontal Cortex","Posterior Cortex","Ento Peduncular","Globus Pallidus","Hippocampus","Striatum","Substantia Nigra","Thalamus")
 tissues = c("CB","FC","PC","ENT","GP","HC","STR","SN","TH")
 cell_type = c("Astrocytes","Endothelial","FibroblastLike","Microglia_Macrophage","Mural","Oligodendrocytes","Polydendrocytes")
-##read in
+
 dge = map(regions, ~loadSparseDge(here("raw","expr","Saunders",paste0("F_GRCm38.81.P60",.x,".raw.dge.txt.gz")))) %>% set_names(regions)
 cell_info = map(regions, ~readRDS(here("raw","expr","Saunders",paste0("F_GRCm38.81.P60",.x,".cell_cluster_outcomes.RDS"))) %>% as_tibble(rownames="cellname")) %>% set_names(regions)
 cell_type_voc = readRDS(here("raw","expr","Saunders","annotation.BrainCellAtlas_Saunders_version_2018.04.01.RDS")) %>% as_tibble() 
@@ -35,7 +34,7 @@ non_neuron_ct = map(cell_type, ~readRDS(here("raw","expr","Saunders",all_files[g
 non_neuron_ct = map2(non_neuron_ct, names(non_neuron_ct), ~mutate(.x, non_neuron_cluster = paste0(.y,"_",non_neuron_cluster))) %>%
   purrr::reduce(~rbind(.x,.y))
 
-### 3 merge data
+# merge data
 tot_genes = dge %>%  #keep only intersected genes
   map(~rownames(.x)) %>%
   purrr::reduce(~intersect(.x,.y))
@@ -168,7 +167,7 @@ cell_type_voc = cell_type_voc %>%
 
 
 #combine with non-neuron annotation
-##rule:neurons are marked by "new cluster", all non neurons are marked by "cell cluster", but neurogenesis/mitotic + choroid plexus + ependyma cells are not markerd. We use original labels to markerd it
+# rule:neurons are marked by "new cluster", all non neurons are marked by "cell cluster", but neurogenesis/mitotic + choroid plexus + ependyma cells are not markerd. We use original labels to markerd it
 cell_info = cell_info %>%
   left_join( cell_type_voc %>% dplyr::select(class, tissue, tissue_subcluster, class_marker, type_marker, cluster_anno,common_name,full_name,subclass,fine_cluster), by=c("tissue_type"="tissue","subcluster"="tissue_subcluster")) %>% #add neuron annotation
   dplyr::select(cellname, tissue_type, class, cluster,subcluster,class_marker,type_marker, cluster_anno, full_name, common_name, subclass, fine_cluster ) %>%
@@ -185,7 +184,7 @@ cell_info = cell_info %>%
   dplyr::select(-non_neuron_cluster) %>%
   dplyr::rename(region = tissue_type)
 
-#### 4 merge to sce
+# merge to sce
 if (!require("SingleCellExperiment")) {
   if (!requidplyr::renamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")

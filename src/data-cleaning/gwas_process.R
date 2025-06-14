@@ -1,4 +1,6 @@
-#script to generate data for causal simulation
+# ********************************
+# GWAS data processing
+# ********************************
 if (!require("here")) {
   install.packages("here")
   library("here")
@@ -12,7 +14,7 @@ if(!require("tidyverse")) {
   library("tidyverse")
 }
 
-#load objects
+
 load(here("data","ref","mapping","mmu_hsa_mapping.rda"))
 
 z_score_file = list.files(here("data","gwas","tm_gwas","zscore"), full.names = T) %>% 

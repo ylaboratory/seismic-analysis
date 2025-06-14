@@ -63,4 +63,4 @@ cl_class = cl_class.dropna(subset=["cl_term"])
 cl_class = cl_class[["cl_term", "cell_ontology_class", "official_name"]]
 cl_class = cl_class[cl_class["cl_term"].str.startswith("CL")]
 
-cl_class.to_csv("data/expr/Tabula_sapiens/all_cell_ontology_class.annotated.new.csv", index=False)
+cl_class.to_csv("data/expr/Tabula_sapiens/all_cell_ontology_class.annotated.csv", index=False)

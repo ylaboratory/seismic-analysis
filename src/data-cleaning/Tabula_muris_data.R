@@ -1,6 +1,7 @@
-#Preprocessing steps for Tabula muris data set
-##### 1. load packages and data#######
-### 1 load packages
+# *************************************************
+# Preprocessing steps for Tabula muris dataset
+# *************************************************
+
 if(!require("Seurat")) {
   install.packages("Seurat")
   library("Seurat")
@@ -23,13 +24,12 @@ if (!require("SingleCellExperiment")) {
   }
   BiocManager::install("SingleCellExperiment")
   library("SingleCellExperiment")
-}  #normalize data
+}
 
-###2 load data
 facs_obj_file = list.files(path = here("raw","expr","Tabula_muris","Seurat"), pattern = "facs.*Robj")
 droplet_obj_file = list.files(path = here("raw","expr","Tabula_muris","Seurat"), pattern = "droplet.*Robj")
 
-##### 2. merge data#######
+# merge data
 facs_obj = facs_obj_file %>%
   map(~{load(here("raw","expr","Tabula_muris","Seurat",.x)); tiss}) %>%
   map(~UpdateSeuratObject(.x)) %>%
@@ -39,11 +39,11 @@ droplet_obj = droplet_obj_file %>%
   map(~UpdateSeuratObject(.x)) %>%
   reduce(~merge(.x,.y))
 
-##### 3. transform data to sce and clean labels #####
+# transform data to sce and clean labels
 facs_obj_sce = as.SingleCellExperiment(facs_obj)
 droplet_obj_sce = as.SingleCellExperiment(droplet_obj)
 
-#clean cell ontology label and remove cells without such labels
+# clean cell ontology label and remove cells without such labels
 colData(facs_obj_sce) = colData(facs_obj_sce) %>% 
   as_tibble() %>% #easy to process
   group_by(cell_ontology_id) %>% #unify cell_ontology_class name (some typo)

@@ -1,23 +1,26 @@
-####load packages
 if (!require("reshape2")) {
   install.packages("reshape2")
   library("reshape2")
 }
+
 if (!require("here")) {
   install.packages("here")
   library("here")
 }
+
 if (!require("magrittr")) {
   install.packages("magrittr")
   library("magrittr")
 }
+
 if (!require("scran")) {
   if (!requireNamespace("BiocManager", quietly = TRUE)){
     install.packages("BiocManager")
   }
   BiocManager::install("scran")
   library("scran")
-}  #normalize data
+}
+
 if (!require("zellkonverter")) {
   if (!requireNamespace("BiocManager", quietly = TRUE)){
     install.packages("BiocManager")
@@ -34,37 +37,30 @@ library(anndata)
 #load function
 source(here("src","tools","munge_sce_mat.R"))
 
-#####load data and filter data#######
-###1 load data
-#data file
+# load data and filter data
 ts_obj <- readH5AD(here("raw","expr","Tabula_sapiens","TabulaSapiens.h5ad"),reader = "R")
 
-###2 quality control and filer cells 
-#num umi has been controlled
+# quality control and filter cells 
 ts_obj$mt_counts <- assay(ts_obj, "decontXcounts")[grep(pattern = "^MT-", rowData(ts_obj)$gene_symbol), ] %>% colSums()
 ts_obj$mt_ratio <- ts_obj$mt_counts/ts_obj$n_counts_UMIs 
 
-##subset 
 ts_obj <- ts_obj[, ts_obj$mt_ratio<=0.15] #keep more cells
 ts_obj <- ts_obj[, ts_obj$method=="10X"] #most of the cells
 
-###filter genes
+# filter genes
 ts_obj <- ts_obj[( rowSums( assay(ts_obj, "decontXcounts"))>=20),]
 ts_obj <- ts_obj %>%
   set_rownames(rowData(ts_obj)$ensemblid %>% strsplit(split=".",fixed=T) %>% map(~.[1]) %>% unlist) %>%
   set_colnames(colData(ts_obj)$cell_id)
 
-###normalization
+# normalization
 cluster <- quickCluster(assay(ts_obj, "decontXcounts")) 
-#calculating normalization factors
 size.factor <- calculateSumFactors(assay(ts_obj, "decontXcounts"), cluster=cluster, min.mean=0.1)
-#lognorm counts
 ts_obj <- logNormCounts(ts_obj, size.factors = size.factor, assay.type = "decontXcounts" )
 assays(ts_obj) <- assays(ts_obj)[c("decontXcounts","logcounts")]
-#ts_obj with symbol mapping
 ts_obj_symbol <- munge_sce_mat(ts_obj, rowData(ts_obj) %>% as_tibble(rownames = "ensembl") %>% select(ensembl, gene_symbol))
 
-###subset data set
+# subset data set
 all_k <- rev(c(300000, 250000, 200000, 150000,100000, 50000,25000, 10000))
 set.seed(101)
 for (i in 1:5) {
@@ -83,7 +79,7 @@ for (i in 1:5) {
 }
 
 
-###upsampling 
+# upsampling 
 extra_k <- c(400000, 500000)
 set.seed(100)
 for (i in 1:5) {
