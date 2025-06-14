@@ -18,7 +18,7 @@ extract_target_ct <- args[5]
 do_inf_analysis <- args[6]
 num_cores <- args[7]
 
-#transform parameters
+# transform parameters
 if(tolower(do_inf_analysis) %in% c("false","f","no","n")) {
   do_inf_analysis <- FALSE
 }else{
@@ -31,7 +31,7 @@ if(tolower(extract_target_ct) %in% c("true","t")) {
   extract_target_ct <- FALSE
 }
 
-#load packages
+# load packages
 suppressMessages(library("magrittr"))
 suppressMessages(library("tidyverse"))
 suppressMessages(library("here"))
@@ -42,7 +42,7 @@ suppressMessages(library("parallel"))
 source(here("src","tools","sparse_mat_util.R"))
 source(here("src","tools","magma_fuma_file_prep.R"))
 
-#load data and set output path
+# load data and set output path
 parameter_df <- read.table(parameter_df_file , header = T)
 process_file <- paste0(final_res_path, "/process.log")
 final_output_file <- paste0(final_res_path, "/all_res.txt")

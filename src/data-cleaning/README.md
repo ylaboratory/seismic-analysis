@@ -1,8 +1,10 @@
 # Data cleaning scripts
 
-This folder contains scripts for preparing the expression data sets from raw data downloaded directly from the respective sources. The scripts are organized as follows:
+This folder contains scripts for preparing the expression datasets
+from raw data downloaded directly from their respective sources.
+The scripts are organized as follows:
 
-- `Saunders_data_cleaning.R` processes the [raw data from Saunders et al. (2018)](ttp://dropviz.org/). It filters out cells labeled as singleton, doublet, or outliers.
+- `Saunders_data_cleaning.R`: processes the [raw data from Saunders et al. (2018)](http://dropviz.org/). It filters out cells labeled as singleton, doublet, or outliers.
 Subcluster annotations are manually curated to remove typos and inconsistencies, which are used for the fine_cluster granularity.
 Cluster labels are extracted from the supplementary file of the original paper. Neuron subclass labels are annotated based on the primary neurotransmitter type.
 

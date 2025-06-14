@@ -1,32 +1,44 @@
 # Analysis scripts for _seismic_
-_seismic_ is a computationally efficient, powerful, and interpretable approach for identifying associations between complex traits and cell type-specific expression using GWAS summary statistics and single-cell RNA-seq data.
-This repository contains all code and scripts required for reproducing the results and figures of the paper, [Disentangling associations between complex traits and cell types with _seismic_](https://www.biorxiv.org/content/10.1101/2024.05.04.592534).
-The repository is organized as follows:
 
-- bin: This directory stores executable binary software or scripts, such as MAGMA and scDRS.
+_seismic_ is a computationally efficient, powerful, and interpretable approach for
+identifying associations between complex traits and cell type-specific expression
+using GWAS summary statistics and single-cell RNA-seq data.
+This repository contains all code and scripts required for reproducing the results
+and figures of the paper,
+[Disentangling associations between complex traits and cell types with _seismic_](https://www.biorxiv.org/content/10.1101/2024.05.04.592534).
 
-- data: All processed expression and GWAS data will be put here, as well as the intermediate files. These processed datasets are also available on the [zenodo repository](https://zenodo.org/records/15582078).
+All data for reproducing the analyses can be found on [zenodo](https://zenodo.org/records/15582078).
+We recommend downloading these files and unzipping into this base directory before
+proceeding. All file paths will assume that downloaded `all_data` file from zenodo is unzipped
+and placed under this repo's parent directory.
 
-- results: The results of all the analyses, including all real dataset analyses, simulation, runtime analysis, and benchmarking.
+Scripts are located in the `src` folder and are divided into the following directories:
 
-- raw: This directory contains the raw and unprocessed data.
+- `analysis`: scripts for performing seismic analysis on various datasets.
+- `causal-sim`: scripts for simulating trait-specific gene expression in cell groups and evaluating the performance of different cell type-trait association detection methods
+- `data-cleaning`: scripts for preparing the expression data sets from raw data downloaded directly from their respective sources
+- `extra`: scripts for extra experiments that analyze the performance of seismic
+- `method-compare`: scripts for running other methods for baseline comparison 
+- `null-sim`: scripts for performing null simulations to assess the calibration of different cell type-trait association frameworks
+- `plot-figure`: scripts for generating all the figures in the paper
+- `runtime`: scripts for evaluating the runtime performance of seismic and other cell type-trait association frameworks
+- `tools`: accessory scripts to facilitate data processing, annotation, and analysis
 
-- ref: Reference files and datasets that are used as inputs for the analysis are stored in this directory.
-Such as MAGMA auxillary files. For further instruction on the location and the usage of these reference files, please refer to the detailed tutorials on [our package's page](https://ylaboratory.github.io/seismicGWAS-page/).
+## Basic setup
 
-- src: Source code files for the analysis, including all scripts for data generation, data analysis, tool scripts and figure generation.
+The _seismic_ framework is available as an R package
+[_seismicGWAS_](https://github.com/ylaboratory/seismic).
+Please refer to the package and accompanying vignette for more about usage,
+requirements, and installation. To quickly install the package in R
+use `devtools`:
 
-- tutorials: This directory contains two RMarkdown files with detailed instructions on how to process data for similar analyses. The tutorials can also be reviewed in [the package's site](https://ylaboratory.github.io/seismicGWAS-page/).
-
-## Environment set up
-The _seismic_ framework is packed up as an R package named [_seismicGWAS_](https://github.com/ylaboratory/seismic) that is avialble for installation. Please refer to the package link and [vignette](https://github.com/ylaboratory/seismic/blob/gh_page/vignettes/seismicGWAS.md) to know more about the usage and the download of the package. To download and install the package:
-
-```{r}
+```R
 devtools::install_github("ylaboratory/seismicGWAS")
 ```
-This will be sufficient for the _seismic_ trait-associated cell type analysis and influential gene analysis. To run the benchmarking analysis, please refer to the script in the `src/method-compare` subdirectory.
 
-## How to preprocess your own data and run _seismic_ analysis
-We provide a detailed tutorial on how to preprocess your own data and run the _seismic_ analysis in the `src/tutorial` subdirectory.
-- [Process your own GWAS data](https://github.com/ylaboratory/seismic-analysis/blob/master/tutorials/GWAS_processing.md)
-- [Process your own scRNA-seq data and run _seismic_ analysis](https://github.com/ylaboratory/seismic-analysis/blob/master/tutorials/scRNA-seq_processing.md)
+Other requirements including other tool prerequisites are located in the
+README files in respective subdirectories.
+
+We refer users to the [_seismicGWAS_](https://github.com/ylaboratory/seismic) repo
+for detailed instructions on how to preprocess your own data
+and run _seismic_ on your own data.
